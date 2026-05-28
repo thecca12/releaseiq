@@ -70,17 +70,17 @@ const MOCK_FLAGS: FlagDetail[] = [
 // ─── Tab / module config ──────────────────────────────────────────────────────
 
 const TAB_CONFIG = [
-  { value: 'trading_style', label: 'Trading Style', icon: SlidersHorizontal, color: 'text-blue-600 dark:text-blue-400' },
-  { value: 'ini_config', label: 'INI Config', icon: Settings2, color: 'text-purple-600 dark:text-purple-400' },
-  { value: 'runtime', label: 'Runtime', icon: Zap, color: 'text-amber-600 dark:text-amber-400' },
-  { value: 'exchange', label: 'Exchange', icon: Globe, color: 'text-emerald-600 dark:text-emerald-400' },
+  { value: 'trading_style', label: 'TradingStyle.txt', icon: SlidersHorizontal, color: 'text-blue-600 dark:text-blue-400' },
+  { value: 'ini_config',    label: 'CTCLManager.ini',  icon: Settings2,          color: 'text-purple-600 dark:text-purple-400' },
+  { value: 'runtime',       label: 'Runtime',           icon: Zap,                color: 'text-amber-600 dark:text-amber-400' },
+  { value: 'exchange',      label: 'Exchange',          icon: Globe,              color: 'text-emerald-600 dark:text-emerald-400' },
 ]
 
 const MODULES_BY_TYPE: Record<FlagDetail['type'], string[]> = {
-  trading_style: ['RMS', 'OMS', 'FIX'],
-  ini_config: ['FIX', 'OMS', 'RMS', 'SERVER', 'CLIENT', 'SYSTEM'],
-  runtime: ['SYSTEM', 'RMS', 'FIX', 'INDEXER', 'AI'],
-  exchange: ['NSE', 'BSE', 'MCX', 'SEBI'],
+  trading_style: ['CLIENT', 'SERVER', 'RMS', 'OMS', 'FIX', 'SYSTEM'],
+  ini_config:    ['SERVER', 'CLIENT', 'RMS', 'FIX', 'OMS', 'SYSTEM'],
+  runtime:       ['SYSTEM', 'RMS', 'FIX', 'INDEXER', 'AI'],
+  exchange:      ['NSE', 'BSE', 'MCX', 'SEBI'],
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -97,20 +97,37 @@ function normaliseType(raw: string): FlagDetail['type'] {
 
 // Map a raw API item to FlagDetail
 function mapApiFlag(item: Record<string, unknown>, index: number): FlagDetail {
-  // Extract module from section name: "RMS_FLAGS" → "RMS", "EXCHANGE_FLAGS" → "EXCHANGE"
+  // source_file tells us exactly which file this flag came from
+  const sourceFile = String(item.source_file ?? '')
+  // Map source file → type
+  let rawType = String(item.type ?? 'ini_config')
+  if (sourceFile.toLowerCase().includes('tradingstyle')) rawType = 'trading_style'
+  else if (sourceFile.toLowerCase().includes('ctclmanager') || sourceFile.toLowerCase().includes('.ini')) rawType = 'ini_config'
+
+  // Module from section or module field
   const rawSection = String(item.section ?? item.module ?? '')
-  const module = rawSection.replace(/_FLAGS$/i, '').replace(/_CONFIG$/i, '').toUpperCase() || 'SYSTEM'
-  // Determine type: exchange section → exchange, else use type field
-  const isExchangeSection = ['NSE', 'BSE', 'MCX', 'SEBI', 'EXCHANGE'].includes(module)
-  const rawType = isExchangeSection ? 'exchange' : String(item.type ?? 'ini_config')
+  const module = rawSection.replace(/_FLAGS$/i, '').replace(/_CONFIG$/i, '')
+    .replace('CTCL_CLIENT', 'CLIENT').replace('CTCL_SERVER', 'SERVER')
+    .toUpperCase() || 'SYSTEM'
+
+  // Build description showing usage + possible values + description
+  const usage = String(item.usage ?? '')
+  const possibleVals = String(item.possible_values ?? item.value ?? '')
+  const desc = String(item.description ?? '')
+  const fullDesc = [
+    usage ? `Usage: ${usage}` : '',
+    possibleVals && possibleVals !== '-' ? `Values: ${possibleVals}` : '',
+    desc && desc !== `${item.name} flag` ? desc : '',
+  ].filter(Boolean).join(' | ')
+
   return {
     id: item.id ? String(item.id) : String(index),
     name: String(item.name ?? ''),
-    value: String(item.value ?? ''),
+    value: possibleVals || String(item.value ?? '-'),
     type: normaliseType(rawType),
-    module,
-    description: item.description ? String(item.description) : undefined,
-    default_value: item.default_value ? String(item.default_value) : undefined,
+    module: module === 'SERVER' ? 'SERVER' : module === 'CLIENT' ? 'CLIENT' : module,
+    description: fullDesc || desc || undefined,
+    default_value: String(item.possible_values ?? item.default_value ?? '') || undefined,
   }
 }
 
@@ -182,7 +199,7 @@ const FlagRow: React.FC<{ flag: FlagDetail; index: number }> = ({ flag, index })
 const FlagsPage: React.FC = () => {
   const [search, setSearch] = useState('')
   const [moduleFilter, setModuleFilter] = useState('all')
-  const [activeTab, setActiveTab] = useState<FlagDetail['type']>('ini_config')
+  const [activeTab, setActiveTab] = useState<FlagDetail['type']>('trading_style')
 
   // ── Fetch real flags from the API ────────────────────────────────────────────
   const { data: flags, isLoading } = useQuery<FlagDetail[]>({

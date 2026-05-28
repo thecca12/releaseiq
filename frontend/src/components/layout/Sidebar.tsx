@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useQuery } from '@tanstack/react-query'
+import { analyticsApi } from '@/services/api'
 import {
   Bot,
   LayoutDashboard,
@@ -19,7 +21,6 @@ import {
   Flag,
   BookOpen,
   Users,
-  Brain,
   ChevronLeft,
   ChevronRight,
   FolderOpen,
@@ -31,9 +32,12 @@ import {
   ChevronDown,
   FileStack,
   Wrench,
+  HardDriveDownload,
 } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useUIStore } from '@/store/uiStore'
+import greeksFtLogo from '@/assets/greeks-ft-logo.svg'
+import greeksFtIcon from '@/assets/greeks-ft-icon.svg'
 
 // ─── Nav item definitions ─────────────────────────────────────────────────────
 
@@ -66,16 +70,17 @@ const MORE_MODULES: NavItem[] = [
   { label: 'Client Releases', icon: Users, path: '/clients' },
   { label: 'Patch/Release Notes', icon: FileStack, path: '/patch-notes' },
   { label: 'Utilities', icon: Wrench, path: '/utilities' },
+  { label: 'Project Backup', icon: HardDriveDownload, path: '/backup' },
 ]
 
-// ─── Quick stats data ─────────────────────────────────────────────────────────
+// ─── Quick stats colors config ────────────────────────────────────────────────
 
-const QUICK_STATS = [
-  { label: 'Files Indexed', value: '2,847', color: 'text-violet-500 dark:text-violet-400' },
-  { label: 'Jira Issues', value: '1,203', color: 'text-blue-500 dark:text-blue-400' },
-  { label: 'Releases', value: '156', color: 'text-emerald-500 dark:text-emerald-400' },
-  { label: 'Log Files', value: '892', color: 'text-amber-500 dark:text-amber-400' },
-  { label: 'Documents', value: '341', color: 'text-pink-500 dark:text-pink-400' },
+const STATS_CONFIG = [
+  { label: 'Files Indexed',  key: 'files_indexed',  color: 'text-violet-500 dark:text-violet-400' },
+  { label: 'Jira Issues',    key: 'jira_issues',    color: 'text-blue-500 dark:text-blue-400' },
+  { label: 'Releases',       key: 'releases',       color: 'text-emerald-500 dark:text-emerald-400' },
+  { label: 'Log Files',      key: 'log_files',      color: 'text-amber-500 dark:text-amber-400' },
+  { label: 'Documents',      key: 'documents',      color: 'text-pink-500 dark:text-pink-400' },
 ]
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -145,6 +150,24 @@ export const Sidebar: React.FC = () => {
   const [moreExpanded, setMoreExpanded] = useState(true)
   const collapsed = sidebarCollapsed
 
+  // Fetch real stats from backend for sidebar quick stats
+  const { data: statsData } = useQuery({
+    queryKey: ['sidebar-stats'],
+    queryFn: async () => {
+      try {
+        const res = await analyticsApi.getDashboardStats()
+        return res.data as Record<string, number>
+      } catch { return null }
+    },
+    staleTime: 5 * 60 * 1000,
+  })
+
+  const quickStats = STATS_CONFIG.map((cfg) => ({
+    label: cfg.label,
+    value: statsData ? (statsData[cfg.key] ?? 0).toLocaleString() : '…',
+    color: cfg.color,
+  }))
+
   return (
     <motion.aside
       animate={{ width: collapsed ? 64 : 230 }}
@@ -176,36 +199,34 @@ export const Sidebar: React.FC = () => {
       <div
         className={cn(
           'flex h-16 items-center border-b border-sidebar-border flex-shrink-0',
-          collapsed ? 'justify-center px-0' : 'px-4'
+          collapsed ? 'justify-center px-0' : 'px-3'
         )}
       >
-        <div className="flex items-center gap-2.5 min-w-0">
-          {/* Icon */}
-          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl gradient-brand shadow-sm">
-            <Brain className="h-4.5 w-4.5 text-white h-[18px] w-[18px]" />
-          </div>
-
-          <AnimatePresence initial={false}>
-            {!collapsed && (
-              <motion.div
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -8 }}
-                transition={{ duration: 0.18 }}
-                className="min-w-0 overflow-hidden"
-              >
-                <div className="flex items-baseline gap-1 leading-none">
-                  <span className="text-sm font-bold bg-gradient-to-r from-violet-600 to-blue-500 bg-clip-text text-transparent">
-                    ReleaseIQ
-                  </span>
-                </div>
-                <p className="mt-0.5 text-[9px] font-medium tracking-wide text-muted-foreground uppercase truncate">
-                  AI-Powered Release Intelligence
-                </p>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <AnimatePresence mode="wait" initial={false}>
+          {collapsed ? (
+            <motion.img
+              key="icon"
+              src={greeksFtIcon}
+              alt="Greeks FT"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.18 }}
+              className="h-8 w-8 object-contain flex-shrink-0"
+            />
+          ) : (
+            <motion.img
+              key="logo"
+              src={greeksFtLogo}
+              alt="Greeks FT"
+              initial={{ opacity: 0, x: -8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -8 }}
+              transition={{ duration: 0.18 }}
+              className="h-9 w-auto object-contain max-w-full"
+            />
+          )}
+        </AnimatePresence>
       </div>
 
       {/* ── Scrollable body ── */}
@@ -275,7 +296,7 @@ export const Sidebar: React.FC = () => {
             <DataSourcePanel />
 
             {/* Quick Stats */}
-            <QuickStatsPanel />
+            <QuickStatsPanel stats={quickStats} />
 
             {/* Help */}
             <HelpPanel />
@@ -322,13 +343,13 @@ const DataSourcePanel: React.FC = () => (
 
 // ─── Quick Stats Panel ────────────────────────────────────────────────────────
 
-const QuickStatsPanel: React.FC = () => (
+const QuickStatsPanel: React.FC<{ stats: Array<{ label: string; value: string; color: string }> }> = ({ stats }) => (
   <div className="px-3 py-3 border-b border-sidebar-border">
     <span className="mb-2 block text-[10px] font-semibold uppercase tracking-widest text-muted-foreground/70">
       Quick Stats
     </span>
     <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">
-      {QUICK_STATS.map((stat) => (
+      {stats.map((stat) => (
         <div key={stat.label} className="flex flex-col">
           <span className={cn('text-sm font-bold leading-none', stat.color)}>
             {stat.value}

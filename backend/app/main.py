@@ -60,6 +60,31 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     except Exception as exc:
         logger.error("datasource_load_failed", error=str(exc))
 
+    # Background: index Datasource PDFs/docs into ChromaDB for RAG
+    # Runs in a thread so it doesn't block startup; safe to re-run (upsert is idempotent)
+    try:
+        import threading
+        from app.services.indexing_service import indexing_service
+        from app.services.datasource.manager import DATASOURCE_ROOT
+
+        def _background_index() -> None:
+            try:
+                logger.info("background_indexing_started", path=str(DATASOURCE_ROOT))
+                result = indexing_service.index_folder(str(DATASOURCE_ROOT))
+                logger.info(
+                    "background_indexing_complete",
+                    files=result.files_processed,
+                    chunks=result.chunks_indexed,
+                    duration=result.duration_seconds,
+                )
+            except Exception as _exc:
+                logger.warning("background_indexing_failed", error=str(_exc))
+
+        t = threading.Thread(target=_background_index, daemon=True, name="datasource-indexer")
+        t.start()
+    except Exception as exc:
+        logger.warning("background_indexing_setup_failed", error=str(exc))
+
     logger.info("application_ready", docs_url="/docs")
 
     yield  # Application runs here

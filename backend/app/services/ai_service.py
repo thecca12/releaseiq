@@ -25,46 +25,63 @@ logger = get_logger(__name__)
 # ---------------------------------------------------------------------------
 
 _INTENT_KEYWORDS: dict[str, list[str]] = {
-    "jira_search": ["jira", "issue", "ticket", "bug", "story", "epic", "task", "sprint"],
-    "log_search": ["log", "fix", "order", "trade", "session", "message", "protocol"],
-    "release_query": ["release", "version", "deploy", "build", "changelog", "notes"],
+    "jira_search": [
+        "jira", "getsctcl", "issue", "ticket", "bug", "story", "epic", "task", "sprint",
+        "defect", "feature request", "assignee", "reporter",
+    ],
+    "log_search": [
+        "log", "fix protocol", "order", "trade", "session", "message", "protocol",
+        "crash", "exception", "error log", "oms log", "rms log",
+    ],
+    "release_query": [
+        "release", "version", "deploy", "build", "changelog", "notes",
+        "patch", "patch note", "patchnote", "optimus", "1209", "3009", "ctcl",
+        "live", "qa", "for live", "for qa",
+    ],
     "general": [],
 }
 
 _TEMPLATE_RESPONSES: dict[str, str] = {
     "release": (
-        "Based on the release data in ReleaseIQ:\n\n"
-        "- **v2.4.0** (Released): 42 issues included, 38 resolved. Deployed to 12 clients.\n"
-        "- **v2.5.0** (In Progress): Currently in testing with 15 open issues.\n"
-        "- **v2.6.0** (Planned): Scheduled for next quarter.\n\n"
-        "Ask me for details on a specific version."
+        "I can look up release data for the Greeksoft CTCL products: **Optimus**, **1209**, and **3009**.\n\n"
+        "Try asking:\n"
+        "- \"Show patch notes for Optimus\"\n"
+        "- \"What JIRAs are in the 1209 live patch?\"\n"
+        "- \"List recent 3009 releases\""
+    ),
+    "patch": (
+        "Patch notes are available for **Optimus**, **1209**, and **3009** across Live and QA environments.\n\n"
+        "Try: \"Show patch notes for Optimus\" or \"What was fixed in the latest 1209 patch?\""
     ),
     "jira": (
-        "Current Jira issue overview:\n\n"
-        "| Status | Count |\n|--------|-------|\n"
-        "| Open | 47 |\n| In Progress | 23 |\n| Testing | 12 |\n| Done | 156 |\n\n"
-        "3 critical issues require immediate attention."
+        "JIRA issues use the project key **GETSCTCL** (e.g. GETSCTCL-14597).\n\n"
+        "Try asking:\n"
+        "- \"Tell me about GETSCTCL-14597\"\n"
+        "- \"Show open bugs in the CTCLClient module\"\n"
+        "- \"Who is assigned to critical issues?\""
+    ),
+    "getsctcl": (
+        "JIRA issues in this project use the key format **GETSCTCL-XXXXX**.\n\n"
+        "Ask me about a specific issue, e.g.: \"What is GETSCTCL-14597?\""
     ),
     "log": (
-        "FIX log analysis summary:\n\n"
-        "- Last session: 1,240 messages processed\n"
-        "- Order types: NewOrder (42%), Modify (28%), Cancel (18%), Execution (12%)\n"
-        "- Anomalies detected: 2 sequence gaps, 1 RMS rejection\n\n"
+        "FIX protocol log analysis is available.\n\n"
+        "- Session logs track: Logon, NewOrderSingle, ExecutionReport, Cancel, Heartbeat\n"
+        "- Common anomalies: sequence gaps, RMS rejections, session resets\n\n"
         "Run a dedicated log analysis for a full report."
     ),
     "rca": (
-        "**Root Cause Analysis Summary**\n\n"
-        "The issue was traced to a sequence number gap in the FIX session, "
-        "causing the OMS to reject subsequent order messages. "
-        "The gap originated from a network timeout at 14:23:07 UTC. "
-        "Recommendation: Implement automatic ResendRequest on reconnect."
+        "**Root Cause Analysis**\n\n"
+        "Provide a GETSCTCL issue ID or paste log content for an AI-generated RCA.\n\n"
+        "Example: \"Generate RCA for GETSCTCL-14597\""
     ),
     "help": (
-        "I'm the ReleaseIQ AI assistant. I can help with:\n\n"
-        "- **Release queries** – status, history, changelog\n"
-        "- **Jira issues** – search, status, assignment\n"
+        "I'm the ReleaseIQ AI assistant for Greeksoft CTCL. I can help with:\n\n"
+        "- **Releases** – Optimus, 1209, 3009 patch notes and status\n"
+        "- **JIRA issues** – search GETSCTCL tickets by ID, status, or module\n"
         "- **FIX log analysis** – order lifecycle, anomalies, RCA\n"
-        "- **General support** – error codes, flags, circulars\n\n"
+        "- **Flags** – TradingStyle.txt and CTCLManager.ini settings\n"
+        "- **Error codes** – exchange rejections and OMS/RMS errors\n\n"
         "Ensure Ollama is running for full AI capabilities."
     ),
 }
@@ -94,30 +111,133 @@ class AIService:
     """
     Unified AI orchestration service.
 
-    All methods are async and gracefully degrade to template-based responses
-    when Ollama is unavailable.
+    Uses LiteLLM/OpenAI-compatible proxy (primary) → Ollama (fallback) →
+    keyword-template (final fallback).
     """
 
     def __init__(self) -> None:
-        self._ollama_available: Optional[bool] = None  # lazy probe
+        self._litellm_available: Optional[bool] = None   # lazy probe
+        self._ollama_available: Optional[bool] = None    # lazy probe
 
     # ------------------------------------------------------------------
     # Internal helpers
     # ------------------------------------------------------------------
 
+    async def _probe_litellm(self) -> bool:
+        """Check whether the LiteLLM proxy is reachable."""
+        if self._litellm_available is not None:
+            return self._litellm_available
+        try:
+            import httpx
+            async with httpx.AsyncClient(timeout=4.0) as client:
+                # Hit the /models endpoint — standard OpenAI-compatible probe
+                resp = await client.get(
+                    f"{settings.AI_BASE_URL}/models",
+                    headers={"Authorization": f"Bearer {settings.AI_API_KEY}"},
+                )
+                self._litellm_available = resp.status_code in (200, 401, 403)
+        except Exception:
+            self._litellm_available = False
+        logger.info("litellm_probe", available=self._litellm_available,
+                    base_url=settings.AI_BASE_URL)
+        return self._litellm_available
+
+    async def _chat_litellm(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        model: Optional[str] = None,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+    ) -> Optional[str]:
+        """
+        Send a chat completion request to the LiteLLM/OpenAI-compatible proxy.
+        Returns the assistant message content, or None on failure.
+        """
+        try:
+            import httpx, json as _json
+
+            payload = {
+                "model": model or settings.AI_MODEL,
+                "messages": messages,
+                "temperature": temperature if temperature is not None else settings.AI_TEMPERATURE,
+                "max_tokens": max_tokens or settings.AI_MAX_TOKENS,
+                "stream": False,
+            }
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {settings.AI_API_KEY}",
+            }
+            async with httpx.AsyncClient(timeout=60.0) as client:
+                resp = await client.post(
+                    f"{settings.AI_BASE_URL}/chat/completions",
+                    json=payload,
+                    headers=headers,
+                )
+                resp.raise_for_status()
+                data = resp.json()
+                content = data["choices"][0]["message"]["content"]
+                logger.info("litellm_response_ok",
+                            model=data.get("model", settings.AI_MODEL),
+                            tokens=data.get("usage", {}).get("total_tokens", 0))
+                return content
+        except Exception as exc:
+            logger.warning("litellm_chat_failed", error=str(exc))
+            self._litellm_available = False
+            return None
+
+    async def _chat_litellm_stream(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        model: Optional[str] = None,
+    ):
+        """Async generator that yields token strings from the LiteLLM stream."""
+        import httpx, json as _json
+        payload = {
+            "model": model or settings.AI_MODEL,
+            "messages": messages,
+            "temperature": settings.AI_TEMPERATURE,
+            "max_tokens": settings.AI_MAX_TOKENS,
+            "stream": True,
+        }
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.AI_API_KEY}",
+        }
+        try:
+            async with httpx.AsyncClient(timeout=120.0) as client:
+                async with client.stream(
+                    "POST",
+                    f"{settings.AI_BASE_URL}/chat/completions",
+                    json=payload,
+                    headers=headers,
+                ) as response:
+                    async for line in response.aiter_lines():
+                        if not line or line == "data: [DONE]":
+                            continue
+                        if line.startswith("data: "):
+                            try:
+                                chunk = _json.loads(line[6:])
+                                token = chunk["choices"][0].get("delta", {}).get("content", "")
+                                if token:
+                                    yield token
+                            except Exception:
+                                continue
+        except Exception as exc:
+            logger.warning("litellm_stream_failed", error=str(exc))
+
     async def _probe_ollama(self) -> bool:
-        """Check whether Ollama is reachable (cached per instance)."""
+        """Check whether Ollama is reachable (fallback)."""
         if self._ollama_available is not None:
             return self._ollama_available
         try:
             import httpx
-
             async with httpx.AsyncClient(timeout=3.0) as client:
                 resp = await client.get(f"{settings.OLLAMA_BASE_URL}/api/tags")
                 self._ollama_available = resp.status_code == 200
         except Exception:
             self._ollama_available = False
-        logger.info("ollama_probe", available=self._ollama_available)
         return self._ollama_available
 
     async def _chat_ollama(
@@ -127,20 +247,18 @@ class AIService:
         model: Optional[str] = None,
         temperature: float = 0.7,
     ) -> Optional[str]:
-        """Send a chat completion request to Ollama. Returns None on failure."""
+        """Send a chat completion request to Ollama (fallback). Returns None on failure."""
         try:
             import httpx
-
             payload = {
-                "model": model or settings.AI_MODEL,
+                "model": model or "llama3",
                 "messages": messages,
                 "stream": False,
                 "options": {"temperature": temperature},
             }
             async with httpx.AsyncClient(timeout=60.0) as client:
                 resp = await client.post(
-                    f"{settings.OLLAMA_BASE_URL}/api/chat",
-                    json=payload,
+                    f"{settings.OLLAMA_BASE_URL}/api/chat", json=payload,
                 )
                 resp.raise_for_status()
                 return resp.json().get("message", {}).get("content")
@@ -149,6 +267,29 @@ class AIService:
             self._ollama_available = False
             return None
 
+    async def _call_ai(
+        self,
+        messages: list[dict[str, str]],
+        *,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+    ) -> Optional[str]:
+        """
+        Unified AI call:  LiteLLM proxy  →  Ollama  →  None (template fallback).
+        """
+        # 1. LiteLLM proxy (primary)
+        result = await self._chat_litellm(messages, temperature=temperature, max_tokens=max_tokens)
+        if result:
+            return result
+
+        # 2. Ollama (fallback)
+        if await self._probe_ollama():
+            result = await self._chat_ollama(messages)
+            if result:
+                return result
+
+        return None  # caller will use template fallback
+
     async def _generate_ollama(
         self,
         prompt: str,
@@ -156,10 +297,9 @@ class AIService:
         model: Optional[str] = None,
         temperature: float = 0.3,
     ) -> Optional[str]:
-        """Send a generate (single-turn) request to Ollama. Returns None on failure."""
-        return await self._chat_ollama(
+        """Single-turn generation — uses unified _call_ai."""
+        return await self._call_ai(
             [{"role": "user", "content": prompt}],
-            model=model,
             temperature=temperature,
         )
 
@@ -220,9 +360,16 @@ class AIService:
             context_text = "\n\nRelevant context:\n" + "\n".join(snippets)
 
         system_prompt = (
-            "You are ReleaseIQ, an expert AI assistant for financial-technology release "
-            "management, FIX protocol analysis, and Jira issue tracking. "
-            "Be concise, structured, and use markdown formatting when helpful."
+            "You are ReleaseIQ, an expert AI assistant for Greeksoft's CTCL (Client Trading) "
+            "release management, FIX protocol analysis, and Jira issue tracking.\n"
+            "Key facts about this system:\n"
+            "- JIRA project key is GETSCTCL (e.g. GETSCTCL-14597). Always use this prefix.\n"
+            "- Products / releases are named: Optimus, 1209, 3009.\n"
+            "- Exchanges supported: NSE, BSE, MCX, SEBI.\n"
+            "- Components: CTCLClient (trading terminal), CTCLServer (OMS/RMS backend).\n"
+            "- Config files: TradingStyle.txt (client flags), CTCLManager.ini (server flags).\n"
+            "Be concise, structured, and use markdown formatting when helpful. "
+            "Always answer based on the provided context data — never invent issue IDs or version numbers."
             + context_text
         )
 
@@ -231,7 +378,7 @@ class AIService:
             {"role": "user", "content": query},
         ]
 
-        result = await self._chat_ollama(messages)
+        result = await self._call_ai(messages)
         if result:
             return result
 
@@ -430,30 +577,35 @@ class AIService:
             context_text = "\n\nContext:\n" + "\n".join(snippets)
 
         system_prompt = (
-            "You are ReleaseIQ AI. Answer concisely using markdown." + context_text
+            "You are ReleaseIQ AI for Greeksoft CTCL. "
+            "JIRA keys use the prefix GETSCTCL (e.g. GETSCTCL-14597). "
+            "Releases: Optimus, 1209, 3009. Exchanges: NSE, BSE, MCX. "
+            "Answer concisely using markdown. Never invent issue IDs or versions."
+            + context_text
         )
 
-        available = await self._probe_ollama()
-        if available:
-            try:
-                import httpx
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": query},
+        ]
 
-                payload = {
-                    "model": settings.AI_MODEL,
-                    "messages": [
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": query},
-                    ],
-                    "stream": True,
-                }
+        # 1. Try LiteLLM streaming
+        streamed = False
+        async for token in self._chat_litellm_stream(messages):
+            streamed = True
+            yield token
+        if streamed:
+            return
+
+        # 2. Try Ollama streaming (fallback)
+        if await self._probe_ollama():
+            try:
+                import httpx, json as _json
+                payload = {"model": "llama3", "messages": messages, "stream": True}
                 async with httpx.AsyncClient(timeout=120.0) as client:
                     async with client.stream(
-                        "POST",
-                        f"{settings.OLLAMA_BASE_URL}/api/chat",
-                        json=payload,
+                        "POST", f"{settings.OLLAMA_BASE_URL}/api/chat", json=payload,
                     ) as response:
-                        import json as _json
-
                         async for line in response.aiter_lines():
                             if not line:
                                 continue
@@ -470,11 +622,10 @@ class AIService:
             except Exception as exc:
                 logger.warning("ollama_stream_failed", error=str(exc))
 
-        # Fallback: chunk the template response word by word
+        # 3. Final fallback: chunk template word by word
         fallback = _template_response(query)
-        words = fallback.split(" ")
-        for i, word in enumerate(words):
-            yield word + (" " if i < len(words) - 1 else "")
+        for word in fallback.split(" "):
+            yield word + " "
 
 
 # ---------------------------------------------------------------------------

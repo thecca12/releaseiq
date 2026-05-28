@@ -32,86 +32,92 @@ logger = get_logger(__name__)
 
 _MOCK_RESPONSES: dict[str, str] = {
     "release": (
-        "Based on the release data in ReleaseIQ, here is a summary:\n\n"
-        "- **v2.4.0** (Released): Contained 42 issues, 38 fixed. Deployed to 12 clients.\n"
-        "- **v2.5.0** (In Progress): Currently in testing phase with 15 open issues.\n"
-        "- **v2.6.0** (Planned): Scheduled for next quarter.\n\n"
-        "Would you like details on a specific release?"
+        "I can look up release data for the Greeksoft CTCL products: **Optimus**, **1209**, and **3009**.\n\n"
+        "Try asking:\n"
+        "- \"Show patch notes for Optimus\"\n"
+        "- \"What JIRAs are in the 1209 live patch?\"\n"
+        "- \"List recent 3009 releases\""
+    ),
+    "patch": (
+        "Patch notes are available for **Optimus**, **1209**, and **3009** across Live and QA environments.\n\n"
+        "Try: \"Show patch notes for Optimus\" or \"What was fixed in the latest 1209 patch?\""
+    ),
+    "getsctcl": (
+        "JIRA issues in this project use the key format **GETSCTCL-XXXXX**.\n\n"
+        "Ask me about a specific issue, e.g.: \"What is GETSCTCL-14597?\""
     ),
     "issue": (
-        "Here is the current issue status overview:\n\n"
-        "| Status | Count |\n|--------|-------|\n"
-        "| Open | 47 |\n| In Progress | 23 |\n| Testing | 12 |\n"
-        "| Done | 156 |\n\n"
-        "Critical issues: **3** require immediate attention. "
-        "Top assignees: Alice (8), Bob (6), Charlie (5)."
+        "JIRA issues use the project key **GETSCTCL**.\n\n"
+        "Try asking:\n"
+        "- \"Tell me about GETSCTCL-14597\"\n"
+        "- \"Show open bugs in CTCLClient\"\n"
+        "- \"List critical priority issues\""
     ),
     "bug": (
-        "There are currently **3 critical bugs** tracked:\n\n"
-        "1. **RIQ-421** – Login timeout not refreshing session (High)\n"
-        "2. **RIQ-418** – PDF export missing page breaks (Medium)\n"
-        "3. **RIQ-415** – Dashboard chart flickers on resize (Low)\n\n"
-        "All are assigned and targeted for v2.5.1."
+        "Bug reports are tracked under the **GETSCTCL** JIRA project.\n\n"
+        "Ask for a specific issue ID (e.g. GETSCTCL-14597) for full details including "
+        "description, patch notes, assignee, and matching log entries."
     ),
     "deploy": (
-        "Recent deployment activity:\n\n"
-        "- **Production** – v2.4.0 deployed 3 days ago (success, 4m 32s)\n"
-        "- **Staging** – v2.5.0-rc1 deployed 6 hours ago (success, 3m 18s)\n"
-        "- **Development** – Latest commit deployed 1 hour ago\n\n"
-        "No failed deployments in the last 7 days."
+        "Client deployments are tracked per release.\n\n"
+        "Try: \"Which clients are on Optimus?\" or \"Show client deployment status\""
     ),
     "client": (
-        "Client deployment summary:\n\n"
-        "- **Total clients**: 24\n"
-        "- **On latest release (v2.4.0)**: 18 (75%)\n"
-        "- **On v2.3.x**: 5 clients (scheduled upgrade next week)\n"
-        "- **On v2.2.x**: 1 client (legacy contract, Q4 upgrade)\n\n"
-        "Acme Corp and TechStart Inc are next in the upgrade queue."
+        "Client deployment data is available from the datasource.\n\n"
+        "Try: \"Show client release summary\" or \"Which clients need upgrades?\""
     ),
-    "analytics": (
-        "ReleaseIQ Analytics Dashboard Summary:\n\n"
-        "**This Month:**\n"
-        "- 3 releases shipped\n"
-        "- 47 issues resolved\n"
-        "- Average deployment time: 4m 12s\n"
-        "- Release success rate: 94.2%\n\n"
-        "**Trend:** Issue resolution rate up 12% vs last month."
+    "flag": (
+        "Trading flags come from two config files:\n\n"
+        "- **TradingStyle.txt** – Client-side trading behaviour flags\n"
+        "- **CTCLManager.ini** – Server-side OMS/RMS configuration\n\n"
+        "Ask: \"What does SKIP_RISK_ON_MODIFY do?\" or browse the Flags page."
     ),
     "help": (
-        "I'm the ReleaseIQ AI assistant. I can help you with:\n\n"
-        "- **Release information** – status, history, notes\n"
-        "- **Issue tracking** – Jira issues, bugs, features\n"
-        "- **Deployment status** – environments, timelines\n"
-        "- **Client management** – which clients have which version\n"
-        "- **Analytics** – trends, metrics, dashboards\n\n"
-        "Just ask me anything about your release management!"
+        "I'm the ReleaseIQ AI assistant for Greeksoft CTCL. I can help with:\n\n"
+        "- **Releases** – Optimus, 1209, 3009 patch notes and status\n"
+        "- **JIRA issues** – search GETSCTCL tickets by ID, status, or module\n"
+        "- **FIX log analysis** – order lifecycle, anomalies, RCA\n"
+        "- **Flags** – TradingStyle.txt and CTCLManager.ini settings\n"
+        "- **Error codes** – exchange rejections and OMS/RMS errors\n\n"
+        "Ensure Ollama is running for full AI capabilities."
     ),
 }
 
 _DEFAULT_MOCK = (
-    "Thank you for your question. I'm the ReleaseIQ AI assistant. "
-    "I can help with releases, issues, deployments, client management, and analytics. "
-    "For a full AI experience, please ensure Ollama is running with the configured model. "
-    "In the meantime, try asking about 'releases', 'issues', 'deployments', or 'clients'."
+    "I'm the ReleaseIQ AI assistant for **Greeksoft CTCL**.\n\n"
+    "I can help with:\n"
+    "- **JIRA issues** (GETSCTCL-XXXXX format)\n"
+    "- **Patch notes** for Optimus, 1209, 3009\n"
+    "- **Flags** (TradingStyle.txt / CTCLManager.ini)\n"
+    "- **Error codes**, logs, and exchange circulars\n\n"
+    "For full AI responses, ensure Ollama is running."
 )
 
 
 def _get_datasource_mock_response(message: str) -> str:
     """
     Build a data-driven mock response using DataSourceManager.
-    Falls back to keyword-matched templates if no specific data found.
+    Supports any language — extracts entities universally, responds in user's language.
     """
     try:
         from app.services.datasource.manager import get_datasource_manager
+        from app.utils.language_utils import (
+            detect_language, detect_intent_multilingual,
+            extract_jira_ids, extract_versions, extract_error_codes,
+        )
         ds = get_datasource_manager()
         lower = message.lower()
+
+        # Detect language for response framing
+        lang = detect_language(message)
+        intent = detect_intent_multilingual(message)
 
         import re
 
         import json
 
-        # Check for specific JIRA ID references
-        jira_ids = re.findall(r"JIRA-\d+", message.upper())
+        # Check for specific JIRA ID references (format: GETSCTCL-XXXXX) — language-agnostic
+        jira_ids = extract_jira_ids(message)
         if jira_ids:
             # Return structured JSON for the first matching JIRA ID so the
             # frontend AIResponseCard can render a rich card.
@@ -190,8 +196,8 @@ def _get_datasource_mock_response(message: str) -> str:
             not_found = ', '.join(jira_ids)
             return f"Issue(s) {not_found} not found in current datasource."
 
-        # Version-specific queries
-        versions = re.findall(r"v\d+\.\d+(?:[.-]\w+)?", lower)
+        # Version-specific queries — language-agnostic extraction
+        versions = extract_versions(message)
         if versions:
             parts = []
             for v in versions:
@@ -206,35 +212,82 @@ def _get_datasource_mock_response(message: str) -> str:
                         f"- Owner: {r.get('owner')}\n"
                         f"- Notes: {r.get('notes', '')[:300]}\n"
                     )
-                pn = ds.get_patch_note_by_version(v)
-                if pn:
+                # Try all matching patch notes for this version/release name
+                matching_pns = ds.get_patch_notes(version=v)
+                for pn in matching_pns[:3]:
+                    jira_items = pn.get('jira_items', [])
+                    jira_lines = "\n".join(
+                        f"  - {j['jira_id']}: {j['summary'][:80]}"
+                        for j in jira_items[:10]
+                    )
                     parts.append(
-                        f"**Patch Notes {pn.get('version')}:**\n"
-                        f"- JIRA Refs: {', '.join(pn.get('jira_refs', []))}\n"
-                        f"- Live changes: {pn.get('live_notes', '')[:300]}\n"
+                        f"**Patch Notes — {pn.get('version')} ({pn.get('environment')}) "
+                        f"{pn.get('release_date','')}**\n"
+                        f"- File: {pn.get('filename')}\n"
+                        f"- Component: {pn.get('component_type')}\n"
+                        f"- JIRA count: {pn.get('jira_count', 0)}\n"
+                        + (f"- JIRAs:\n{jira_lines}\n" if jira_lines else "")
                     )
             if parts:
                 return "\n\n".join(parts)
 
         # Error code query
-        if any(kw in lower for kw in ["error", "rejection", "reject", "rms0", "fix-0", "oms-"]):
-            error_codes = re.findall(r"[A-Z]{2,5}[- ]?\d{3,4}", message.upper())
-            if error_codes:
-                parts = []
-                for ec_str in error_codes:
-                    normalized = ec_str.replace(" ", "").replace("-", "")
-                    matches = [e for e in ds.get_error_codes() if e.get("code", "").replace("-", "").upper() == normalized]
-                    if matches:
-                        e = matches[0]
-                        parts.append(
-                            f"**Error Code {e.get('code')}** ({e.get('severity')})\n"
-                            f"- Module: {e.get('module')}\n"
-                            f"- Description: {e.get('description')}\n"
-                            f"- Root Cause: {e.get('root_cause', '')}\n"
-                            f"- Resolution: {e.get('resolution', '')}\n"
-                        )
-                if parts:
-                    return "\n\n".join(parts)
+        if any(kw in lower for kw in ["error", "rejection", "reject", "rms0", "fix-0", "oms-", "err_", "error_"]):
+            all_error_codes = ds.get_error_codes()
+
+            # Match numeric codes like RMS001, FIX-001
+            numeric_codes = re.findall(r"[A-Z]{2,5}[- ]?\d{3,4}", message.upper())
+            # Match define-style names like ERR_PRICE_NOT_MULT_TICK_SIZE
+            define_names = re.findall(r"\b(ERR_\w+|ERROR_\w+)\b", message.upper())
+            # Match plain numeric codes like 16283
+            plain_numeric = re.findall(r"\b(\d{4,6})\b", message)
+
+            parts = []
+            for ec_str in numeric_codes:
+                normalized = ec_str.replace(" ", "").replace("-", "")
+                matches = [e for e in all_error_codes if e.get("code", "").replace("-", "").upper() == normalized]
+                if matches:
+                    e = matches[0]
+                    parts.append(
+                        f"**Error Code {e.get('code')}** ({e.get('severity')})\n"
+                        f"- Module: {e.get('module')}\n"
+                        f"- Description: {e.get('description')}\n"
+                        f"- Resolution: {e.get('resolution', '')}\n"
+                    )
+            for name in define_names:
+                matches = [e for e in all_error_codes if e.get("code", "").upper() == name]
+                if matches:
+                    e = matches[0]
+                    parts.append(
+                        f"**{e.get('code')}** ({e.get('severity')})\n"
+                        f"- Description: {e.get('description')}\n"
+                        f"- Resolution: {e.get('resolution', '')}\n"
+                    )
+            for num in plain_numeric:
+                matches = [e for e in all_error_codes if str(e.get("code", "")).strip() == num]
+                if matches:
+                    e = matches[0]
+                    parts.append(
+                        f"**Error {e.get('code')}** ({e.get('severity')})\n"
+                        f"- Description: {e.get('description')}\n"
+                        f"- Resolution: {e.get('resolution', '')}\n"
+                    )
+            if not parts:
+                # Fuzzy keyword match across all error codes
+                query_words = [w for w in lower.split() if len(w) > 4]
+                fuzzy = [
+                    e for e in all_error_codes
+                    if any(w in e.get("description", "").lower() or w in e.get("code", "").lower()
+                           for w in query_words)
+                ][:3]
+                for e in fuzzy:
+                    parts.append(
+                        f"**{e.get('code')}** ({e.get('severity')})\n"
+                        f"- Description: {e.get('description')}\n"
+                        f"- Resolution: {e.get('resolution', '')}\n"
+                    )
+            if parts:
+                return "\n\n".join(parts)
 
         # Log / crash query
         if any(kw in lower for kw in ["crash", "log", "exception", "null pointer", "oom", "timeout"]):
@@ -258,7 +311,7 @@ def _get_datasource_mock_response(message: str) -> str:
                 )
 
         # Release/deployment overview
-        if any(kw in lower for kw in ["release", "deploy", "version", "live"]):
+        if intent == "release_query" or any(kw in lower for kw in ["release", "deploy", "version", "live"]):
             releases = ds.get_releases()[:5]
             if releases:
                 lines = [f"**Current Release Status:**\n"]
@@ -270,8 +323,50 @@ def _get_datasource_mock_response(message: str) -> str:
                     )
                 return "\n".join(lines)
 
-        # Issues overview
-        if any(kw in lower for kw in ["issue", "bug", "jira", "ticket"]):
+        # Issues overview — filtered first, then generic summary
+        if intent == "jira_search" or any(kw in lower for kw in ["issue", "bug", "jira", "ticket", "samasya", "dikkat", "problem"]):
+            query_words_j = [w for w in lower.split() if len(w) > 3]
+            priority_map = {"critical": "Critical", "high": "High", "medium": "Medium", "low": "Low"}
+            matched_priority = next((priority_map[w] for w in query_words_j if w in priority_map), None)
+
+            # Simple keyword search first (most specific)
+            keyword_results = [
+                i for i in ds.get_jira_issues()
+                if any(w in i.get("search_text", "") for w in query_words_j
+                       if w not in ("issue", "bugs", "jira", "ticket", "show", "open", "list", "dikhao", "batao"))
+            ][:10]
+
+            # Apply priority filter on keyword results if any
+            if matched_priority and keyword_results:
+                keyword_results = [i for i in keyword_results if i.get("priority") == matched_priority] or keyword_results
+
+            if keyword_results:
+                label_parts = []
+                if matched_priority:
+                    label_parts.append(matched_priority)
+                label_parts.append(f"{len(keyword_results)} found")
+                lines = [f"**JIRA Issues ({', '.join(label_parts)}):**\n"]
+                for i in keyword_results[:8]:
+                    lines.append(
+                        f"- **{i.get('jira_id')}** [{i.get('priority')}] "
+                        f"{i.get('title','')[:70]} | {i.get('status')} "
+                        f"| {i.get('assignee') or 'Unassigned'}"
+                    )
+                return "\n".join(lines)
+
+            # Priority-only filter
+            if matched_priority:
+                filtered = ds.get_jira_issues(priority=matched_priority)[:10]
+                if filtered:
+                    lines = [f"**{matched_priority} Priority JIRA Issues ({len(filtered)} found):**\n"]
+                    for i in filtered:
+                        lines.append(
+                            f"- **{i.get('jira_id')}** {i.get('title','')[:70]} "
+                            f"| {i.get('status')} | {i.get('assignee') or 'Unassigned'}"
+                        )
+                    return "\n".join(lines)
+
+            # Generic summary
             issues = ds.get_jira_issues()
             open_count = sum(1 for i in issues if i.get("status", "").lower() in ("open", "in progress"))
             critical_count = sum(1 for i in issues if i.get("priority", "").lower() == "critical")
@@ -279,7 +374,7 @@ def _get_datasource_mock_response(message: str) -> str:
             for i in issues:
                 m = i.get("module", "Other")
                 by_module[m] = by_module.get(m, 0) + 1
-            module_lines = "\n".join(f"  - {m}: {cnt}" for m, cnt in sorted(by_module.items(), key=lambda x: -x[1]))
+            module_lines = "\n".join(f"  - {m}: {cnt}" for m, cnt in sorted(by_module.items(), key=lambda x: -x[1])[:15])
             return (
                 f"**Jira Issue Summary ({len(issues)} total):**\n\n"
                 f"- Open/In Progress: **{open_count}**\n"
@@ -288,8 +383,20 @@ def _get_datasource_mock_response(message: str) -> str:
             )
 
         # Client overview
-        if any(kw in lower for kw in ["client", "broker", "upgrade"]):
+        if intent == "client_query" or any(kw in lower for kw in ["client", "broker", "upgrade", "grahak"]):
             clients = ds.get_client_releases()
+            # Check if asking about a specific client by name
+            query_words = [w for w in lower.split() if len(w) > 3]
+            named = [c for c in clients if any(w in c.get("client_name", "").lower() for w in query_words)]
+            if named:
+                c = named[0]
+                return (
+                    f"**Client: {c.get('client_name')} ({c.get('client_id')})**\n\n"
+                    f"- Version: **{c.get('current_version')}**\n"
+                    f"- Environment: {c.get('environment')}\n"
+                    f"- Health: **{c.get('health_status')}**\n"
+                    f"- Last Updated: {c.get('last_updated', 'N/A')}\n"
+                )
             healthy = sum(1 for c in clients if c.get("health_status", "").lower() == "healthy")
             warning = sum(1 for c in clients if c.get("health_status", "").lower() == "warning")
             critical = sum(1 for c in clients if c.get("health_status", "").lower() == "critical")
@@ -301,14 +408,176 @@ def _get_datasource_mock_response(message: str) -> str:
                 + "\n".join(
                     f"- {c.get('client_name')} ({c.get('client_id')}): "
                     f"{c.get('current_version')} — {c.get('health_status')}"
-                    for c in clients[:5]
+                    for c in clients[:10]
                 )
             )
+
+        # Test case search — check before flags to avoid "basket" ambiguity
+        if any(kw in lower for kw in [
+            "test case", "test cases", "testcase", "testing",
+            "regression", "smoke test", "test karo", "test dikhao",
+        ]):
+            query_words_t = [w for w in lower.split() if len(w) > 3]
+            all_tests = ds.get_test_cases()
+            matched_t = [
+                t for t in all_tests
+                if any(w in t.get("test_name", "").lower()
+                       or w in t.get("module", "").lower()
+                       or w in t.get("test_id", "").lower()
+                       for w in query_words_t)
+            ][:8]
+            if matched_t:
+                lines = [f"**Test Cases ({len(matched_t)} found):**\n"]
+                for t in matched_t:
+                    lines.append(
+                        f"- **{t.get('test_id')}** [{t.get('module')}]: "
+                        f"{t.get('test_name','')[:80]} | Status: {t.get('status','N/A')}"
+                    )
+                return "\n".join(lines)
+
+        # Flag lookup — specific flag by name or keyword
+        if intent == "flag_query" or any(kw in lower for kw in [
+            "flag", "kill switch", "trading style", "ini", "tradingstyle",
+            "amo", "ioc", "gtd", "mis", "basket", "pre open", "algo",
+            "killswitch", "enable", "disable", "setting",
+        ]):
+            all_flags = ds.get_flags()
+            query_words = [w for w in lower.replace("_", " ").split() if len(w) > 2]
+            matched = [
+                f for f in all_flags
+                if any(w in f.get("name", "").lower() or w in f.get("description", "").lower()
+                       for w in query_words)
+            ][:5]
+            if matched:
+                lines = [f"**Matching Flags ({len(matched)} found):**\n"]
+                for f in matched:
+                    lines.append(
+                        f"**{f.get('name')}** = `{f.get('value')}`\n"
+                        f"  - {f.get('description', '')[:150]}\n"
+                        f"  - Source: {f.get('source_file')} | Usage: {f.get('usage', 'N/A')}\n"
+                    )
+                return "\n".join(lines)
+
+        # Test case search
+        if any(kw in lower for kw in [
+            "test case", "test cases", "testing", "regression", "smoke test",
+            "market watch", "order entry", "basket order", "slice order",
+        ]):
+            query_words = [w for w in lower.split() if len(w) > 3]
+            all_tests = ds.get_test_cases()
+            matched = [
+                t for t in all_tests
+                if any(w in t.get("test_name", "").lower()
+                       or w in t.get("module", "").lower()
+                       or w in t.get("test_id", "").lower()
+                       for w in query_words)
+            ][:6]
+            if matched:
+                lines = [f"**Test Cases ({len(matched)} found):**\n"]
+                for t in matched:
+                    lines.append(
+                        f"- **{t.get('test_id')}** [{t.get('module')}]: "
+                        f"{t.get('test_name', '')[:80]} | Status: {t.get('status', 'N/A')}"
+                    )
+                return "\n".join(lines)
+
+        # Exchange circulars search
+        if any(kw in lower for kw in [
+            "circular", "nse", "bse", "mcx", "sebi", "exchange", "notification",
+            "fix api", "protocol", "nnf", "eti", "ctcl circular",
+        ]):
+            query_words = [w for w in lower.split() if len(w) > 2]
+            circulars = ds.get_circulars()
+            matched = [
+                c for c in circulars
+                if any(w in c.get("subject", "").lower()
+                       or w in c.get("body", "").lower()
+                       or w in c.get("exchange", "").lower()
+                       for w in query_words)
+            ][:4]
+            if matched:
+                lines = [f"**Exchange Circulars ({len(matched)} found):**\n"]
+                for c in matched:
+                    lines.append(
+                        f"**[{c.get('exchange')}] {c.get('subject', c.get('filename', ''))[:80]}**\n"
+                        f"  Date: {c.get('date', 'N/A')} | Ref: {c.get('circular_no', 'N/A')}\n"
+                        f"  {c.get('body', '')[:200]}\n"
+                    )
+                return "\n".join(lines)
+
+        # Greek / GreekSoft code lookup
+        upper_msg = message.upper()
+        code_names_found = re.findall(r'\b(GC_\w+|GRC_\w+|IC_\w+|BC_\w+|EEC_\w+|GIC_\w+)\b', upper_msg)
+        if code_names_found or any(kw in lower for kw in [
+            "greek code", "gc_", "grc_", "gic_", "ic_", "bc_", "eec_",
+            "message type", "broadcast", "token master", "login code",
+        ]):
+            all_greek = ds.get_greek_codes()
+            if code_names_found:
+                # Exact + prefix match
+                matched_g = [
+                    g for g in all_greek
+                    if any(g.get("greek_code", "").upper().startswith(cn[:8]) or
+                           g.get("greek_code", "").upper() == cn
+                           for cn in code_names_found)
+                ][:5]
+            else:
+                query_words_g = [w for w in lower.replace("_", " ").split() if len(w) > 3]
+                matched_g = [
+                    g for g in all_greek
+                    if any(w in g.get("greek_code", "").lower()
+                           or w in g.get("description", "").lower()
+                           or w in g.get("product_type", "").lower()
+                           for w in query_words_g)
+                ][:5]
+            if matched_g:
+                lines = [f"**Greek Codes ({len(matched_g)} found):**\n"]
+                for g in matched_g:
+                    lines.append(
+                        f"**{g.get('greek_code')}** = `{g.get('value')}`\n"
+                        f"  - {g.get('description', '')}\n"
+                        f"  - Exchange: {g.get('exchange')} | Category: {g.get('product_type')}\n"
+                    )
+                return "\n".join(lines)
+
+        # Universal fallback — search ALL datasources and format top results
+        results = ds.search_all(message)
+        if results:
+            lines = [f"**Search results for:** _{message[:60]}_\n"]
+            seen_types: dict = {}
+            for r in results[:8]:
+                rtype = r.get("type", "")
+                seen_types[rtype] = seen_types.get(rtype, 0) + 1
+                if seen_types[rtype] > 3:
+                    continue
+                title = r.get("title", "")[:80]
+                snippet = r.get("snippet", "")[:120]
+                source = r.get("source", "")
+                lines.append(f"**[{rtype.upper()}]** {title}\n  _{snippet}_\n  Source: {source}\n")
+            if len(lines) > 1:
+                return "\n".join(lines)
 
     except Exception as exc:
         logger.warning(f"Datasource mock response failed: {exc}")
 
-    # Fall back to keyword templates
+    # Fall back to multilingual keyword templates
+    try:
+        from app.utils.language_utils import detect_intent_multilingual
+        intent = detect_intent_multilingual(message)
+        intent_to_key = {
+            "jira_search": "issue",
+            "release_query": "release",
+            "error_query": "error",
+            "flag_query": "flag",
+            "help": "help",
+            "client_query": "client",
+        }
+        key = intent_to_key.get(intent)
+        if key and key in _MOCK_RESPONSES:
+            return _MOCK_RESPONSES[key]
+    except Exception:
+        pass
+
     lower = message.lower()
     for keyword, response in _MOCK_RESPONSES.items():
         if keyword in lower:
@@ -321,26 +590,98 @@ def _get_mock_response(message: str) -> str:
     return _get_datasource_mock_response(message)
 
 
-async def _call_ollama(message: str, history: list[dict]) -> Optional[str]:
+async def _call_ai(message: str, history: list[dict], ds_context: str = "") -> Optional[str]:
     """
-    Attempt to call Ollama. Returns the response string or None on failure.
-    """
-    try:
-        import httpx
-        from app.core.config import settings
+    Call AI via LiteLLM proxy (primary) → Ollama (fallback).
+    Returns assistant response string or None.
 
-        messages = history + [{"role": "user", "content": message}]
+    Priority:
+      1. LiteLLM proxy  (http://192.168.192.50:4000/v1 — Claude Haiku)
+      2. Ollama          (localhost:11434)
+      3. None            (caller uses datasource mock response)
+    """
+    import httpx, json as _json
+    from app.core.config import settings
+
+    # Detect language for multilingual response
+    try:
+        from app.utils.language_utils import detect_language, get_language_instruction
+        _lang = detect_language(message)
+        _lang_instruction = get_language_instruction(_lang)
+    except Exception:
+        _lang_instruction = ""
+
+    # Build system prompt enriched with datasource context
+    system_content = (
+        "You are ReleaseIQ, an expert AI assistant for Greeksoft's CTCL (Client Trading) system "
+        "and a knowledgeable assistant for general financial market, trading, and technology topics.\n"
+        "Key facts about this system:\n"
+        "- JIRA project key: GETSCTCL (e.g. GETSCTCL-14597). Never invent issue IDs.\n"
+        "- Products/releases: Optimus, 1209, 3009.\n"
+        "- Exchanges: NSE, BSE, MCX, SEBI.\n"
+        "- Components: CTCLClient (trading terminal), CTCLServer (OMS/RMS backend).\n"
+        "- Config: TradingStyle.txt (client flags), CTCLManager.ini (server flags).\n\n"
+        "Instructions:\n"
+        "1. If datasource context is provided, use it to give accurate specific answers.\n"
+        "2. For general questions (trading concepts, finance, market, technology), answer from your knowledge.\n"
+        "3. Never invent JIRA IDs, version numbers, or client names.\n"
+        "4. Be concise and use markdown formatting."
+        + _lang_instruction + "\n"
+    )
+    if ds_context:
+        system_content += f"\n[DATASOURCE CONTEXT]\n{ds_context}\n"
+
+    system_msg = {"role": "system", "content": system_content}
+    messages = [system_msg] + history + [{"role": "user", "content": message}]
+
+    # ── 1. LiteLLM / Claude Haiku proxy ─────────────────────────────────
+    try:
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {settings.AI_API_KEY}",
+        }
+        payload = {
+            "model": settings.AI_MODEL,
+            "messages": messages,
+            "temperature": settings.AI_TEMPERATURE,
+            "max_tokens": settings.AI_MAX_TOKENS,
+            "stream": False,
+        }
         async with httpx.AsyncClient(timeout=30.0) as client:
             resp = await client.post(
-                f"{settings.OLLAMA_BASE_URL}/api/chat",
-                json={"model": settings.AI_MODEL, "messages": messages, "stream": False},
+                f"{settings.AI_BASE_URL}/chat/completions",
+                json=payload,
+                headers=headers,
             )
             resp.raise_for_status()
             data = resp.json()
-            return data.get("message", {}).get("content")
+            content = data["choices"][0]["message"]["content"]
+            logger.info("litellm_chat_ok",
+                        model=data.get("model", settings.AI_MODEL),
+                        tokens=data.get("usage", {}).get("total_tokens", 0))
+            return content
+    except Exception as exc:
+        logger.warning("litellm_unavailable", error=str(exc))
+
+    # ── 2. Ollama fallback ────────────────────────────────────────────────
+    try:
+        async with httpx.AsyncClient(timeout=30.0) as client:
+            resp = await client.post(
+                f"{settings.OLLAMA_BASE_URL}/api/chat",
+                json={"model": "llama3", "messages": messages, "stream": False},
+            )
+            resp.raise_for_status()
+            return resp.json().get("message", {}).get("content")
     except Exception as exc:
         logger.warning("ollama_unavailable", error=str(exc))
-        return None
+
+    return None
+
+
+# Keep backward-compatible alias used in the send_message endpoint
+async def _call_ollama(message: str, history: list[dict]) -> Optional[str]:
+    """Backward-compatible wrapper — delegates to _call_ai."""
+    return await _call_ai(message, history)
 
 
 # ---------------------------------------------------------------------------
@@ -425,23 +766,15 @@ async def send_message(
         if msg.id != user_msg.id
     ]
 
-    # Build datasource context to augment the prompt
+    # Build datasource context for RAG-augmented response
     try:
         from app.services.datasource.manager import get_datasource_manager
         ds_context = get_datasource_manager().build_ai_context(body.message)
     except Exception:
         ds_context = ""
 
-    # If we have context, prepend it to the Ollama system prompt or inject in message
-    ollama_message = body.message
-    if ds_context:
-        ollama_message = (
-            f"[SYSTEM CONTEXT FROM RELEASEIQ DATASOURCE]\n{ds_context}\n\n"
-            f"[USER QUESTION]\n{body.message}"
-        )
-
-    # Try Ollama, fall back to datasource-powered mock
-    ai_text = await _call_ollama(ollama_message, ollama_history)
+    # Call AI: LiteLLM proxy (Claude Haiku) → Ollama → datasource mock
+    ai_text = await _call_ai(body.message, ollama_history, ds_context=ds_context)
     is_mock = ai_text is None
     if is_mock:
         ai_text = _get_mock_response(body.message)
@@ -451,7 +784,7 @@ async def send_message(
         session_id=session.id,
         role=MessageRole.assistant,
         content=ai_text,
-        model_used=settings.AI_MODEL if not is_mock else "mock",
+        model_used=settings.AI_MODEL if not is_mock else "datasource-mock",
         is_mock=is_mock,
     )
     db.add(assistant_msg)

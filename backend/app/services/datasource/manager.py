@@ -61,6 +61,7 @@ class DataSourceManager:
             from app.services.datasource.circulars_parser import CircularsParser
             from app.services.datasource.test_cases_parser import TestCasesParser
             from app.services.datasource.utilities_parser import UtilitiesParser
+            from app.services.datasource.product_knowledge_parser import ProductKnowledgeParser
 
             self._cache["releases"] = ReleaseParser(self.root).parse()
             self._cache["jira_issues"] = JiraParser(self.root).parse()
@@ -73,6 +74,7 @@ class DataSourceManager:
             self._cache["circulars"] = CircularsParser(self.root).parse()
             self._cache["test_cases"] = TestCasesParser(self.root).parse()
             self._cache["utilities"] = UtilitiesParser(self.root).parse()
+            self._cache["product_knowledge"] = ProductKnowledgeParser(self.root).parse()
             self._last_refresh = datetime.utcnow()
 
             stats = self.get_stats()
@@ -236,6 +238,27 @@ class DataSourceManager:
                 return util
         return None
 
+    def get_product_knowledge(self, category: str = None, search: str = None) -> List[Dict]:
+        items = list(self._cache.get("product_knowledge", []))
+        if category:
+            items = [d for d in items if category.lower() in d.get("category", "").lower()]
+        if search:
+            s = search.lower()
+            items = [
+                d for d in items
+                if s in d.get("title", "").lower()
+                or s in d.get("body", "").lower()
+                or s in d.get("filename", "").lower()
+            ]
+        return items
+
+    def get_product_doc_by_filename(self, filename: str) -> Optional[Dict]:
+        for doc in self._cache.get("product_knowledge", []):
+            if doc.get("filename", "").lower() == filename.lower():
+                return doc
+        return None
+
+
     # ------------------------------------------------------------------
     # Cross-datasource search
     # ------------------------------------------------------------------
@@ -358,6 +381,20 @@ class DataSourceManager:
                     })
                     break  # Only one match per log file in global search
 
+        # Product knowledge documents
+        for item in self._cache.get("product_knowledge", []):
+            text = f"{item.get('title','')} {item.get('category','')} {item.get('body','')[:500]}".lower()
+            if self._matches(text, query_lower):
+                results.append({
+                    "type": "product_knowledge",
+                    "relevance": 0.72,
+                    "id": item.get("id"),
+                    "title": item.get("title", item.get("filename")),
+                    "snippet": item.get("summary", "")[:200],
+                    "source": f"Product Knowledge / {item.get('category')}",
+                    **item,
+                })
+
         # Sort by relevance descending
         results.sort(key=lambda x: x.get("relevance", 0), reverse=True)
         return results[:50]
@@ -374,8 +411,8 @@ class DataSourceManager:
         query_lower = query.lower()
         context_parts: List[str] = []
 
-        # Check for JIRA ID mentions
-        jira_ids = re.findall(r"JIRA-\d+", query.upper())
+        # Check for JIRA ID mentions (format: GETSCTCL-XXXXX)
+        jira_ids = re.findall(r"GETSCTCL-\d+", query.upper())
         for jid in jira_ids:
             issue = self.get_jira_issue_by_id(jid)
             if issue:
@@ -390,8 +427,8 @@ class DataSourceManager:
                     f"  Description: {str(issue.get('description', ''))[:300]}\n"
                 )
 
-        # Check for version mentions (v9.47, v9.48 etc.)
-        version_refs = re.findall(r"v\d+\.\d+(?:[.-]\w+)?", query_lower)
+        # Check for version/release name mentions (Optimus, 1209, 3009, v9.47 etc.)
+        version_refs = re.findall(r"v\d+\.\d+(?:[.-]\w+)?|\b(?:optimus|1209|3009)\b", query_lower)
         for vref in version_refs:
             # Check releases
             for rel in self.get_releases(version=vref):
@@ -424,34 +461,75 @@ class DataSourceManager:
                     )
                 )
 
-        # Error codes context
-        if any(kw in query_lower for kw in ["error", "rejection", "fail", "crash", "exception", "reject"]):
-            # Check for specific error code patterns like RMS001, FIX-001
-            error_code_refs = re.findall(r"[A-Z]{2,6}[- ]?\d{3,4}", query.upper())
-            for ecref in error_code_refs:
-                normalized_ref = ecref.replace(" ", "").replace("-", "")
-                for ec in self.get_error_codes():
-                    if ec.get("code", "").replace("-", "").upper() == normalized_ref:
-                        context_parts.append(
-                            f"Error Code {ec.get('code')}:\n"
-                            f"  Description: {ec.get('description')}\n"
-                            f"  Module: {ec.get('module')}\n"
-                            f"  Resolution: {ec.get('resolution', '')}\n"
-                        )
+        # Patch notes context
+        if any(kw in query_lower for kw in ["patch", "patch note", "patchnote", "patch notes"]):
+            if not version_refs:
+                recent_patches = self.get_patch_notes()[:5]
+            else:
+                recent_patches = []
+                for vref in version_refs:
+                    pn = self.get_patch_note_by_version(vref)
+                    if pn:
+                        recent_patches.append(pn)
+            if recent_patches:
+                context_parts.append(
+                    "Recent Patch Notes:\n"
+                    + "\n".join(
+                        f"  {p.get('version')} ({p.get('environment')}) {p.get('release_date','')}: "
+                        f"{p.get('jira_count',0)} JIRAs — {p.get('summary','')[:200]}"
+                        for p in recent_patches
+                    )
+                )
 
-            if not error_code_refs:
-                # Fuzzy match on keywords
-                query_words = query_lower.split()
-                matched_errors = [
-                    e for e in self.get_error_codes()
-                    if any(w in e.get("description", "").lower() for w in query_words if len(w) > 3)
+        # Error codes context — numeric codes (3-6 digits), define names ERR_*, and keyword matches
+        if any(kw in query_lower for kw in ["error", "rejection", "fail", "crash", "exception", "reject", "err_", "error_"]):
+            all_ec = self.get_error_codes()
+            found_ec: List[Dict] = []
+
+            # Match short alphanumeric codes (RMS001, FIX-001)
+            for ecref in re.findall(r"[A-Z]{2,6}[- ]?\d{3,4}", query.upper()):
+                normalized = ecref.replace(" ", "").replace("-", "")
+                found_ec += [e for e in all_ec if e.get("code", "").replace("-", "").upper() == normalized]
+
+            # Match 4-6 digit numeric codes (16000, 16283, etc.)
+            for num in re.findall(r"\b(\d{4,6})\b", query):
+                found_ec += [e for e in all_ec if str(e.get("code", "")).strip() == num]
+
+            # Match define names ERR_* / ERROR_*
+            for dname in re.findall(r"\b(ERR_\w+|ERROR_\w+)\b", query.upper()):
+                found_ec += [e for e in all_ec if e.get("code", "").upper() == dname]
+
+            # Deduplicate
+            seen_codes: set = set()
+            unique_ec = []
+            for e in found_ec:
+                k = str(e.get("code", ""))
+                if k not in seen_codes:
+                    seen_codes.add(k)
+                    unique_ec.append(e)
+
+            if unique_ec:
+                context_parts.append(
+                    "Error Code Information:\n"
+                    + "\n".join(
+                        f"  {e.get('code')} [{e.get('severity')}]: {e.get('description')} — {e.get('resolution', '')}"
+                        for e in unique_ec[:5]
+                    )
+                )
+            else:
+                # Fuzzy keyword match
+                query_words = [w for w in query_lower.split() if len(w) > 3]
+                fuzzy_ec = [
+                    e for e in all_ec
+                    if any(w in e.get("description", "").lower() or w in e.get("code", "").lower()
+                           for w in query_words)
                 ][:3]
-                if matched_errors:
+                if fuzzy_ec:
                     context_parts.append(
                         "Related Error Codes:\n"
                         + "\n".join(
                             f"  {e.get('code')}: {e.get('description')} — {e.get('resolution', '')}"
-                            for e in matched_errors
+                            for e in fuzzy_ec
                         )
                     )
 
@@ -481,15 +559,72 @@ class DataSourceManager:
                     )
                 )
 
-        # Flag context
-        if any(kw in query_lower for kw in ["flag", "kill switch", "algo", "maintenance", "trading mode"]):
-            # Look for specific flag names
-            for flag in self.get_flags():
-                if any(kw in flag.get("name", "").lower() for kw in query_lower.split() if len(kw) > 3):
-                    context_parts.append(
-                        f"Flag: {flag.get('name')} = {flag.get('value')}\n"
-                        f"  {flag.get('description', '')}\n"
+        # Exchange circulars context
+        if any(kw in query_lower for kw in ["circular", "nse", "bse", "mcx", "sebi", "exchange notification", "nnf", "eti", "fix api"]):
+            query_words_c = [w for w in query_lower.split() if len(w) > 2]
+            matched_circulars = [
+                c for c in self.get_circulars()
+                if any(w in c.get("subject", "").lower() or w in c.get("body", "").lower()
+                       or w in c.get("exchange", "").lower()
+                       for w in query_words_c)
+            ][:3]
+            if matched_circulars:
+                context_parts.append(
+                    "Exchange Circulars:\n"
+                    + "\n".join(
+                        f"  [{c.get('exchange')}] {c.get('subject', c.get('filename',''))[:80]}"
+                        f" | Date: {c.get('date','N/A')} | {c.get('body','')[:300]}"
+                        for c in matched_circulars
                     )
+                )
+
+        # Flag context — specific flag lookup by name keywords
+        if any(kw in query_lower for kw in ["flag", "kill switch", "algo", "maintenance", "trading mode",
+                                              "amo", "ioc", "gtd", "mis", "basket", "tradingstyle", "ini"]):
+            query_words_f = [w for w in query_lower.replace("_", " ").split() if len(w) > 3]
+            # Look for specific flag names matching query words
+            matched_flags = [
+                flag for flag in self.get_flags()
+                if any(kw in flag.get("name", "").lower() or kw in flag.get("description", "").lower()
+                       for kw in query_words_f)
+            ][:5]
+            if matched_flags:
+                context_parts.append(
+                    "Matching Flags:\n"
+                    + "\n".join(
+                        f"  {flag.get('name')} = {flag.get('value')} | {flag.get('description','')[:150]}"
+                        for flag in matched_flags
+                    )
+                )
+
+        # Product knowledge context — manuals, protocols, FAQs
+        doc_keywords = [
+            "manual", "guide", "how to", "install", "setup", "configure",
+            "admin", "faq", "eti", "nnf", "fix api", "protocol",
+            "ctcl", "gmx", "gats", "gets", "greeksoft", "colocation",
+            "market watch", "order entry", "net position", "surveillance",
+        ]
+        if any(kw in query_lower for kw in doc_keywords):
+            # Use individual words for matching (word-level OR search)
+            query_words = [w for w in query_lower.split() if len(w) > 3]
+            all_docs = self.get_product_knowledge()
+            matched_docs = [
+                d for d in all_docs
+                if any(
+                    w in d.get("title", "").lower()
+                    or w in d.get("filename", "").lower()
+                    or w in d.get("body", "").lower()
+                    for w in query_words
+                )
+            ][:3]
+            if matched_docs:
+                context_parts.append(
+                    "Relevant Documentation:\n"
+                    + "\n".join(
+                        f"  [{d.get('category')}] {d.get('title')[:80]}: {d.get('summary','')[:200]}"
+                        for d in matched_docs
+                    )
+                )
 
         return "\n\n".join(context_parts) if context_parts else ""
 

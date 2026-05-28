@@ -46,8 +46,8 @@ class JiraParser(BaseParser):
             with open(csv_path, encoding="utf-8", errors="replace") as f:
                 reader = csv.DictReader(f)
                 for idx, row in enumerate(reader):
-                    # Limit to 500 for performance (86k rows in real file)
-                    if idx >= 500:
+                    # Limit to 2000 for performance (86k rows in real file)
+                    if idx >= 2000:
                         break
                     issue = self._map_row(row, idx)
                     if issue:

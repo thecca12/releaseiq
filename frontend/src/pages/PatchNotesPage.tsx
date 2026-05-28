@@ -42,15 +42,34 @@ import { patchNotesApi } from '@/services/api'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+interface JiraItem {
+  jira_id: string
+  summary: string
+  issue_type?: string
+  priority?: string
+  severity?: string
+  status?: string
+  reporter?: string
+  customer?: string
+  customer_version?: string
+  patch_details?: string
+}
+
 interface PatchNote {
   version: string
   filename?: string
   release_date: string
+  release_for?: string
+  environment?: string        // LIVE | QA
   environments: string[]
+  component_type?: string     // Server | Client | Both
   jira_refs: string[]
+  jira_count?: number
+  jira_items?: JiraItem[]    // full JIRA details with columns
   qa_notes: string
   live_notes: string
   summary?: string
+  format?: string             // optimus | fusion
 }
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
@@ -342,10 +361,20 @@ const PatchNoteCard: React.FC<{
               : <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
             }
 
-            {/* Version badge */}
+            {/* Version badge — clean release name only */}
             <span className="rounded-full bg-violet-100 dark:bg-violet-950/50 text-violet-700 dark:text-violet-400 px-3 py-0.5 text-sm font-bold font-mono">
               {note.version}
             </span>
+            {/* Component type badge — show when it's specifically Client or Server */}
+            {note.component_type && (
+              <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-medium',
+                note.component_type === 'Server' ? 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300' :
+                note.component_type === 'Client' ? 'bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300' :
+                'bg-violet-100 text-violet-700 dark:bg-violet-900/40 dark:text-violet-300'
+              )}>
+                {note.component_type}
+              </span>
+            )}
 
             {/* Date */}
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -353,23 +382,22 @@ const PatchNoteCard: React.FC<{
               {formatDate(note.release_date)}
             </span>
 
-            {/* Environment badges */}
-            <div className="flex items-center gap-1">
-              {note.environments.map((env) => {
-                const cfg = ENV_CONFIG[env.toLowerCase()] ?? { label: env.toUpperCase(), bg: 'bg-muted', text: 'text-foreground' }
-                return (
-                  <span key={env} className={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold', cfg.bg, cfg.text)}>
-                    {cfg.label}
-                  </span>
-                )
-              })}
-            </div>
+            {/* Environment badge — use direct environment field */}
+            {(() => {
+              const envKey = (note.environment ?? (note.environments[0] ?? '')).toLowerCase()
+              const cfg = ENV_CONFIG[envKey] ?? { label: envKey.toUpperCase() || 'UNKNOWN', bg: 'bg-muted', text: 'text-foreground' }
+              return (
+                <span className={cn('rounded-full px-2 py-0.5 text-[10px] font-semibold', cfg.bg, cfg.text)}>
+                  {cfg.label}
+                </span>
+              )
+            })()}
 
             {/* JIRA count */}
-            {note.jira_refs.length > 0 && (
+            {(note.jira_count ?? note.jira_refs.length) > 0 && (
               <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
                 <Tag className="h-3 w-3" />
-                {note.jira_refs.length} JIRA{note.jira_refs.length !== 1 ? 's' : ''}
+                {note.jira_count ?? note.jira_refs.length} JIRA{(note.jira_count ?? note.jira_refs.length) !== 1 ? 's' : ''}
               </span>
             )}
           </div>
@@ -405,17 +433,86 @@ const PatchNoteCard: React.FC<{
                   </div>
                 )}
 
-                {/* JIRA references */}
-                {note.jira_refs.length > 0 && (
+                {/* JIRA items table — show full data when available, else badges */}
+                {((note.jira_items && note.jira_items.length > 0) || note.jira_refs.length > 0) && (
                   <div>
-                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">JIRA References</p>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                      JIRA Items ({note.jira_count ?? note.jira_refs.length})
+                    </p>
+                    {note.jira_items && note.jira_items.length > 0 ? (
+                      <div className="rounded-lg border border-border overflow-hidden">
+                        <div className="overflow-x-auto max-h-72 overflow-y-auto">
+                          <table className="w-full text-xs">
+                            <thead className="bg-muted/50 sticky top-0">
+                              <tr>
+                                <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-32">JIRA ID</th>
+                                <th className="px-3 py-2 text-left font-semibold text-muted-foreground">Summary</th>
+                                {note.jira_items[0]?.issue_type && <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-24">Type</th>}
+                                {note.jira_items[0]?.priority && <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-20">Priority</th>}
+                                {note.jira_items[0]?.status && <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-24">Status</th>}
+                                {note.jira_items[0]?.reporter && <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-28">Reporter</th>}
+                                {note.jira_items[0]?.customer && <th className="px-3 py-2 text-left font-semibold text-muted-foreground w-32">Customer</th>}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {note.jira_items.map((item, i) => (
+                                <tr key={item.jira_id} className={cn('border-t border-border', i % 2 === 0 ? 'bg-background' : 'bg-muted/20')}>
+                                  <td className="px-3 py-1.5 font-mono font-semibold text-primary">{item.jira_id}</td>
+                                  <td className="px-3 py-1.5 text-foreground/80 max-w-xs truncate" title={item.summary}>{item.summary}</td>
+                                  {note.jira_items![0]?.issue_type !== undefined && (
+                                    <td className="px-3 py-1.5 text-muted-foreground">{item.issue_type}</td>
+                                  )}
+                                  {note.jira_items![0]?.priority !== undefined && (
+                                    <td className="px-3 py-1.5">
+                                      <span className={cn('rounded px-1.5 py-0.5 text-[10px] font-medium',
+                                        item.priority?.toLowerCase().includes('highest') || item.priority?.toLowerCase() === 'critical' ? 'bg-red-100 text-red-700 dark:bg-red-950/40 dark:text-red-400' :
+                                        item.priority?.toLowerCase() === 'high' ? 'bg-orange-100 text-orange-700' :
+                                        item.priority?.toLowerCase() === 'medium' ? 'bg-amber-100 text-amber-700' :
+                                        'bg-slate-100 text-slate-600'
+                                      )}>{item.priority || '—'}</span>
+                                    </td>
+                                  )}
+                                  {note.jira_items![0]?.status !== undefined && (
+                                    <td className="px-3 py-1.5 text-muted-foreground">{item.status}</td>
+                                  )}
+                                  {note.jira_items![0]?.reporter !== undefined && (
+                                    <td className="px-3 py-1.5 text-muted-foreground truncate max-w-[7rem]" title={item.reporter}>{item.reporter}</td>
+                                  )}
+                                  {note.jira_items![0]?.customer !== undefined && (
+                                    <td className="px-3 py-1.5 text-muted-foreground truncate max-w-[8rem]" title={item.customer}>{item.customer}</td>
+                                  )}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-1.5">
+                        {note.jira_refs.map((ref) => (
+                          <span key={ref} className="rounded-md bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 text-[11px] font-mono font-semibold">
+                            {ref}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Source patch files that make up this group */}
+                {(note as PatchNote & { _files?: Array<{filename:string;date:string;component?:string;jira_count:number}> })._files && (
+                  <div>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide mb-2">
+                      Source Patch Files ({(note as PatchNote & { _files?: Array<{filename:string;date:string;component?:string;jira_count:number}> })._files!.length})
+                    </p>
                     <div className="flex flex-wrap gap-1.5">
-                      {note.jira_refs.map((ref) => (
-                        <span
-                          key={ref}
-                          className="rounded-md bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-400 px-2 py-0.5 text-[11px] font-mono font-semibold"
-                        >
-                          {ref}
+                      {(note as PatchNote & { _files?: Array<{filename:string;date:string;component?:string;jira_count:number}> })._files!.map((f) => (
+                        <span key={f.filename} className="inline-flex items-center gap-1 rounded-md bg-muted/60 px-2 py-1 text-[10px] text-muted-foreground border border-border">
+                          <span className={cn('h-1.5 w-1.5 rounded-full flex-shrink-0',
+                            f.component === 'Server' ? 'bg-slate-500' :
+                            f.component === 'Client' ? 'bg-sky-500' : 'bg-violet-500'
+                          )} />
+                          {(f.filename ?? '').replace('.xlsx','').slice(0,40)} | {f.date} | {f.jira_count} JIRAs
                         </span>
                       ))}
                     </div>
@@ -479,7 +576,7 @@ const PatchNotesPage: React.FC = () => {
     queryKey: ['patch-notes'],
     queryFn: async () => {
       try {
-        const res = await patchNotesApi.list()
+        const res = await patchNotesApi.list({ page_size: 100 })
         const items = (res.data?.items ?? res.data) as PatchNote[]
         if (Array.isArray(items) && items.length > 0) return items
         return MOCK_PATCH_NOTES
@@ -489,8 +586,107 @@ const PatchNotesPage: React.FC = () => {
     },
   })
 
-  const notes = data ?? MOCK_PATCH_NOTES
-  const versions = useMemo(() => notes.map((n) => n.version), [notes])
+  const rawNotes = data ?? MOCK_PATCH_NOTES
+
+  // ── Group individual patch files by version + environment ─────────────────
+  // Each xlsx file is a separate entry; merge them into one card per version+env
+  const notes: PatchNote[] = useMemo(() => {
+    const groupMap = new Map<string, PatchNote>()
+
+    for (const note of rawNotes) {
+      const env = (note.environment || note.environments[0] || 'LIVE').toUpperCase()
+      const key = `${note.version}__${env}`
+
+      if (!groupMap.has(key)) {
+        // Seed group with clean version-level metadata (not file-specific)
+        groupMap.set(key, {
+          version: note.version,
+          filename: undefined,
+          release_date: note.release_date,
+          release_for: note.version,           // use version name, not file tag
+          environment: env,
+          environments: [env.toLowerCase()],
+          component_type: note.component_type, // will be updated to 'Both' if mixed
+          jira_refs: [],
+          jira_items: [],
+          jira_count: 0,
+          qa_notes: '',
+          live_notes: '',
+          summary: '',
+          format: note.format,
+          _files: [],
+        } as PatchNote & { _files: Array<{filename:string;date:string;component?:string;jira_count:number}> })
+      }
+
+      const group = groupMap.get(key)!
+      const g = group as PatchNote & { _files: Array<{filename:string;date:string;component?:string;jira_count:number}> }
+
+      // Merge JIRA items (deduplicate by jira_id)
+      const existingIds = new Set((group.jira_items ?? []).map((j: JiraItem) => j.jira_id))
+      const newItems = (note.jira_items ?? []).filter((j: JiraItem) => !existingIds.has(j.jira_id))
+      group.jira_items = [...(group.jira_items ?? []), ...newItems]
+
+      // Merge jira_refs (deduplicate)
+      const existingRefs = new Set(group.jira_refs)
+      note.jira_refs.forEach((r) => existingRefs.add(r))
+      group.jira_refs = Array.from(existingRefs)
+      group.jira_count = group.jira_refs.length
+
+      // Use latest patch date
+      if ((note.release_date || '') > (group.release_date || '')) {
+        group.release_date = note.release_date
+      }
+
+      // Track component types — show 'Both' when Client + Server files are merged
+      const existingComp = group.component_type || ''
+      const noteComp = note.component_type || ''
+      if (existingComp && noteComp && existingComp !== noteComp && existingComp !== 'Both') {
+        group.component_type = 'Both'
+      } else if (!existingComp && noteComp) {
+        group.component_type = noteComp
+      }
+
+      // Append notes text with component+date label
+      const label = `[${note.component_type || ''} | ${note.release_date}]`
+      if (note.qa_notes) {
+        group.qa_notes = (group.qa_notes ? group.qa_notes + '\n\n' : '') + label + '\n' + note.qa_notes
+      }
+      if (note.live_notes) {
+        group.live_notes = (group.live_notes ? group.live_notes + '\n\n' : '') + label + '\n' + note.live_notes
+      }
+
+      // Track constituent files (avoid duplicates)
+      if (!g._files.some((f) => f.filename === (note.filename ?? ''))) {
+        g._files.push({
+          filename: note.filename ?? '',
+          date: note.release_date,
+          component: note.component_type,
+          jira_count: note.jira_count ?? note.jira_refs.length
+        })
+      }
+    }
+
+    // After merging, set clean summary for each group
+    for (const group of groupMap.values()) {
+      const g = group as PatchNote & { _files: Array<{filename:string;date:string;component?:string;jira_count:number}> }
+      const fileCount = g._files.length
+      group.summary = `${group.version} | ${group.environment} | ${group.component_type} | ${group.jira_count} unique JIRAs across ${fileCount} patch file${fileCount !== 1 ? 's' : ''} | Latest: ${group.release_date}`
+    }
+
+    // Sort: Optimus first, then 3009, then 1209; LIVE before QA within version
+    return Array.from(groupMap.values()).sort((a, b) => {
+      const vOrder: Record<string, number> = { Optimus: 0, '3009': 1, '1209': 2 }
+      const vA = vOrder[a.version] ?? 99
+      const vB = vOrder[b.version] ?? 99
+      if (vA !== vB) return vA - vB
+      const envA = (a.environment || '').toUpperCase()
+      const envB = (b.environment || '').toUpperCase()
+      if (envA !== envB) return envA === 'LIVE' ? -1 : 1
+      return 0
+    })
+  }, [rawNotes])
+
+  const versions = useMemo(() => [...new Set(notes.map((n) => n.version))], [notes])
 
   const filtered = useMemo(() => {
     return notes.filter((n) => {
@@ -512,10 +708,10 @@ const PatchNotesPage: React.FC = () => {
 
   // Stats
   const stats = useMemo(() => ({
-    total: notes.length,
-    withQa: notes.filter((n) => n.qa_notes).length,
-    withLive: notes.filter((n) => n.live_notes).length,
-    totalJiras: notes.reduce((sum, n) => sum + n.jira_refs.length, 0),
+    total: notes.length,                                   // grouped count (6 groups)
+    withQa: notes.filter((n) => (n.environment || '').toUpperCase() === 'QA').length,
+    withLive: notes.filter((n) => (n.environment || '').toUpperCase() === 'LIVE').length,
+    totalJiras: notes.reduce((sum, n) => sum + (n.jira_count ?? n.jira_refs.length), 0),
   }), [notes])
 
   return (
@@ -538,9 +734,9 @@ const PatchNotesPage: React.FC = () => {
       {/* Stats */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Total Versions', value: stats.total, color: 'text-foreground' },
-          { label: 'With QA Notes', value: stats.withQa, color: 'text-blue-600 dark:text-blue-400' },
-          { label: 'With Live Notes', value: stats.withLive, color: 'text-emerald-600 dark:text-emerald-400' },
+          { label: 'Total Patch Files', value: stats.total, color: 'text-foreground' },
+          { label: 'QA Patches', value: stats.withQa, color: 'text-blue-600 dark:text-blue-400' },
+          { label: 'Live Patches', value: stats.withLive, color: 'text-emerald-600 dark:text-emerald-400' },
           { label: 'Total JIRAs', value: stats.totalJiras, color: 'text-violet-600 dark:text-violet-400' },
         ].map(({ label, value, color }) => (
           <Card key={label}>
@@ -598,7 +794,7 @@ const PatchNotesPage: React.FC = () => {
       </motion.div>
 
       <p className="text-xs text-muted-foreground">
-        Showing <span className="font-medium text-foreground">{filtered.length}</span> version{filtered.length !== 1 ? 's' : ''} — click any card to expand release notes
+        Showing <span className="font-medium text-foreground">{filtered.length}</span> release group{filtered.length !== 1 ? 's' : ''} — click any card to expand release notes
       </p>
 
       {/* Timeline list */}

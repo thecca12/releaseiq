@@ -30,18 +30,26 @@ async def list_patch_notes(
     start = (page - 1) * page_size
     items = notes[start: start + page_size]
 
-    # Strip full_content from list view for bandwidth
     summary_items = []
     for n in items:
+        # Determine environment from environments list or environment field
+        env_list = n.get("environments", [])
+        env_str = n.get("environment", env_list[0] if env_list else "")
         summary_items.append({
-            "version": n.get("version"),
-            "filename": n.get("filename"),
-            "release_date": n.get("release_date"),
-            "environments": n.get("environments", []),
-            "jira_refs": n.get("jira_refs", []),
-            "jira_ref_count": len(n.get("jira_refs", [])),
-            "has_qa_notes": bool(n.get("qa_notes")),
-            "has_live_notes": bool(n.get("live_notes")),
+            "version":        n.get("version", ""),
+            "filename":       n.get("filename", ""),
+            "release_date":   n.get("release_date", ""),
+            "release_for":    n.get("release_for", n.get("version", "")),
+            "environment":    env_str.upper() if env_str else "",
+            "environments":   env_list,
+            "component_type": n.get("component_type", "Both"),
+            "jira_refs":      n.get("jira_refs", [])[:20],  # first 20 IDs
+            "jira_count":     len(n.get("jira_refs", [])),
+            "jira_items":     n.get("jira_items", [])[:50],  # first 50 full items
+            "qa_notes":       n.get("qa_notes", "")[:2000],
+            "live_notes":     n.get("live_notes", "")[:2000],
+            "summary":        n.get("summary", ""),
+            "format":         n.get("format", ""),
         })
 
     return {

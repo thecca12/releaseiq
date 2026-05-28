@@ -35,8 +35,31 @@ class ErrorCodesParser(BaseParser):
         for md_file in folder.glob("*.md"):
             codes.extend(self._parse_md(md_file))
 
-        logger.info(f"ErrorCodesParser: parsed {len(codes)} error codes")
-        return codes
+        # Parse PDFs (ETI API manual, NNF protocol)
+        for pdf_file in folder.glob("*.pdf"):
+            codes.extend(self._parse_pdf_errors(pdf_file))
+
+        # Also parse MessageBox_Reference.md from Product_knowledge if present
+        pk_md = self.root / "Product_knowledge" / "MessageBox_Reference.md"
+        if pk_md.exists():
+            codes.extend(self._parse_messagebox_md(pk_md))
+
+        # Also parse MessageBox_Reference.md in Exchange_ErrorCodes (rich format)
+        ec_md = folder / "MessageBox_Reference.md"
+        if ec_md.exists():
+            codes.extend(self._parse_messagebox_md(ec_md))
+
+        # Deduplicate by code
+        seen: set = set()
+        unique = []
+        for c in codes:
+            key = c.get("code", "").strip().lower()
+            if key and key not in seen:
+                seen.add(key)
+                unique.append(c)
+
+        logger.info(f"ErrorCodesParser: parsed {len(unique)} error codes")
+        return unique
 
     def _parse_xlsx(self, path: Path) -> List[Dict[str, Any]]:
         codes = []
@@ -107,6 +130,89 @@ class ErrorCodesParser(BaseParser):
                 "module": self._guess_module(code, desc),
                 "root_cause": desc[:150], "resolution": "", "example": "",
             })
+        return codes
+
+    def _parse_pdf_errors(self, path: Path) -> List[Dict[str, Any]]:
+        """Extract error codes from ETI/NNF protocol PDFs."""
+        codes = []
+        try:
+            import PyPDF2
+            import re as _re
+            with open(path, "rb") as f:
+                reader = PyPDF2.PdfReader(f)
+                text = "\n".join(page.extract_text() or "" for page in reader.pages[:30])
+            # Pattern: numeric error codes with descriptions (e.g. "16283 Price not multiple of tick size")
+            for m in _re.finditer(r'\b(\d{4,6})\s+([A-Z][^\n]{10,120})', text):
+                code_val = m.group(1)
+                desc_val = m.group(2).strip()[:200]
+                codes.append({
+                    "code": code_val,
+                    "description": desc_val,
+                    "severity": self._guess_severity(code_val, desc_val),
+                    "module": self._guess_module(code_val, desc_val),
+                    "root_cause": desc_val[:150],
+                    "resolution": f"Refer to {path.name} for details.",
+                    "example": "",
+                    "source_file": path.name,
+                })
+        except Exception as e:
+            logger.debug(f"PDF error parse failed for {path.name}: {e}")
+        return codes
+
+    def _parse_messagebox_md(self, path: Path) -> List[Dict[str, Any]]:
+        """
+        Parse the rich MessageBox_Reference.md format which contains:
+        - Message box dialog text with purpose/cause
+        - ERR_*/ERROR_* defines with numeric values and descriptions
+        """
+        import re as _re
+        codes = []
+        try:
+            content = self._safe_read(path)
+
+            # Pattern 1: Error code defines table rows
+            # | `ERR_NAME` | VALUE | File | Line | Purpose |
+            for m in _re.finditer(
+                r'\|\s*`(ERR_\w+|ERROR_\w+)`\s*\|\s*(\d+)\s*\|[^|]*\|[^|]*\|\s*([^|]{5,200})\s*\|',
+                content,
+            ):
+                name = m.group(1)
+                value = m.group(2)
+                purpose = m.group(3).strip()[:200]
+                codes.append({
+                    "code": name,
+                    "description": purpose,
+                    "severity": self._guess_severity(name, purpose),
+                    "module": self._guess_module(name, purpose),
+                    "root_cause": purpose[:150],
+                    "resolution": f"Check exchange/RMS configuration. Code value: {value}.",
+                    "example": f"Numeric value: {value}",
+                    "source_file": path.name,
+                })
+
+            # Pattern 2: MessageBox dialog rows
+            # | `"message text"` | File | Line | Debug? | Purpose | ...
+            for m in _re.finditer(
+                r'\|\s*`"([^"]{10,150})"`\s*\|[^|]*\|[^|]*\|\s*(No|Yes)\s*\|\s*([^|]{5,200})\s*\|',
+                content,
+            ):
+                msg_text = m.group(1).strip()
+                is_debug = m.group(2).strip()
+                purpose = m.group(3).strip()[:200]
+                if is_debug == "Yes":
+                    continue  # Skip debug-only messages
+                codes.append({
+                    "code": msg_text[:80],
+                    "description": purpose,
+                    "severity": self._guess_severity(msg_text, purpose),
+                    "module": self._guess_module(msg_text, purpose),
+                    "root_cause": purpose[:150],
+                    "resolution": "Check application logs for context. Contact support if persistent.",
+                    "example": f'User sees: "{msg_text}"',
+                    "source_file": path.name,
+                })
+        except Exception as e:
+            logger.warning(f"MessageBox_Reference parse failed for {path.name}: {e}")
         return codes
 
     def _guess_severity(self, code: str, desc: str) -> str:
