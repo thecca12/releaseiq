@@ -1,0 +1,11 @@
+Greek F7 Testing:
+Tested online Backup setting,uploaded trades through trade file uploading method,and checked calculations with greek logoff/login.
+cross checked trade entries,Flags in DB. 3.00
+
+tested Greek Backup setting and checked  xls,dat files in folder .
+tested Scenario for DB Autobackup on app exist setting with client client logoff/login.       1.30
+
+Load Testing :placed manual and automated orders continously on  server 19 & 5.    3
+
+
+updated daily mantis sheet with latest patches.     0.45

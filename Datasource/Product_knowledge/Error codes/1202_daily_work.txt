@@ -1,0 +1,11 @@
+Greek(F7):Tested Greek Setting Date Diff,Near Expiry,far Expiry,Currency*Regular Lot with Calculations.
+Checked Delta Nuetral,Nuetral Expired Position.    1.5HRs
+
+
+Tested Greek Summary Report Window ,sorting column,Portfolio and checked values with calculation.     3Hrs
+
+
+Tested Greek DefaultIV setting,Existing symbol setting also observed values on Mkt Watch.               2HRS
+
+Tested Hide Prtfolio window with client logoff/login also checked Calculation.    1Hr
+Load testing: manually place order on server 19& 31 .           0.30Hrs                

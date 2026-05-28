@@ -1,0 +1,24 @@
+new multicast IP and port provided below are for the Dedicated Test Market only
+
+
+Broadcast ip and port for Live
+
+NSE EQ - 233.2.2.5 port 5573
+
+NSE FO - 233.2.2.5 port 5590
+
+NSE CD - 233.2.2.5 port 5591
+
+NSE COM - 233.2.2.5 port 5592
+
+NSE SLBM - 233.2.2.5 port 5594
+
+BSE EQ - 233.1.2.3 port 8001
+
+BSE FO - 233.1.2.3 port 8002
+
+BSE CD - 233.1.2.3 port 8003
+
+
+
+

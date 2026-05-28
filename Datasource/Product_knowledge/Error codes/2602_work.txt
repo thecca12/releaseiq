@@ -1,0 +1,16 @@
+Greek F7 :
+Tested Greek Trade Trail window modify Strategy name,Qty,Price,with all Filter,checked modified data in DB.  2.30
+
+
+Tested Greek Mkt watch calculation for Diff IV .  2.00
+
+Tested  client crash live issue to check greek positions after relogin. 1.00
+
+
+Tested Greek Hide portfolio window with client relogin,checked portfolio data in database. 
+Tested Greek Net Position window ,save file with calculation.    
+
+
+
+
+

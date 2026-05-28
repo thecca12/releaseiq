@@ -1,0 +1,7 @@
+Greek F7 :
+Tested Mkt Watch Calculation Nse E,FO,CD for Diff IV.  4
+
+
+Tested Greek Summary Window sorting ,with calculation.   3
+
+Tested Restore Todays data funcationality ,checked positions with client relogin. 1

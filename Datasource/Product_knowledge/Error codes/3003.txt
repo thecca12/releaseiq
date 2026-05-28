@@ -1,0 +1,9 @@
+Greek F7 Testing:
+Tested greek IV setting ,New portfolio as per strike IV,checked position,mkt watch calcu,summary report,checked records in DB
+Tested greek Default setting ,existing symbol setting with mkt watch calcu ,checked records in db.
+
+Tested Ask IV/Bid IV /Last IV values with Input Eq and Fut.cross checked Delta ,Theta ,Gamma,Vega values on market watch
+
+
+Tested Greek Expense report window with calculation.cross checked values in saved file.
+Tested Accounting window calculation.

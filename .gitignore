@@ -1,0 +1,169 @@
+# ============================================================
+# ReleaseIQ – .gitignore
+# ============================================================
+
+# ----------------------------------------------------------------
+# Python
+# ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.coveragerc
+.tox/
+.nox/
+
+# mypy / type checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+.pyre/
+
+# ----------------------------------------------------------------
+# Node / Frontend
+# ----------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp
+.pnp.js
+.yarn/
+.pnpm-store/
+
+# Build output
+frontend/dist/
+frontend/build/
+frontend/.vite/
+
+# TypeScript
+*.tsbuildinfo
+
+# ----------------------------------------------------------------
+# Environment & secrets  ← IMPORTANT: never commit these
+# ----------------------------------------------------------------
+.env
+.env.*
+!.env.example
+!.env.test.example
+*.secret
+secrets/
+
+# ----------------------------------------------------------------
+# Docker
+# ----------------------------------------------------------------
+.docker/
+
+# ----------------------------------------------------------------
+# Databases & data
+# ----------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+releaseiq.db
+backend/data/
+backend/releaseiq.db
+data/
+
+# ----------------------------------------------------------------
+# Logs
+# ----------------------------------------------------------------
+*.log
+logs/
+*.log.*
+
+# ----------------------------------------------------------------
+# OS generated files
+# ----------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V3
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ----------------------------------------------------------------
+# IDE / Editor
+# ----------------------------------------------------------------
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.orig
+.project
+.classpath
+.settings/
+*.sublime-workspace
+*.sublime-project
+
+# ----------------------------------------------------------------
+# AI / ML artefacts
+# ----------------------------------------------------------------
+# ChromaDB persisted data
+chroma_db/
+*.chroma/
+
+# Sentence-transformer / HuggingFace model cache
+.cache/
+models/
+*.onnx
+*.bin
+*.pt
+*.pth
+
+# ----------------------------------------------------------------
+# Alembic
+# ----------------------------------------------------------------
+# Uncomment if you want to keep migrations out of git (not recommended)
+# backend/alembic/versions/
+
+# ----------------------------------------------------------------
+# Misc
+# ----------------------------------------------------------------
+*.bak
+*.tmp
+*.temp
+.cache/
+.parcel-cache/
+*.pid
+celerybeat-schedule
+celerybeat.pid

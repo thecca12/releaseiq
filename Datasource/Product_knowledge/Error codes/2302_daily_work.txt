@@ -1,0 +1,13 @@
+Greek F7:
+Tested  summary Report  window checked values with sorting column/row with greek&client relogin.
+again checked values after hide portfolio and client relogin,cross checked values in DB     2.30
+
+
+Tested LastIV on greek mkt watch and client mkt watch with include/Exclude Expiry.    1.30
+
+changed AssetToken base ,E/FO ckecked changes in cloumn ,also cross checked LastIV values ,LTP on both mkt watch. 1
+
+
+
+updated mantis sheet with latest release note and patches.    3
+  

@@ -1,0 +1,12 @@
+summary : In Greek, Greek valuation (Balance,MTOM,Fund Utilized) field should be large in Greek marketwatch.
+
+ Description: In Greek, Greek valuation(Balance,Mtom,Fund Utilized) field should be large in Greek marketwatch.
+
+step to reproduce
+1. Login Greek.
+2. Create portfolio.
+3. You will see that, last digits in Greek valuations(Balance,Mtom,Fund Utilized) are not displayed proper.
+
+
+
+0032647: In Greek, Greek valuation (Balance,MTOM,Fund Utilized) field should be large in Greek marketwatch.

@@ -1,0 +1,10 @@
+Greek F7 :
+Tested Scenario for Trade file upload method,manual restore position and checked trade entries,Flags,in DB,
+greek hide portfolio window with client relogin.  3
+
+
+Tested Greek Trade Trail window,modify Strategy name,Qty,Price and checked changes in DB.  2.30
+
+Tested Mkt watch values for StrikeIV,UserIV with calculation, and cross checked values in summary window.  3.30
+
+

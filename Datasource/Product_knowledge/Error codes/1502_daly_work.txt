@@ -1,0 +1,13 @@
+Greek F7:
+tested trade positions with multiple Expiry and diff strategy,checked calculations.     
+cross check data in database.test Summary report window with calculation.
+
+
+Tested Greek Trade Trail window with modification in strategy,Qty and price.          
+checked entries in database.
+
+Load testing on server 19 ,placed automated orders with diff strategy Spread,Triangle,Butterfly, 
+also placed oreders manually.    
+
+
+update mantis sheet of Rel_0901 with updated patches       0.3

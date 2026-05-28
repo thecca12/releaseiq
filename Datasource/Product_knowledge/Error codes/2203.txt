@@ -1,0 +1,19 @@
+Greek F7 Testing:
+
+Tested Last IV  with include Expiry with Eq and Fut Base
+Tested Last IV  with Exclude Expiry with Eq and Fut Base
+Tested Greek Accounting window calcu with Diff IV's.  3
+
+
+Tested Mkt watch calcu with Include Expiry 
+Tested Mkt watch calcu with Exclude Expiry 
+Tested Mkt watch calcu with Reduced days
+Tested Mkt watch calcu with online portfolio
+Tested Mkt watch calcu with offline portfolio   6        
+
+
+
+
+
+
+

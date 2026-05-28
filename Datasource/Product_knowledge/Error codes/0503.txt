@@ -1,0 +1,14 @@
+Greek F7 Testing:
+Tested Greek mkt watch calcu for NSE ,BSE with diff IV setting.3.30
+
+
+Tested Greek summary report window calcu,sorting with client relogin.2.30
+
+
+Tested Greek open position upload Funcationality,cross checked positions,calcu with client relogin. 1.30
+
+Tested Greek hide portfolio window with client relogin.  1
+
+
+mock testing
+market wtach calc, ivs, summary report, net positions, tradefile upload etc

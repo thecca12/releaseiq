@@ -1,0 +1,22 @@
+Greek F7  Testing:
+Tested Greek Trade Trail Wibdow,modify strategy name,Qty,price,and cross checked changes in database and mkt watch with client logofff/login.    1.30
+
+
+Tested scenario for far expiry,near expiry,for Get online data  setting, Currency* regular Lot checkbox,
+graph view /report view with client relogin,tested default setting,existing symbol setting.  2
+
+
+Tested Scenario for create,delete .hide portfolio and cross chcked data on greek Mkt watch with client relogin.  2
+
+Tested Scenario for online Backup,uploaded positions through file uploading method ,cross checked data on Mkt watch and DB .  2
+
+
+
+Load Testing: Placed Manual and automated orders continously on server 5  1.30
+
+
+
+
+
+ 
+ 

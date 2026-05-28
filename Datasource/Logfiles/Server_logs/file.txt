@@ -1,0 +1,2 @@
+psql:Postgresql_triggers_and_procedures.sql:4201: NOTICE:  trigger "trg_tradeinfo_history" for relation "tradeinfo" does not exist, skipping
+psql:Postgresql_triggers_and_procedures.sql:7898: NOTICE:  trigger "audit_delrmsbasketsetting" for relation "rmsbasketsetting" does not exist, skipping

@@ -1,0 +1,15 @@
+Greek F7 Testing
+Tested greek summary report window with calcu,with hide square off position func.
+Tested greek  simulaton report window with report /graph view.
+Tested greek Dayswise simulation report cross checked values .
+
+Tested Trade Trail window with modify stategy name,price,Qty,checked records in DB.
+Tested Trade file upload func with header name and withought header name online backup,checked positions. checked records in db.
+
+
+Greek F7 Testing
+Tested greek summary report window
+Tested greek  simulaton report window
+Tested greek Dayswise simulation report
+Tested Trade Trail window
+Tested Trade file upload func,checked records in db.

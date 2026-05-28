@@ -1,0 +1,1492 @@
+
+ 
+#define LICENSE_VERSION_NO 20090527
+	//This Version 20090428 Is Changed 
+									//For Arbitrage Surveillance, BannedScrip,
+									//ATS, BSE, MCX
+
+//************* For Version ***********************
+#define VER_CLIENT					"2.0.0.1609"
+#define VER_TRDALG_DLL				"1.0.0.1609"
+#define VER_QUICKINMEMORY_DLL		"2.4.86.1609"
+#define VER_COMMONINCLUDE_DLL		"1.0.0.1609"
+#define VER_SURVEILLANCE_DLL		"1.0.0.1609"
+#define VER_BROADCASTRECEIVE_DLL	"1.0.0.310"
+#define VER_BROADCASTPROCESS_DLL	"1.1.2.310"
+#define VER_CLIENTINTERACTIVE_DLL	"1.0.0.1609"
+#define VER_INTERACTIVEPROCESS_DLL	"1.0.0.1609"
+#define VER_ORDERTRADEGENERAL_DLL	"1.2.0.408"
+#define VER_VERSIONCHECKING_DLL		"1.0.0.1"
+#define VER_EXPENSE_SETTINGS_DLL	"1.2.0.609" //CK 17/06/09
+//************* End For Version *******************
+
+///Version////
+#define VERSION			"G.E.T.S Client"
+/// Market Segments ///
+#define CASH_MARKET		1
+#define FO_MARKET		2
+#define COM_MARKET		3
+/// END Market Segments ///
+
+#define OPTCALL		1
+#define OPTPUT		2
+
+/////SPREADORDER
+#define SPREADORDERLEGS				3
+
+#define TRADINGSYSTEMTYPE	1  // 1 for non automated & 0 for program trading (Automated)
+#define ORDERTIMEFACTOR		19800
+//~!@# Rahul magar  start
+#define HISTORICAL_DATA			0
+#define LIVE_DATA				1
+#define CDATA 1022 
+
+//#define MAXIMUM_ARBITRAGE_ID	30 //30 :: 0-29 {upto 100 ie 0-99}
+#define NORMAL_ORD				1 //By Rahul Magar
+#define NON_ATS_ARBITRAGE_ORD	2 //By Rahul Magar
+#define ATS_ARBITRAGE_ORD		3 //By Rahul Magar
+
+
+//~!@# Rahul magar  end
+
+/// Exchanges ////////
+#define NSE_EXCHANGE	1
+#define BSE_EXCHANGE	2
+#define MCX_EXCHANGE	3F
+#define NCDEX_EXCHANGE	4
+
+#define	NSE				"NSE"
+#define BSE				"BSE"
+#define	MCX				"MCX"
+#define	NCDEX			"NCDEX"
+
+#define SPREAD_DAY_ORD	2
+#define SPREAD_IOC_ORD	1
+//#define NORMAL_ORD		0
+
+#define CASH_BASED		0	// by hiral for coc
+#define	BUYFLAG			1
+#define	SELLFLAG		2
+#define BOTH			3	//BY HIRAL FOR COC
+#define PROFLAG			2	
+#define	CLIFLAG			1
+#define INSTFLAG		3
+#define	PRO				"PRO"
+#define	CLI				"CLI"
+#define MSGUSERID		"UserId"
+
+//Product IDs
+#define	CASHFUTURERULE		1
+#define ROLLOVERRULE		2
+#define	QUOTERULE_F2F		3
+#define COC_QUOTE			14
+#define IV_ORDER_LOGIN		15
+#define SLICE_ORDER_LOGIN	6
+#define MCXQUOTEROLLOVER	20//~!@#$ Rahul Magar
+#define MCXPAIR	21//~!@#$ Rahul Magar
+#define MCXQUOTEROLLOVER	20//~!@#$ Rahul Magar
+#define MCXQUOTEROLLOVER	20//~!@#$ Rahul Magar
+#define	GATS_ARBITRAGE		22
+#define BASKET	23//~!@#$ Rahul Magar
+//Product IDs end
+
+#define ALL				0
+#define PENDING			1
+#define CANCELED		2
+#define	UNCONFIRMED		3
+#define	REJECTED		4
+#define	EXECUTED		5
+#define	ADMINPENDING	6
+#define	MINADMINPENDING	7	
+/// END Exchanges ////////
+///////OrderType///////////////
+#define	REGULAR_LOT			1
+#define	SPECIAL_TERMS		2
+#define STOPLOSS_ORDER		3
+#define	NEGOTIATED_ORDER	4
+#define	ODDLOT_ORDER		5
+#define	SPOT_ORDER			6
+#define AUCTION_ORDER		7
+/////////////////////////////
+
+#define RL				"RL"
+#define STOPLOSS		"SL"
+#define PRICE_DECIMALS	2
+#define DEFAULTPRICE	"0.00"
+
+#define IVDAYZERO	0.00
+#define IVDAYONE	0.25
+#define IVDAYTWO	0.50
+
+#define MANAGERRESPONSEDELAY	30000 //120000
+
+///////// PENDING ORDERS ////////////////////
+#define PENDING_FRESH			2
+#define	PENDING_MODIFY			1
+#define	PENDING_CANCEL			3
+#define PENDING_OFFLINE_ORDER	5
+
+///////// SURVEILLANCE LIMITATIONS //////////
+#define	MAXQTY			99999999//999
+#define	MAXAMOUNT		999999999999.99
+					//this is in percentage term
+/////////////////////////////////////////////
+#define	iMSGORDERTYPE		0
+#define	iMSGTRADETYPE		1
+#define	iMSGSYSTEM			2
+#define	iMSGBCAST			3
+#define iMSGARBITRAGERULES  5
+
+
+
+/// INST NAMES ////
+#define FUTSTK
+#define FUTIDX
+#define OPTSTK
+#define OPTIDX
+#define OPTINT
+
+///////// Market Status ///////
+#define MANAGER_NOT_LOGIN	-1//TO EXCHANGE
+#define	PREOPENMARKET		0
+#define	OPENMARKET			1
+#define	CLOSEMARKET			2
+#define	SUSPENDEDMARKET		3
+#define POSTCLOSESTART		4
+///////////////////////////////
+#define	MULTIPLE_IN_CRORE	10000000	/// For Crore
+#define EQLOURTOKENLIMIT	101999999
+//// User Types ////////
+#define NORMAL_USER		0
+#define	ADMIN			1
+/////////////////////////////////////////
+#define SEPERATOR		__toascii(1)
+#define TERMINATOR		"###"
+#define	MSG_SIZE		512
+#define CLIENTAPP		1
+
+#define SENDORDTRDMSG			1
+#define	SENDORDSTRUCT			2
+#define	SENFTRDSTRUCT			3
+
+#define WM_PROCESS_DATA					WM_USER + 2007
+///////// Serveillance DLL //////
+#define WM_CHECK_ORDER					WM_USER	+ 701
+#define	WM_SURVEILLANCE_DLL				WM_USER	+ 703
+#define	WM_CHECK_SPREAD_ORDER			WM_USER	+ 704
+
+///// Broadcast Messages  //////////
+#define GREEK_BCASTCHECK				WM_USER + 2002
+#define GREEK_SENDMSG					WM_USER + 2003	/// From Broadcast Msg
+#define GREEK_ONLYMBP					WM_USER + 2005	/// From Broadcast Msg
+#define GREEK_ONLYMSG					WM_USER + 2006	/// From Broadcast Msg
+////// Broadcast Messages /////////////////////////
+//// From Interactive side dll
+#define	GREEK_INTERACTIVECHECK			WM_USER	+ 2004
+//// Interactive side dll
+
+//////// User Defined Greek Messages /////////////
+#define	GM_MKTWATCH_DEPTH				WM_USER + 1000
+#define	GM_MKTWATCH_UPDATE				WM_USER + 1001
+#define	GM_MBPMBO_UPDATE				WM_USER	+ 1002
+#define	GM_MBP_DEPTH					WM_USER	+ 1003
+#define	GM_MBO_DEPTH					WM_USER	+ 1004
+#define	GM_INDEXVALUES					WM_USER	+ 1005
+#define GM_CHECK_PENDING				WM_USER + 1006		//by hiral
+#define GM_ON_SRUV_FAIL					WM_USER + 1007		//by hiral
+#define GM_ON_SRUV_FAIL1				WM_USER + 1008		//by hiral
+
+#define GM_BEST_DEPTH_DATA				WM_USER + 1111 //By Rahul Magar
+#define GM_BEST_BASKET_DEPTH_DATA		WM_USER + 1112 //By Rahul Magar On 28 Oct 2009
+#define GM_BASKET_INDEX_DATA			WM_USER + 1113 //By Rahul Magar On 28 Oct 2009
+//////////////////////////////////////////////////
+/*
+#define GM_ONFILLMARKETWATCH			WM_USER + 1000	/// For Market Watch Window
+#define GM_ONFILLMARKETPICTURE			WM_USER + 1001	/// For Market Picture Window
+#define GM_INDEXVIEW					WM_USER + 1002	/// For Index View Window
+#define GM_ONFILLMARKETPICTURE_F6		WM_USER + 1003	/// For Market Picture Window for F6 (By Order)
+#define GM_INDEXINFORMATION		 		WM_USER + 1004	/// For Index Information Window
+#define GM_MARKETPICTUREVERTICAL		WM_USER + 1005	/// For Market Picture Vertical Controls
+#define GM_MARKETPICTUREVERTICALFLEX	WM_USER + 1006	/// For Market Picture FlexGrid
+#define GM_MBPINFO						WM_USER + 1007	/// For MBP Information
+#define GM_MBOINFO						WM_USER + 1008	/// For MBO Information
+*/
+#define	GM_ONFILLMESSAGE				WM_USER	+ 1009     /// For Displaying Message On Message Bar
+#define	GM_ONFILLPENDINGORDERS			WM_USER	+ 1010   //For PendingOrders
+#define GM_ONFILLNETPOSITION			WM_USER	+ 1011	//For IntegratedNetPosition		
+#define	GM_ONFILLTRADE					WM_USER + 1012	//For TradeWindow
+#define GM_ONMARKETSTATUS				WM_USER + 1013	//To Display Market Open/Close Status
+#define GM_ONFILLMESSAGELIST			WM_USER + 1014  //To display On MessageList
+#define GM_BCAST_MESSAGE				WM_USER + 1015 /// To display message in message bar
+#define	GM_ONFILLEXORDER				WM_USER + 1016	//For Ex Delivery Order Book
+  ////////////////////////////////////////////////////////////////
+#define	GM_COMBOPOSITION				WM_USER	+ 100
+#define GM_OPENLOGIN					WM_USER	+ 101	//To Open Login when Logoff
+#define GM_ENABLELOGIN					WM_USER	+ 102	//To Enable Login Dialog
+#define GM_PRINTMKTPICTURE				WM_USER	+ 103	//To Print data on MarketPicVertical
+														//on Selchange of MarketWatch
+#define GM_INSERTEXPIRY					WM_USER	+ 104	//Insert Expiries in Buy Sell
+#define GM_INSERTSTRIKE					WM_USER	+ 105	//Insert Strikes in Buy Sell
+#define GM_INSERTOPTTYPE				WM_USER	+ 106	//Insert Opt Type in Buy Sell
+#define GM_GENERALFRAME_SETTINGS		WM_USER	+ 107	//For Client General Settings for
+#define GM_INSERTRECORD					WM_USER	+ 108	//Insert Record in ScripMarketWatch
+#define GM_INSERT_ROWMAP				WM_USER	+ 109	//Insert in Row Map in ScripMarketWatch
+#define GM_CALC_NETMTOM					WM_USER	+ 110	//Net MTOM on Scrip Bar for MainFrm StatusBar
+#define GM_UPDATEICONS					WM_USER	+ 111	//Update Icons to Show Market Status
+#define GM_BUYSELL_COLOR				WM_USER	+ 112	//ClientSettings Buy Sell Color
+#define GM_UPDOWN_COLOR					WM_USER	+ 113	//ClientSettings Up Down Color
+#define GM_TIMEFORMAT					WM_USER	+ 114	//ClientSettings Time Format
+#define GM_ORDERTRADE_COLOR				WM_USER	+ 115	//Order Trade Flex BuySellColor
+#define GM_ALL_COLOR					WM_USER	+ 116	//All Flex BuySellColor
+#define GM_OPTIONS_CALC					WM_USER	+ 117	//Option Calculator
+#define GM_WORKSPACE_DATA				WM_USER	+ 118	//Worksace Data
+#define GM_OPEN_WORKSPACEDATA			WM_USER	+ 119	//Open Workspace Data
+#define GM_MODIFY_SURV_FAIL				WM_USER	+ 120	//On Modification Surveillance Failed
+#define GM_PENDING_ACTION_REJECT		WM_USER	+ 121	//On Pending Order Cancel/Modify Rejection
+#define GM_UPDATE_PROCLIENT_STORAGE		WM_USER	+ 122	//To Update the PROClient Storage
+#define GM_MISC_SETTINGS				WM_USER	+ 123	//For Misc Settings PostMessage
+
+#define GM_ONSECURITYINFO				WM_USER + 1017	//For Display Security Information
+#define GM_ONCONTRACTINFO				WM_USER + 1018  //For Display Contract Information
+
+#define	GM_SHOW_MESSAGE_MKT_STATUS		WM_USER + 1019 //For Displaying Market Status
+#define GM_ONTRADE						WM_USER	+ 1020 //For Updating AlgorithmOrderTracker For Arbitrage
+#define GM_ONORDERCONFIRM				WM_USER	+ 1021 //For Updating AlgorithmOrderTracker For Arbitrage
+#define GM_ONORDER						WM_USER	+ 1022	//For Online Display On Order History
+#define GM_MARKETSTATUS					WM_USER + 1023	//For Market Status
+#define GM_RESET_FRESH_PENDING			WM_USER	+ 1024	//Resetting the PendingOrder Status Variable
+#define GM_MARKETWATCHIVUPDATE			WM_USER + 1025	//For IV Updation On Market Watch
+#define GM_REQUESTCOLOR					WM_USER	+ 1026	//For Pending Orders Cancel Color
+#define GM_COC_CANCEL_MODIFY_RES		WM_USER	+ 1027	//For Modify Or Cancel Confirmation To Manage COC Orders Transaction
+#define GM_INSERTSTRIKEINIVBS			WM_USER	+ 1028	//User IVBASEDORDERS
+#define GM_INSERTOPTTYPEINIVBS			WM_USER	+ 1029
+#define GM_INSERTEXPDATEINIVBS			WM_USER	+ 1030
+#define GM_IVBASEDORDENTRY				WM_USER	+ 1031
+#define GM_ONIVORDERCONFIRM				WM_USER	+ 1034
+#define GM_ONERRORIVORDER				WM_USER	+ 1035
+#define GM_IVCHECKLTP					WM_USER	+ 1037	
+#define GM_QUICKIVMODOFICATION			WM_USER	+ 1038	
+#define GM_COCORDER_ERROR				WM_USER	+ 1039	
+#define GM_SPREADBCAST					WM_USER + 1040
+//Dhanashree
+//@#@Bhushan NEW 6Jan
+#define GM_RECV_IV_MANAGER				WM_USER + 1090
+//End
+
+
+#define GM_DELTAHEDGING_CONFIRM			WM_USER + 1064
+#define GM_DELTAHEDGING_TRADE			WM_USER + 1065
+#define GM_DELTAMODIFY					WM_USER + 1066
+
+#define SLICE_MAP_COUNT					300000		
+#define	SLICE_LOURORDERNUMBER			400000														//Dhanashree
+/////////  End Of User Defined Messages ///////////////////////////////////////////////////////
+#define GM_UPDATEASSETTOKEN				WM_USER + 1041
+#define GM_SERVERSTATUS					WM_USER	+ 1042
+#define GM_MESSAGEBAR_ORDER_TRADE		WM_USER	+ 1043
+#define	GM_FILLMAP_ROLLOVER				WM_USER + 1044
+#define GM_TOPINDEXBASED				WM_USER + 1045
+#define	GM_ROUTEMESSAGES				WM_USER + 1046
+#define GM_ERRSERVERAPPLICATION		    WM_USER + 1047 //Dhanashree
+
+#define GM_SLICECONFIRM					WM_USER + 1048   //SLICE  ORDER 
+#define GM_SLICETRADE					WM_USER + 1049
+#define GM_SLICEMODCONFIRM				WM_USER + 1050
+#define GM_SCLIE_CANCEL_RES				WM_USER + 1051
+//////Rahul Jr.////////
+#define WM_CLIENTORDERTRADEGENERAL		WM_USER + 135
+#define WM_CLIENTHISTORICALMESSAGE		WM_USER + 888
+#define WM_CLI_DOWNLOADING_HIST_MSG		WM_USER + 889
+
+#define WM_SURV_SETTINGS_CHANGED		WM_USER	+ 137
+
+#define GM_RECV_ALG_ORD_TRD				WM_USER + 1121
+#define GM_RECV_ALG_MANAGER				WM_USER + 1122
+#define GM_ALG_QUOTE_TIMER				WM_USER + 1123
+
+//////end Rahul Jr.////////
+
+//@@@ COC hiral
+#define GM_RECV_ORD_TRD					WM_USER + 2261
+#define GM_RECV_MANAGER					WM_USER + 2262
+#define GM_TIMER_COCQUOTE				WM_USER + 2263
+//@@@ COC end 
+
+//By Vikram M Tathe On 15th Sept 2008 For Quote Based FUT 2 FUT ARB
+#define GM_MGRRESPONSE					WM_USER + 1052 //Vikram M Tathe For Arbitrage
+#define GM_ONFILLQUOTE					WM_USER + 1053 //Vikram M Tathe For Quote Trading
+#define GM_ONBCASTONQUOTE				WM_USER + 1054 //Vikram M Tathe For Diplaying BCast On Quote Grid
+#define GM_ONMODIFYRESPONE				WM_USER + 1055 //Vikram M Tathe For Displaying Pending On Quote Grid
+#define GM_ONRECEIVEMBPFORQUOTE			WM_USER + 1056 //Vikram M Tathe For Getting BroadCast For Quote Algo
+#define GM_ONMODIFY_QUOTE				WM_USER + 1057
+#define GM_ONMODIFYREJECTRESPONE		WM_USER + 1058
+// End For Quote Bsed FUT 2 FUT Arb For VIkram M Tathe
+///For License
+#define GM_SHOW_PRODUCTMESSAGE			WM_USER	+ 987	//~!@# Rahul BOTH
+#define GM_ORDER_RESPONSE				WM_USER + 1059
+#define GM_ONLINE_SURV_ADMIN			WM_USER + 1060
+
+#define GM_GENERATESPREADDAYORDER		WM_USER + 1067
+
+#define GM_ARB_INST						WM_USER + 1068
+#define GM_ARB_LOGIN					WM_USER + 1069
+#define GM_ARB_LOGOFF					WM_USER + 1070
+#define GM_ARB_ORD_INST					WM_USER + 1071
+#define	GM_ARB_NOTIFY					WM_USER + 1072
+#define GM_ARB_COC_RULE					WM_USER + 1073
+
+
+//@#@Bhushan 16-May-2009 @#@MCX
+#define GM_GENERATEQUOTEALGORD			WM_USER + 1074
+
+#define GM_PAN_NO						WM_USER + 1075 //CK Pan
+//Rajat Sharma July 11th'2009
+#define GM_MESSAGEBAR_SETTINGS			WM_USER	+ 1076
+
+#define GM_STORE_VARIABLES				WM_USER	+ 1077
+#define GM_MARKETWATCH_FILLDATA			WM_USER	+ 1078
+#define GM_FILLMESSAGELIST				WM_USER	+ 1079
+#define WM_CALCULATE_IV					WM_USER + 1080
+
+#define WM_USERDEF_GETMINMAXINFO		WM_USER + 1115
+#define WM_USERDEF_REMOVEMINMAXINFO		WM_USER + 1116
+
+#define USER_INVALID_PAN				6033 //CK Pan
+#define USER_VALID_PAN					6036 //CK Pan
+
+//////////////MessageType For Order Trade//////////////////////
+#define IORDERMSGTYPE			1
+#define ITRADEMSGTYPE			2
+#define	ISYSTEMMSGTYPE			3
+#define IORDERCANCELMSGTYPE		4
+///////////////////////////////////////////////////////////
+
+#define MAX_ERROR_SIZE		1024
+#define LOGIN_ERROR_LOG_FILE		"LoginErrClient"
+#define ERROR_LOG_FILE		"ErrorsInCTCLClient"
+#define IV_ORDERNUMBER		"IVOrderNumber"
+#define IV_ORDERFILE		"IVOrder"
+#define IV_FILE				"IVOrderFile"
+#define IV_CONFIRM			"IVOrderConfirm"
+#define PACKET_SIZE			4096
+#define MBP_DEPTH			10001
+#define MBO_DEPTH			10002
+#define	BUY					"Buy"
+#define	SELL				"Sell"
+
+////// Transaction Codes //////////
+/////////// Serveillance DLL ////////////
+#define ORDER_SUCCESS_RES				0
+#define ORDER_FAIL_RES					1
+#define MTM_SUCCESS_RES					2
+#define MTM_FAIL_RES					3
+#define EXPOSURE_SUCCESS_RES			4
+#define EXPOSURE_FAIL_RES				5
+#define GREEK_VALUE_SUCCESS_RES			6
+#define GREEK_VALUE_FAIL_RES			7
+
+#define SPREAD_ORDER_SUCCESS_RES		10
+#define SPREAD_ORDER_FAIL_RES			11
+
+///// For Broadcast (BC - Broadacast Code)/////////
+#define	BC_MBPMBO_UPDATE				5000			/// 7200
+#define	BC_MKTWATCH_UPDATE				5001			/// 7201
+#define	BC_TICKER_INDEX_DATA			5002			/// 7202
+#define	BC_INDEXVALUES					5003			/// 7207
+#define BC_MKTWATCH_DEPTH				5004			/// 7208
+#define BC_CIRCUIT_MSG					5005			/// 6541
+#define BC_MSG_TO_TRADER_EQ				5006			/// 6501_1_EQ
+#define BC_INDEX_BHAVCOPY				5008			/// 1836
+#define BC_ORDER_SEND					5009			/// 2009
+#define BC_INDEX_CASH_MKT				5010			/// 7203
+#define BC_SECURITY_STATUS_CHG			5012			/// 7210
+#define BC_SECURITY_MSTR_CHG			5013			/// 7305
+#define BC_AUCTION_STATUS_CHG			5014			/// 6581(EQ)
+#define BC_AUCTION_INQ_OUT				5015			/// 6582
+#define BC_VCT_MSGS						5016			/// 6511
+#define BC_SECURITY_OPEN_PRICE			5017			/// 6013
+#define BC_MSG_TO_TRADER				5018			/// 5295
+#define BC_PARTICIPANT_UPDATE			5019			/// 7306
+#define BC_LIMIT_EXCEEDED				5020			/// 9011
+#define BC_BUY_BACK						5021			/// 7211EQ
+#define BC_SPD_MKT_INFO					5022			/// 7211FO
+//#define BC_SYSTEM_INFO_OUT				5023			/// 7206
+#define BC_SYSTEM_INFO_EQ_RES			5023			
+#define BC_SYSTEM_INFO_FO_RES			5024			
+#define BC_REPORT_HEADER				5025			/// 1833H
+#define BC_REPORT_DATA					5026			/// 1833R
+#define BC_REPORT_TRAILER				5027			/// 1833T
+#define BC_MESSAGE						5028			//// 
+
+#define	BC_MKTOPEN						5034
+#define	BC_MKTCLOSE						5035
+#define	BC_MKTPREOPEN					5036
+#define	BC_MKTPREOPENCLOSE				5037
+#define	BC_MKTPOSTCLOSE_SESSION_START		5038
+#define BC_MKTPOSTCLOSE_SESSION_END			5039
+#define BC_MKTOPEN_INTEREST				5031
+
+////////// For Interactive (IC - Interactive Code)///////////
+/*
+#define IC_LOGIN_REQ					5100			/// 2300
+#define IC_LOGIN_RES					5101			/// 2301
+#define IC_LOGOUT_RES					5105			/// 2321
+*/
+/////////////////////////////////////////////////////////////
+#define GC_GREEK_SYSTEM_INFO_RESPONSE	5102
+#define IC_ORDER_REQ					5501			/// 2000
+#define IC_ORDER_RES					5502			/// 2001
+#define IC_NEG_TRADE					5503			/// 2008
+#define IC_NEG_TRADE_BY_CPID			5504			/// 2009
+#define IC_ORDER_MOD_REQ				5505			/// 2040
+#define IC_ORDER_MOD_RES				5506			/// 2041
+#define IC_ORDER_MOD_REJ				5507			/// 2042
+#define IC_ORDER_CANCEL_REQ				5508			/// 2070
+#define IC_ORDER_CANCEL_RES				5509			/// 2071
+#define IC_ORDER_CANCEL_REJ				5510			/// 2072
+#define IC_ORDER_CONFIRMATION_RES		5511			/// 2073
+#define IC_ORDER_MOD_CONFIRM_RES		5512			/// 2074
+#define IC_ORDER_CANCEL_CONFIRM_RES		5513			/// 2075
+#define IC_NEG_TRADE_REJ				5514			/// 2076
+#define IC_ORDER_FREEZE_RES				5515			/// 2170
+#define IC_ORDER_ERROR_RES				5516			/// 2231
+#define IC_BATCH_ORDER_CANCEL			5517			/// 9002
+
+#define	IC_ORDER_INFO_VIEW_REQ			5518
+#define	IC_PENDING_ORDER_VIEW_REQ		5519
+//#define	IC_ORDER_VIEW_REQ			5518
+//#define	IC_ORDER_VIEW_RES			5519
+/////////////////////////////////////////////////////////////
+#define IC_STOP_LOSS_TRIGGER			5601			/// 2212
+#define IC_TRADE_CONFIRMATION			5602			/// 2222
+#define IC_TRADE_CANCEL_REJ				5603			/// 2223
+#define IC_TRADE_CANCEL_CONFIRM			5604			/// 2282
+#define IC_TRADE_CANCEL_REJ_RES			5605			/// 2286
+#define IC_TRADE_MOD_CONFIRMATION		5606			/// 2287
+#define IC_TRADE_MOD_REJ_RES			5607			/// 2288
+#define IC_TRADE_CANCEL_REQ				5608			/// 5440
+#define IC_TRADE_CANCEL_REQ_RES			5609			/// 5441
+#define IC_TRADE_MOD_REQ				5610			/// 5445
+#define IC_TRADE_MOD_REQ_RES			5611			/// 5446
+
+#define IC_TRADE_VIEW_REQ				5612
+#define IC_TRADE_VIEW_RES				5613
+
+
+////////////////////////////////////////////////////////////////
+#define IC_LOGIN_REQUEST				5900
+#define IC_CLIENTLOGONRES				5901
+#define IC_LOGOFF_REQUEST				5902
+#define IC_LOGOFF_RESPONSE				5903
+#define IC_LOGIN_WITH_NEWPASSWORD		5904
+
+#define IC_GREEKTOEKNMASTER_REQ			5910
+#define	IC_GREEKTOKENMASTERHEADER		5911
+#define	IC_GREEKTOKENMASTERDATA			5912
+#define	IC_GREEKTOKENMASTERTRAILER		5913
+
+#define IC_PARTICIPANTMASTER_REQ		5920
+#define	IC_PARTICIPANTMASTER_HEADER		5921
+#define	IC_PARTICIPANTMASTER_DATA		5922
+#define	IC_PARTICIPANTMASTER_TRAILER	5923
+
+#define IC_HISTORICAL_EQMASTER_REQ			5914
+#define	IC_HISTORICAL_EQMASTER_HEADER		5915
+#define IC_HISTORICAL_EQMASTER_DATA			5916
+#define	IC_HISTORICAL_EQMASTER_TRAILER		5917
+
+#define	IC_HISTORICAL_FOMASTER_REQ			5924
+#define	IC_HISTORICAL_FOMASTER_HEADER		5925
+#define IC_HISTORICAL_FOMASTER_DATA			5926
+#define IC_HISTORICAL_FOMASTER_TRAILER		5927
+
+#define	IC_HISTORICAL_PARTICIPANT_REQ			5934
+#define	IC_HISTORICAL_PARTICIPANT_HEADER		5935
+#define IC_HISTORICAL_PARTICIPANT_DATA			5936
+#define IC_HISTORICAL_PARTICIPANT_TRAILER		5937
+
+#define IC_HISTORICAL_ORDERINFO_REQ			5930
+#define	IC_HISTORICAL_ORDERINFO_HEADER		5931
+#define	IC_HISTORICAL_ORDERINFO_DATA		5932
+#define	IC_HISTORICAL_ORDERINFO_TRAILER		5933
+
+#define IC_HISTORICAL_PENDINGORDER_REQ		5940
+#define	IC_HISTORICAL_PENDINGORDER_HEADER	5941
+#define	IC_HISTORICAL_PENDINGORDER_DATA		5942
+#define	IC_HISTORICAL_PENDINGORDER_TRAILER	5943
+
+#define IC_HISTORICAL_TRADE_REQ						5950
+#define	IC_HISTORICAL_TRADE_HEADER					5951
+#define	IC_HISTORICAL_TRADE_DATA					5952
+#define	IC_HISTORICAL_TRADE_TRAILER					5953
+
+#define IC_HISTORICAL_SPD_ORDERINFO_REQ				5960
+#define	IC_HISTORICAL_SPD_ORDERINFO_HEADER			5961
+#define	IC_HISTORICAL_SPD_ORDERINFO_DATA			5962
+#define	IC_HISTORICAL_SPD_ORDERINFO_TRAILER			5963
+
+#define IC_HISTORICAL_SPD_PENDINGORDER_REQ			5970
+#define	IC_HISTORICAL_SPD_PENDINGORDER_HEADER		5971
+#define	IC_HISTORICAL_SPD_PENDINGORDER_DATA			5972
+#define	IC_HISTORICAL_SPD_PENDINGORDER_TRAILER		5973
+
+#define IC_HISTORICAL_PORTFOLIODATA_REQ				5974
+#define IC_HISTORICAL_PORTFOLIODATA_HEADER			5975
+#define IC_HISTORICAL_PORTFOLIODATA_DATA			5976
+#define IC_HISTORICAL_PORTFOLIODATA_TRAILER			5977
+
+#define IC_USERMAINTAINANCE_REQ						5980
+#define	IC_USERMAINTAINANCE_HEADER					5981
+#define	IC_USERMAINTAINANCE_DATA					5982
+#define	IC_USERMAINTAINANCE_TRAILER					5983
+
+#define IC_SURVEILLANCESETTINGS_REQ					5984
+#define	IC_SURVEILLANCESETTINGS_HEADER				5985
+#define	IC_SURVEILLANCESETTINGS_DATA				5986
+#define	IC_SURVEILLANCESETTINGS_TRAILER				5987
+#define NO_SURV_SETTINGS							13
+
+#define IC_SURVEILLANCE_REQ							5988
+#define	IC_SURVEILLANCE_HEADER						5989
+#define	IC_SURVEILLANCE_DATA						5990
+#define	IC_SURVEILLANCE_TRAILER						5991
+
+//CK Expense Download 06/06/09 - begin
+#define IC_EXPENSE_REQ								3300
+#define	IC_EXPENSE_HEADER							3400
+#define	IC_EXPENSE_DATA								3500
+#define	IC_EXPENSE_TRAILER							3600
+//end
+
+
+//By Rahul Magar Start
+#define	GC_ARBITRAGE_LOGIN_REQ				6340
+#define GC_ARBITRAGE_LOGIN_RESP				6341
+#define	GC_ARBITRAGE_LOGOFF_REQ				6342
+#define GC_ARBITRAGE_LOGOFF_RESP			6343
+
+#define GC_ARBITRAGE_INST_REQ				6350
+#define GC_ARBITRAGE_INST_RESP				6351
+#define GC_ARB_ORD_INST_REQ					6352
+#define GC_ARB_ORD_INST_RESP				6353
+
+#define GC_COC_QUOTE_RULE_ADD_REQ			6361
+#define GC_COC_QUOTE_RULE_ADD_RESP			6362
+#define GC_COC_QUOTE_RULE_MOD_REQ			6363
+#define GC_COC_QUOTE_RULE_MOD_RESP			6364
+#define GC_COC_QUOTE_RULE_DEL_REQ			6365
+#define GC_COC_QUOTE_RULE_DEL_RESP			6366
+//By Rahul Magar end
+
+#define GC_ROLLOVER_QUOTE_RULE_ADD_REQ		6367
+#define GC_ROLLOVER_QUOTE_RULE_ADD_RESP		6368
+#define GC_ROLLOVER_QUOTE_RULE_MOD_REQ		6369
+#define GC_ROLLOVER_QUOTE_RULE_MOD_RESP		6370
+#define GC_ROLLOVER_QUOTE_RULE_DEL_REQ		6371
+#define GC_ROLLOVER_QUOTE_RULE_DEL_RESP		6372
+
+
+
+#define IC_GREEK_COMMUNICATOR_MSG		5106
+
+#define	IC_GREEK_CLIENT_PORTFOLIO_DETAILS			5310//~!@# Rahul Magar 
+#define IC_GREEK_CLIENT_TOKEN_DETAILS				5311//~!@# Rahul Magar 
+#define IC_GREEK_CLIENT_ALL_TOKEN_INFO				5312//~!@# Rahul Magar  
+#define IC_GREEK_PORTFOLIO_TOP_TOKEN_REQ			5313//~!@# Rahul Magar
+#define IC_GREEK_PORTFOLIO_TOP_TOKEN_RES			5314//~!@# Rahul Magar
+#define	IC_GREEK_TOP_SCRIPT_TOKEN_REQ				5315//Ashwini Marale
+#define IC_GREEK_TOP_SCRIPT_TOKEN_RES				5316//Ashwini Marale
+///////////// EXTRA ///////////////////////
+#define MANAGER_ORD_RES					5520
+
+#define	IC_HEARTBEAT					5997
+#define IC_MANAGERRESPONSEMSG			5998
+#define IC_CONNECTIONBREAKMSG			5999
+//////////////////////////////////////////////////
+
+
+#define USERLOGINDETAIL_REQ				6031
+#define USERLOGINDETAIL_RES				6032
+
+#define USERMAINTAINANCE_ADD_REQ		6001
+#define USERMAINTAINANCE_ADD_RES		6002
+#define USERMAINTAINANCE_MODIFY_REQ		6003
+#define USERMAINTAINANCE_MODIFY_RES		6004
+#define USERMAINTAINANCE_DELETE_REQ		6005	
+#define USERMAINTAINANCE_DELETE_RES		6006	
+#define USERMAINTAINANCE_VIEW_REQ		6007	
+#define USERMAINTAINANCE_VIEW_RES		6008
+
+#define OPEN_POSITION_ADD_REQ			6011
+#define OPEN_POSITION_ADD_RES			6012
+#define OPEN_POSITION_MODIFY_REQ		6013
+#define OPEN_POSITION_MODIFY_RES		6014
+#define OPEN_POSITION_DELETE_REQ		6015
+#define OPEN_POSITION_DELETE_RES		6016
+#define OPEN_POSITION_VIEW_REQ			6017
+#define OPEN_POSITION_VIEW_RES			6018
+
+#define SURVEILLANCE_ADD_REQ			6021
+#define SURVEILLANCE_ADD_RES			6022
+#define SURVEILLANCE_DELETE_REQ			6023
+#define SURVEILLANCE_DELETE_RES			6024	
+#define SURVEILLANCE_VIEW_REQ			6025	
+#define SURVEILLANCE_VIEW_RES			6026
+
+#define SURV_FAIL_ADD_REQ				6041
+#define SURV_FAIL_ADD_RES				6042
+
+#define	PARTICIPANT_VIEW_REQ			6091
+#define	PARTICIPANT_VIEW_RES			6092
+
+#define NETPOSITION_VIEW_REQ			6061
+#define NETPOSITION_VIEW_RES			6062
+
+#define DEALER_CLIENT_VIEW_REQ			6081
+#define DEALER_CLIENT_VIEW_RES			6082
+#define DEALER_CLIENT_ADD_REQ			6083
+#define DEALER_CLIENT_ADD_RES			6084
+
+//CK - 25/05/09 - begin
+#define EXPENSE_DELETE_ALL				3028
+#define EXPENSE_SETTINGS				3029
+#define	C_EXPENSETYPE					3030
+#define	I_EXPENSEON						3031
+#define	D_EXPENSERATE					3032 //CK - 25/06/09
+#define	D_BASERATE						3033
+#define	C_STARTDATE						3034
+#define	C_CHARGESON						3035
+#define	C_TRADETYPE						3036
+#define	C_EXASSIGNMENT					3037
+#define	B_SPLFLG						3038
+#define	B_BASIS							3039
+//end
+
+
+/*
+#define IC_SYS_INFO_REQ								/// 1600
+#define IC_SYS_INFO_RES								/// 1601
+#define IC_OPEN_ORDER_REPORT						/// 1821
+#define IC_ORDER_LOG_REPORT							/// 1824
+#define IC_TRADE_REPORT								/// 1827
+#define IC_DOWNLOAD_REQ								/// 7000
+#define IC_HEADER_RECORD							/// 7011
+#define IC_MSG_RECORD								/// 7021
+#define IC_TRAILER_RECORD							/// 7031
+#define IC_UPDATE_LOCALDB_REQ						/// 7300
+#define IC_UPDATE_LOCALDB_DATA						/// 7304
+#define IC_UPDATE_LOCALDB_HEADER					/// 7307
+#define IC_UPDATE_LOCALDB_TRAILER					/// 7308
+#define IC_PARTIAL_SYS_INFO							/// 7321
+*/
+//////////////////////////////////////
+
+//////////// Window Names For Identification (WN - Window Name)///////////
+//----------------------------------Forms-----------------------------------
+#define WN_MARKETWATCH				10000		//MarketWatch
+#define WN_MARKETPICTURE_F5			10001		//MarketPicture(F5)		
+#define WN_MARKETPICTURE_F6			10002		//MarketPicture(F6)
+#define WN_MARKETPICTUREVERTICAL	10003		//Market Picture Vertical
+#define WN_INDEXINFORMATION			10004		//IndexInformation
+#define WN_PENDINGORDERS			10005		//Pending Orders
+#define WN_BHAVCOPYEQUITY			10006		//Bhav Copy Equity
+#define WN_BHAVCOPYDERIVATIVE		10007		//Bhav Copy Derivative
+#define WN_INTEGRATEDNETPOSITION	10008		//Integrated Net Position
+#define WN_BUYSELLORDER				10009		//Buy Sell Order
+#define WN_BULKORDER				10010		//Bulk Order
+#define WN_ARBITRAGEBUYSELLORDER	10011		//ArbitrageBuySellOrder
+#define WN_MESSAGELIST				10012		//MessageList
+#define WN_OPENPOSITION				10013		//Open Position
+#define WN_OPTIONSCALCULATOR		10014		//OptionsCalculator
+#define WN_SERVERSETTINGS			10015		//Server Settings
+#define WN_SURVEILLANCELIMIT		10016		//Surviellance Limitations
+#define WN_SURVEILLANCELIMITFILTER	10017		//Surveillance Limit Filter
+#define WN_SURVEILLANCELIST			10018		//Surveillance List
+#define WN_TOPGAINERSLOSERS			10019		//Top Gaiiners Top Losers
+#define WN_USERLIST					10020		//User List
+#define WN_USERLISTFILTER			10021		//User List Filter
+#define WN_USERMANAGEMENT			10022		//User Management
+#define	WN_TRADE					10023		//Trades
+#define WN_MESSAGELOG				10024		//MessageList
+#define WN_CONNECTIONINFO			10025		//ConnectionInfo
+#define WN_ORDERHISTORY				10026		//Order History
+#define WN_EXDELIVERYBOOK			10027		//ExDelivery Book for All
+#define WN_DEALERCLIENTMAPPER		10028		//Dealer InvestorClient Mapper
+#define WN_PANICWITHDRAWAL			10029		//Panic Widthdrawal
+#define WN_EXENTRYDELIEVERY			10030		//ExEntryDelieveryInformation
+#define WN_EXOFFLINEENTRY			10031		//ExOfflineEntry
+#define WN_MOSTACTIVESEURITYFILTER	10032		//Most Active Security Filter
+#define WN_PARTICIPANTS				10033		//Participants Window
+#define WN_CONTRACTINFO				10034		//Contract Information
+#define WN_SECURITYINFO				10035		//Security Informtion
+#define WN_MOSTACTIVESEURITY		10036		//Most Active Security
+#define WN_SURVEILLANCESTATUS		10037		//Surveillance Status
+#define WN_GRAPHS					10038		//Graphs
+#define WN_SURVEILLANCEFAIL			10039		//Surveillance Fail Order
+#define WM_ONLINEBACKUP				10040		//Online Backup
+#define WM_TOP_INDEXGAINERSLOSERS	10041		//TopGainers&Losers_IndexBased
+#define WM_MARKETMOVEMENT			10042		//Market Movement
+#define WM_IVBASEDBUYSELLORDER		10043		//IVBasedOrderEntry
+#define WM_QUOTESETTINGS			10044		//Quote Settings Form
+#define WM_SCRIP_BLOCK				10045		//Scrip Block
+#define	WN_FUTURETOFUTURE			10046		//FutureToFuture
+#define WN_CASHTOFUTURE				10047		//CashToFuture
+#define WM_PRODUCTLOGIN				10048		//ProductLogin
+#define WM_LICENSEPRODUCTINFORMATION   10049    //LicenseProductInformation
+#define	WN_SPREADMARKETPICTURE		10050		//SpreadMarketPicture
+#define WN_MCXCOMMODITYROLLOVER		10052		//ComudityRollOver //@#@MCX
+#define WN_MCXCONTRACTINFORMATION	10053		//MCXContractInformation
+#define WN_IVBASEDORDERENTRY		10054		//IVBasedOrderEntry
+
+//------------------------------Dialog Boxes---------------------------------------
+#define WN_INDEXVIEW				50000		//IndexView
+#define WN_ADDINDEXLIST				50001		//Add Index List
+#define WN_COLUMNPROFILE			50002		//Column Profile
+#define WN_SAVEPORTFOLIO			50003		//Save Portfolio
+#define	WN_MESSAGEBAR				50004		//MessageBar
+#define WN_SURVEILLANCESETTINGS		50005		//SurvellanceSettings
+#define WN_SCRIPBAR					50006		//ScripBar
+#define WM_PASSWORDCHANGE			50007		//Password Change
+#define WM_SETCLIENTPASSWORD		50008		//Set Client Password
+#define WM_INVESTORCLIENTLIST		50009		//Investor Client List
+#define WM_CLIENTSECURITY			50010		//Client Security
+#define WM_CLIENTSETTINGS			50011		//Client Settings
+#define WN_INDEXLIMITS				50012		//Index Limits
+#define WN_CUSTOMIZE				50013		//Customize
+#define WN_WORKSPACE				50014		//Workspace
+#define WN_LOGIN					50015		//Login
+#define WN_THEORITICALPRICE			50016		//Theoritical Price
+#define WN_GENERAL_SETTINGS			50017		//Client General Settings
+#define WN_ORDER_SETTINGS			50018		//Client Order Settings
+#define WN_OPTIONSCALC_SETTINGS		50019		//Client Options Calc Settings
+#define WN_SERVER_SETTINGS			50020		//Client Server Settings
+#define WN_WINDOWS_SETTINGS			50021		//Client Windows Settings
+#define WN_ALERT_SETTINGS			50022		//Client Alert Message Settings
+#define WN_GETS_HELP				50023		//GETS Help
+#define WN_MESSAGEBOX				50024		//MessageBox
+#define WN_PORTFOLIOEXPRESSION		50025		//Portfolio Expression
+#define	WN_MARKET_BRIEFING			50026		//MarketBriefing
+
+///////////////////////////////////////////////////////
+
+//@@@ COC hiral
+#define WN_COCQUOTE					50026
+
+/////////// TABLE CONSTANTS ///////////////
+#define		ORDER_INFO			1001
+#define		PENDING_ORDER		1002
+///////////////////////////////////////////
+
+/////  Temp  //////
+#define		iGREEKCODE 				1003
+#define		iBCASTMSGLENGTH			102
+#define		lLOGTIME	 			1070	
+#define		bLIVEHISTORICALFLAG		3001
+#define		cGREEKCLIENTIDUSERID	2041		
+#define		lSEQUENCENO				1237
+#define		bSTATUS					3000
+#define		iERRORCODE				1238
+#define		cLOGONRESPONSEMSG		2044
+#define		lPINCODEOFDEALER		1239
+#define		iBRANCHID				1199
+#define		iTERMINALID				1241
+////////////////////
+
+#define MARKETWATCH				"MarketWatch"
+#define	MARKETPICTURE			"MarketPicture"
+#define	PENDINGORDER			"PendingOrders"
+#define	NETPOSITION				"NetPosition"
+#define	BUYSELLORDER			"BuySellOrder"
+#define	MOSTACTIVESECURITY		"MostActiveSec"
+#define	MOSTACTIVESECURITYFILTER "MostActiveSecFilter"
+#define	TRADES					 "Trade"
+#define ORDERTRADEMSG			"OrderTradeMessage"
+#define SYSTEMMSG				"SystemMessage"
+#define	EXDELIVERYBOOKALL		"ExDeliveryBookAll"
+#define	EXOFFLINEENTRY			"ExOfflineEntry"
+#define	CONNECTIONINFO			"ConnectionInfo"
+#define USERLIST				"UserList"
+#define USERLISTFILTER			"UserListFilter"
+#define SURVEILLANCELIST		"SurveillanceList"
+#define SURVEILLANCELISTFILTER	"SurveillanceListFilter"
+#define OPENPOSITION			"OpenPosition"
+#define TOPGAINERANDLOSER		"TopGainerAndLoser"
+#define USERMANAGEMENT			"UserManangement"
+#define ORDERHISTORY			"Order History"
+#define BULKORDERENTRY			"Bulk Order Entry"
+#define MESSAGELIST				"Message List"
+#define PARTICIPANTS			"Participants"
+
+///// Greek Transaction Code
+#define GREEK_ORDER_REQUEST		5501
+
+//// order structure size array
+#define NULL_TERMINATE			'\0'
+
+#define CPARTICIPANTTYPE_ORD_ARR		1
+#define CMODCXLBY_ORD_ARR				1
+#define CSUSPENDED_ORD_ARR				1
+#define CCOUNTERPARTYBROKERID_ORD_ARR	5
+#define CACCOUNTNUMBER_ORD_ARR			10
+#define COPBROKERID_ORD_ARR				5
+#define CBROKERID_ORD_ARR				5
+#define COEREMARKS_ORD_ARR				25
+#define CREMARKS_ORD_ARR				24 
+#define CSETTLOR_ORD_ARR				12
+#define COPENCLOSE_ORD_ARR				1
+#define CCOVERUNCOVER_ORD_ARR			1
+#define	CGIVEUPFLAG_ORD_ARR				1
+#define CERRORMSG_ORD_ARR				239
+
+
+#define CBRANCHID_LOGON_RES				5
+
+
+//// By: Rahul D (Dt: 10-Oct-2007)
+#define SURVEILLANCESETTINGS_ADD_REQ	6051
+#define SURVEILLANCESETTINGS_ADD_RES	6052
+#define SURVEILLANCESETTINGS_MODIFY_REQ	6053
+#define SURVEILLANCESETTINGS_MODIFY_RES	6054
+#define SURVEILLANCESETTINGS_DELETE_REQ	6055
+#define SURVEILLANCESETTINGS_DELETE_RES	6056
+#define SURVEILLANCESETTINGS_VIEW_REQ	6057
+#define SURVEILLANCESETTINGS_VIEW_RES	6058
+
+// Add by Yatin on 19 Oct 2007
+#define MODIFY_PWD_REQ					6100
+#define MODIFY_PWD_RES					6101
+
+
+#define SURV_ORD_REJECTION				5531
+#define SURV_ORD_MOD_REJECTION			5532
+#define SURV_ORD_CANCEL_REJECTION		5533
+
+////Added by Ashwini On 29 Oct 2007
+#define IC_MESSAGECODE					7001
+#define	IC_MANAGERRESMSG				7002
+//Added By Rajat Sharma
+#define IC_OFFLINE_MESSAGE				7003
+// ADDED BY AWANINDRA 21-12-07
+#define IC_EX_PL_ENTRY_IN				5200
+#define	IC_EX_PL_MOD_IN					5205
+#define IC_EX_PL_CXL_IN					5208
+#define IC_EX_PL_ENTRY_OUT				5201
+#define IC_EX_PL_CONFIRMATION			5202
+#define	IC_EX_PL_MOD_CONFIRMATION		5207
+#define	IC_EX_PL_CXL_OUT				5209
+#define IC_EX_PL_CXL_CONFIRMATION		5210
+#define IC_GREEK_COMMUNICATOR_MSG		5106
+
+//////////For Algorithm trading/////////
+#define	GREEK_CASH_FUT_OPPORTUNITY		WM_USER	+ 1234 //rahul Jr.
+#define	GREEK_ROLLOVER_OPPORTUNITY		WM_USER	+ 2345 //rahul Jr.
+#define GREEK_OPPORTUNITY				WM_USER	+ 3456 //rahul Jr.
+
+#define	GREEK_CASH_FUT_TIMER		WM_USER	+ 4567 //DHANASHREE.
+#define CHECK_TIMER_STATUS			WM_USER + 5678
+#define GREEK_TIMER_ACTION			WM_USER + 6789
+#define GREEK_CANCEL_ORDER			WM_USER + 7891
+
+#define MARKET_VALIDITY "DAY"
+#define MARKET_SETTLOR	""
+
+#define TO_SERVEILANCE				0
+#define	FROM_SERVEILANCE_ACCEPTED	1
+#define FROM_SERVEILANCE_REJECTED	2
+
+//////////end For Algorithm trading/////////
+
+#define CONTRACT_VIEW_REQ					6059
+#define CONTRACT_VIEW_RES					6060
+#define SECURITY_VIEW_REQ					6066
+#define SECURITY_VIEW_RES					6067
+
+#define	IC_SPREAD_ORD_REQ					5700
+#define	IC_SPREAD_ORD_RES					5701
+#define	IC_SPREAD_ORD_CONFIRM_RES			5724//
+#define IC_SPREAD_ORD_MOD_REQ				5718
+#define	IC_SPREAD_ORD_MOD_RES				5719
+#define	IC_SPREAD_ORD_MOD_CONFIRM_RES		5736//
+#define	IC_SPREAD_ORD_CANCEL_REQ			5706
+#define	IC_SPREAD_ORD_CANCEL_RES			5707
+#define	IC_SPREAD_ORD_CANCEL_CONFIRM_RES	5730
+#define	IC_SPREAD_ORD_ERROR					5754
+#define	IC_SPREAD_ORD_CANCEL_REJ			5727
+#define	IC_SPREAD_ORD_MOD_REJ				5733
+
+#define SURV_SPD_ORD_REJECTION				8000
+#define SURV_SPD_ORD_MOD_REJECTION			8001
+#define SURV_SPD_ORD_CANCEL_REJECTION		8002
+
+#define IC_TWO_LEG_ORD_REQ					5702
+#define IC_TWO_LEG_ORD_RES					5703
+#define IC_TWO_LEG_ORD_CONFIRM				5725//
+#define IC_THREE_LEG_ORD_REQ				5704
+#define IC_THREE_LEG_ORD_RES				5705
+#define IC_THREE_LEG_ORD_CONFIRM			5726//
+
+#define IC_TWO_LEG_ORD_CXL_CONFIRM			5731
+#define IC_THREE_LEG_ORD_CXL_CONFIRM		5732
+
+#define IC_TWO_LEG_ORD_ERROR				5755
+#define IC_THREE_LEG_ORD_ERROR				5756
+
+
+#define MANAGER_NEW_SPD_ORD_RES				5523	
+#define MANAGER_MODIFY_SPD_ORD_RES			5524	
+#define	MANAGER_CANCEL_SPD_ORD_RES			5525
+#define MANAGER_NEW_TWO_LEG_ORD_RES			5526
+#define IC_PRICE_CONFIRMATION				5527
+/*##OFFLINE##*/
+#define IC_ORD_OFFLINE_REQ					5528
+#define IC_ORD_OFFLINE_CANCEL_REQ			5529
+#define IC_ORD_OFFLINE_CANCEL_RES			5530
+#define IC_CHECK_RES_AS_OFFLINE_ORDER		2000
+#define IC_ENTER_OFFLINE_ORDER				2001
+
+#define	IC_GREEK_PORTFOLIO_BHAVCOPY_REQ		5534
+#define	IC_GREEK_TOKEN_BHAVCOPY_REQ			5535
+#define	IC_GREEK_BHAVCOPY_RES				5536
+#define  ORDERERRROR						16273
+
+
+#define DOWNLOADING_FAILURE					9103 /*** BY HIRAL ***/
+#define ARCADIACODE							"07782" /*** BY HIRAL ***/
+
+#define RECORD_MISMATCH						51			 /*** BY HIRAL ***/
+
+#define IVERRREFTIME						60			//Dhanashree
+
+/****** by hiral ******/
+#define NSE_TIME							8099
+#define NSE_TIME_REQ						8098
+/**********************/
+
+#define ROLLOVER_ADD_REQ					6102
+#define ROLLOVER_ADD_RES					6103
+#define ROLLOVER_MODIFY_REQ					6104
+#define ROLLOVER_MODIFY_RES					6105
+#define ROLLOVER_DELETE_REQ					6106
+#define ROLLOVER_DELETE_RES					6107
+#define ROLLOVER_START_ALGO					6108
+#define	ROLLOVER_STOP_ALGO					6109
+#define ROLLOVER_ORDER_TYPE_REQ				6110
+
+
+///////*********ServerSide Apllication Close Error Code  Dhanashree Gavade on 6 Aug
+#define IC_GREEK_ERROR						9200
+#define DEFAULTIVORDERNUMBER				30000000//@@@@@@******
+
+#define MANAGER								0
+#define NSEINTERACTIVE						1
+#define CLIENTCOMMUNICATOR					2
+#define DATABASEMANAGER						3
+#define EQBROADCAST							4
+#define FOBROADCAST							5
+#define ATS									6
+#define	BSEINTERACTIVE						7
+#define	MCXINTERACTIVE						8
+#define EICON_CARD_DISCONNECT				9905
+
+#define CONSTANT_ORDER_TIMER				10
+#define COUNTER_ORDER						1
+#define AGAINST_ORDER						2
+
+#define MARKET_ORDER						1
+#define	BESTASKBID_ORDER					2
+#define MARKET_ORDER_WITH_DIFF				3
+#define	BESTASKBID_ORDER_WITH_DIFF			4
+
+//////////////////Addded BY Rahulj for License
+#define IC_GREEK_LICENSED_PRODUCT				5906
+#define IC_GREEK_PRODUCT_ALLOWED				5907
+#define LIVE_DATA								1
+#define PRODUCT_LOGIN_REQ						5400
+#define PRODUCT_LOGIN_RES						5401
+#define PRODUCT_LOGOFF_REQ						5402
+#define PRODUCT_LOGOFF_RES						5403
+#define USER_PRODUCT_ALLOWED_REQ				5404
+#define USER_PRODUCT_ALLOWED_RES				5406
+#define NSE_FO_SEGMENT_DETAILS					5407
+#define NSE_EQ_SEGMENT_DETAILS					5408
+////////////////////////////////////////////////////////////////////////
+#define ROLLOVER_OPPORTUNITY					"GETS ROLL OVER"
+#define ROLLOVER_QUOTE							"GETS QUOTE ROLL OVER"
+#define COC_OPPORTUNITY							"GETS COC"
+#define COC_QUOTE_BASED							"GETS QUOTE COC"
+#define IV_ORDER								"GETS IV ORDER ENTRY"
+#define SLICE_ORDER								"GETS SLICE ORDER"
+#define NSE_CASH								"GETS NSE-EQ"//"GETS NSE EQUITY"
+#define NSE_DERIVATIVES							"GETS NSE-FO"
+#define IV_DELTA_HEDGING						"GETS IV WITH DELTA"
+#define IV_INTHEMONEY							"GETS IV IN THE MONEY"
+#define IV_SPREAD								"GETS IV WITH SPREAD"
+
+#define MCX_QUOTE_ROLLOVER						"GETS MCX QUOTE ROLL OVER"
+#define MCX_COM_MARKET							"GETS MCX"
+#define BASKET_NSE								"GETS BASKET"
+
+#define LICENSED_APPLIED						TRUE
+#define MINIMUM_SCRIPS_ALLOWED					30	// by hiral for arbitrage
+
+//@@@@@@New Merge On 22 Oct Dhanashree Gavade Start
+
+#define IV_TIMER				1
+#define IV_ABSOLUTE				2
+#define IV_PERCENTAGE			3
+
+#define DEFAULTIVORDERNUMBER				30000000//@@@@@@******New
+#define DELTAAUTONUMBER						40000000//###!@#$%^//@@@@@@******
+//@@@@@@New Merge On 22 Oct Dhanashree Gavade Stop
+
+#define SURVEILLANCE_BYPASS			 0  //(0 = Send to Surveillance.dll and 1 = Not to send Surveillance.dll)
+
+
+
+//////////////////RahuJ For Sequence Number on 17thNovember
+//////////////////////////////////////////////////////////////////
+#define IC_HISTORICAL_SEQUENCE_ORDERINFO_REQ		    	5830
+#define	IC_HISTORICAL_SEQUENCE_ORDERINFO_HEADER	      	    5831
+#define	IC_HISTORICAL_SEQUENCE_ORDERINFO_DATA				5832
+#define	IC_HISTORICAL_SEQUENCE_ORDERINFO_TRAILER			5833
+
+#define IC_HISTORICAL_SEQUENCE_PENDINGORDER_REQ				5840
+#define	IC_HISTORICAL_SEQUENCE_PENDINGORDER_HEADER			5841
+#define	IC_HISTORICAL_SEQUENCE_PENDINGORDER_DATA			5842
+#define	IC_HISTORICAL_SEQUENCE_PENDINGORDER_TRAILER			5843
+
+#define IC_HISTORICAL_SEQUENCE_TRADE_REQ					5850
+#define	IC_HISTORICAL_SEQUENCE_TRADE_HEADER					5851
+#define	IC_HISTORICAL_SEQUENCE_TRADE_DATA					5852
+#define	IC_HISTORICAL_SEQUENCE_TRADE_TRAILER				5853
+
+#define IC_HISTORICAL_SEQUENCE_SPD_ORDERINFO_REQ			5860
+#define	IC_HISTORICAL_SEQUENCE_SPD_ORDERINFO_HEADER			5861
+#define	IC_HISTORICAL_SEQUENCE_SPD_ORDERINFO_DATA			5862
+#define	IC_HISTORICAL_SEQUENCE_SPD_ORDERINFO_TRAILER		5863
+
+#define IC_HISTORICAL_SEQUENCE_SPD_PENDINGORDER_REQ			5870
+#define	IC_HISTORICAL_SEQUENCE_SPD_PENDINGORDER_HEADER		5871
+#define	IC_HISTORICAL_SEQUENCE_SPD_PENDINGORDER_DATA		5872
+#define	IC_HISTORICAL_SEQUENCE_SPD_PENDINGORDER_TRAILER		5873
+
+
+#define IC_HISTORICAL_SPREADMASTER_REQ			6300  
+#define	IC_HISTORICAL_SPREADMASTER_HEADER		6301
+#define IC_HISTORICAL_SPREADMASTER_DATA			6302
+#define	IC_HISTORICAL_SPREADMASTER_TRAILER		6303
+///////////////////////////////////////////////////////////////////////
+#define IC_DOWNLOAD_TIMER									5874
+#define IC_DOWNLOAD_KILL_TIMER								5875
+////////////////////To merge By Rahulj
+//#define GREEK_HISTORICAL_TRADE_LOGTIME_REQ  5959
+//#define GREEK_HISTORICAL_ORDER_LOGTIME_REQ  5957
+#define GREEK_HISTORICAL_DOWN_TRADE_ORDER					5958
+#define PARTIAL_DOWNLAODING_COMPLETED						5957
+#define MANAGER_DOWNLOADING_COMPLETED						5959
+#define MANAGER_DOWNLOADING_INCOMPLETE						5964		
+//#define GREEK_HISTORICAL_TRADE_LOGTIME_RES  5964
+//#define GREEK_HISTORICAL_ORDER_LOGTIME_RES  5965
+//////////////////////////////////////////////////
+////////////////////RahulJ End For Sequence Number
+ #define EQ_SEQUENCE_START									101000000	
+#define FO_SEQUENCE_START									102000000
+#define FO_SEQUENCE_END										103000000
+#define MCX_COM_SEQUENCE_START								303000000
+#define MCX_COM_SEQUENCE_END								304000000
+
+//By : Poonam For Message  //
+#define INSERTED		1
+#define MODIFIED		2
+#define DELETED         3
+
+//CashToFuture//
+#define BUYCASH			1
+#define BUYFUT			2
+
+
+
+/***** BH HIRAL***/
+#define GREEK_MESSAGES_ADD_REQ								6121
+#define GREEK_MESSAGES_VIEW_REQ								6122
+#define GREEK_MESSAGES_VIEW_RES								6123
+/*****************/
+
+/////////////For Greek Messages ///////////////////////////////////
+#define IC_GREEK_MESSAGES_VIEW_REQ          6124	//By Poonam//
+#define IC_GREEK_MESSAGES_HEADER			6125    //By Poonam//
+#define IC_GREEK_MESSAGES_DATA				6126	//By Poonam//
+#define IC_GREEK_MESSAGES_TRAILER			6127	//By Poonam//
+
+/************** by hiral  ***********/
+#define FISHING_DEFUALT			"0.00"
+
+#define ALGORITHM_START_TIMER		1111
+#define ALGORITHM_STOP_TIMER		1112
+
+/****** by hiral ******/
+#define COC_VERSION1				"1.0.0.1"
+#define COC_VERSION2				"1.0.0.2"
+#define COC_VERSION3				"1.0.0.3"
+#define COC_VERSION4				"1.0.0.4"
+#define COC_VERSION5				"1.0.0.5"
+/**********************/
+
+//**************** By Poonam : For OpenPosition 27Jan 2009 **********************//
+
+#define IC_GREEK_OPENPOSITION_VIEW_REQ			6130
+#define IC_GREEK_OPENPOSITION_HEADER			6131
+#define IC_GREEK_OPENPOSITION_DATA				6132
+#define IC_GREEK_OPENPOSITION_TRAILER			6133
+
+//*************************** End Of Poonam ************************************//
+//@#@Bhushan============================
+#define GETS_IV_VERSION				2
+#define F2FQUOTE_VERSION			3
+//======================================
+#define CONSIDER_PENDING_STATUS		0
+
+
+//*****************By Rahul M 26 March 2009 Start*****************//
+#define	GC_ARBITRAGE_LOGIN_REQ				6340
+#define GC_ARBITRAGE_LOGIN_RESP				6341
+#define	GC_ARBITRAGE_LOGOFF_REQ				6342
+#define GC_ARBITRAGE_LOGOFF_RESP			6343
+
+#define GC_ARBITRAGE_INST_REQ				6350
+#define GC_ARBITRAGE_INST_RESP				6351
+#define GC_ARB_ORD_INST_REQ					6352
+#define GC_ARB_ORD_INST_RESP				6353
+
+#define GC_ARB_NOTIFICATION					6354
+#define	GC_ARB_ABNORMAL_LOGOFF_REQ			6355
+#define	GC_ARB_ABNORMAL_LOGOFF_RES			6356
+
+#define GC_COC_QUOTE_RULE_ADD_REQ			6361
+#define GC_COC_QUOTE_RULE_ADD_RESP			6362
+#define GC_COC_QUOTE_RULE_MOD_REQ			6363
+#define GC_COC_QUOTE_RULE_MOD_RESP			6364
+#define GC_COC_QUOTE_RULE_DEL_REQ			6365
+#define GC_COC_QUOTE_RULE_DEL_RESP			6366
+
+
+#define GC_ROLLOVER_QUOTE_RULE_ADD_REQ		6367
+#define GC_ROLLOVER_QUOTE_RULE_ADD_RESP		6368
+#define GC_ROLLOVER_QUOTE_RULE_MOD_REQ		6369
+#define GC_ROLLOVER_QUOTE_RULE_MOD_RESP		6370
+#define GC_ROLLOVER_QUOTE_RULE_DEL_REQ		6371
+#define GC_ROLLOVER_QUOTE_RULE_DEL_RESP		6372
+
+#define GC_HISTORICAL_COCQUOTERULES_REQ				6450
+#define GC_HISTORICAL_COCQUOTERULES_HEADER			6451
+#define GC_HISTORICAL_COCQUOTERULES_DATA			6452
+#define GC_HISTORICAL_COCQUOTERULES_TRAILER			6453
+
+#define GC_HISTORICAL_ROLLOVERQUOTERULES_REQ		6454
+#define GC_HISTORICAL_ROLLOVERQUOTERULES_HEADER		6455
+#define GC_HISTORICAL_ROLLOVERQUOTERULES_DATA		6456
+#define GC_HISTORICAL_ROLLOVERQUOTERULES_TRAILER	6457
+
+#define ATS_NO				2
+#define NO_ATS				1
+#define ARB_START			1
+#define ARB_STOP			2
+#define RULE_MOD_BY_USER	1
+#define RULE_MOD_ON_TRADE	2
+#define RULE_MOD_ALL		3
+#define	RULE_MOD_ALL_LAST	4
+#define	ALREADY_LOGIN		5
+#define	ARB_DEL_ALL_RULE	6
+
+
+#define	SURV_REJECT				1000
+#define	TOT_QTY_ERR				1001
+#define ATS_EXIT				1002
+#define RULE_EXIST				1003
+#define INDEX_LIMIT_EXCEEDS		1004
+//*****************By Rahul M 26 March 2009  end*****************//
+
+//*****************By Rahul M 15 April 2009  Start*****************//
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_REQ			6550
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_HEADER		6551
+#define GC_HISTORICAL_BSE_TOKEN_MASTER_DATA			6552
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_TRAILER		6553
+
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_REQ			6554
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_HEADER		6555
+#define GC_HISTORICAL_MCX_TOKEN_MASTER_DATA			6556
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_TRAILER		6557
+//*****************By Rahul M 15 April 2009  end*****************//
+
+
+#define GC_EXCHANGE_SEGMENT_DETAILS		5407 //By Rahul magar On 17April2009
+
+#define NSE_EQ		101
+#define NSE_FO		102
+#define	BSE_EQ		201
+#define	MCX_COM		303
+#define NCDEX_COM	403
+
+#define EXCHANGE_DIV_COUNTER	100000000
+
+#define GC_EXCHANGE_SEGMENT_DETAILS		5407 //By Rahul magar On 17April2009
+
+
+/*** By hiral on 17-April-2009 ****/
+#define GC_ARBSURV_ADD_REQ				6700
+#define	GC_ARBSURV_ADD_RES				6701
+#define GC_ARBSURV_MOD_REQ				6702
+#define GC_ARBSURV_MOD_RES				6703
+#define GC_ARBSURV_DEL_REQ				6704
+#define	GC_ARBSURV_DEL_RES				6705
+#define GC_HISTORICAL_ARBSURV_REQ		6706
+#define GC_HISTORICAL_ARBSURV_HEADER	6707
+#define GC_HISTORICAL_ARBSURV_DATA		6708
+#define GC_HISTORICAL_ARBSURV_TRAILER	6709
+#define GC_ARBSURV_VIEW_REQ				6710
+#define	GC_ARBSURV_VIEW_RES				6711
+
+#define GC_BANSCRIP_ADD_REQ				6712
+#define GC_BANSCRIP_ADD_RES				6713
+#define	GC_BANSCRIP_MOD_REQ				6714
+#define GC_BANSCRIP_MOD_RES				6715
+#define	GC_BANSCRIP_DEL_REQ				6716
+#define GC_BANSCRIP_DEL_RES				6717
+#define GC_HISTORICAL_BANSCRIP_REQ		6718
+#define GC_HISTORICAL_BANSCRIP_HEADER	6719
+#define GC_HISTORICAL_BANSCRIP_DATA		6720
+#define GC_HISTORICAL_BANSCRIP_TRAILER	6721
+#define GC_BANSCRIP_VIEW_REQ			6722
+#define GC_BANSCRIP_VIEW_RES			6723
+/**********************************/
+
+//*****************By Rahul M 15 April 2009  Start*****************//
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_REQ			6550
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_HEADER		6551
+#define GC_HISTORICAL_BSE_TOKEN_MASTER_DATA			6552
+#define	GC_HISTORICAL_BSE_TOKEN_MASTER_TRAILER		6553
+
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_REQ			6554
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_HEADER		6555
+#define GC_HISTORICAL_MCX_TOKEN_MASTER_DATA			6556
+#define	GC_HISTORICAL_MCX_TOKEN_MASTER_TRAILER		6557
+//*****************By Rahul M 15 April 2009  end*****************//
+
+
+#define GC_EXCHANGE_SEGMENT_DETAILS		5407 //By Rahul magar On 17April2009
+
+#define GETS_CLIENT						10
+#define GETS_ROLL_OVER					11
+#define GETS_COC						12
+#define GETS_QUOTE_ROLL_OVER			13
+#define GETS_QUOTE_COC					14
+#define GETS_IV_ORDER_ENTRY				15
+#define GETS_IV_DELTA_HEDGING			16
+#define GETS_SLICE_ORDER				17
+#define GETS_IV_INTHEMONEY				18
+#define GETS_IV_SPREAD					19
+#define GETS_CONSTANT_ORDER_GENRATE		20 //For Constant Order generation Of Month 2 Month Arbitrage. Order Genraete from RollOverLimits Rule
+#define GETS_IV							21 //Not Include Spread IV Include GETS_IV_ORDER_ENTRY,GETS_IV_DELTA_HEDGING,GETS_IV_INTHEMONEY /*Mahendra*/
+
+
+#define IC_GREEK_ADD_RULE_REQ		6313
+#define IC_GREEK_MODIFY_RULE_REQ	6314
+#define IC_GREEK_DELETE_RULE_REQ	6315
+#define IC_GREEK_START_RULE_REQ		6316
+#define IC_GREEK_STOP_RULE_REQ		6317
+
+
+
+#define GETS_MCX_QUOTE_ROLLOVER			20
+#define GETS_BASKET						23
+
+#define BC_GREEK_TOP_SCRIPT_TOKEN_RES	6252	//added by ashwini on 22 April 2009
+#define GC_EXCHANGE_SEGMENT_DETAILS		5407 //By Rahul magar On 17April2009
+
+
+
+
+
+
+#define GC_EXCHANGE_SEGMENT_DETAILS		5407 //By Rahul magar On 17April2009
+
+#define GETS_CLIENT						10
+#define GETS_ROLL_OVER					11
+#define GETS_COC						12
+#define GETS_QUOTE_ROLL_OVER			13
+#define GETS_QUOTE_COC					14
+#define GETS_IV_ORDER_ENTRY				15
+#define GETS_IV_DELTA_HEDGING			16
+#define GETS_SLICE_ORDER				17
+#define GETS_IV_INTHEMONEY				18
+#define GETS_IV_SPREAD					19
+
+/////////////////Added By RhaulJ for Sequence Number
+#define IC_HISTORICAL_SEQ_NSEFO_ORDER_REQ						5876
+#define IC_HISTORICAL_SEQ_NSEFO_ORDER_HEADER					5877
+#define IC_HISTORICAL_SEQ_NSEFO_ORDER_DATA						5878
+#define IC_HISTORICAL_SEQ_NSEFO_ORDER_TRAILER					5879
+
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_ORDER_REQ					5880
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_ORDER_HEADER				5881
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_ORDER_DATA					5882
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_ORDER_TRAILER				5883
+
+#define IC_HISTORICAL_SEQ_NSEFO_PENDINGORDERS_REQ				5884
+#define IC_HISTORICAL_SEQ_NSEFO_PENDINGORDERS_HEADER			5885
+#define IC_HISTORICAL_SEQ_NSEFO_PENDINGORDERS_DATA				5886
+#define IC_HISTORICAL_SEQ_NSEFO_PENDINGORDERS_TRAILER			5787
+
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_PENDINGORDERS_REQ			5888		
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_PENDINGORDERS_HEADER		5889
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_PENDINGORDERS_DATA			5890
+#define IC_HISTORICAL_SEQ_NSEFO_SPD_PENDINGORDERS_TRAILER		5891
+
+#define IC_HISTORICAL_SEQ_NSEFO_TRADES_REQ						5892
+#define IC_HISTORICAL_SEQ_NSEFO_TRADES_HEADER					5893
+#define IC_HISTORICAL_SEQ_NSEFO_TRADESS_DATA					5894
+#define IC_HISTORICAL_SEQ_NSEFO_TRADES_TRAILER					5895
+
+
+
+
+#define IC_HISTORICAL_SEQ_MCXCOM_ORDER_REQ						6724					
+#define IC_HISTORICAL_SEQ_MCXCOM_ORDER_HEADER					6725
+#define IC_HISTORICAL_SEQ_MCXCOM_ORDER_DATA						6726
+#define IC_HISTORICAL_SEQ_MCXCOM_ORDER_TRAILER					6727					
+
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_ORDER_REQ					6728
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_ORDER_HEADER				6729
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_ORDER_DATA					6730
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_ORDER_TRAILER				6731
+
+#define IC_HISTORICAL_SEQ_MCXCOM_PENDINGORDERS_REQ				6732
+#define IC_HISTORICAL_SEQ_MCXCOM_PENDINGORDERS_HEADER			6733
+#define IC_HISTORICAL_SEQ_MCXCOM_PENDINGORDERS_DATA				6734
+#define IC_HISTORICAL_SEQ_MCXCOM_PENDINGORDERS_TRAILER			6735
+
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_PENDINGORDERS_REQ			6736
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_PENDINGORDERS_HEADER		6737
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_PENDINGORDERS_DATA			6738
+#define IC_HISTORICAL_SEQ_MCXCOM_SPD_PENDINGORDERS_TRAILER		6739
+
+
+#define IC_HISTORICAL_SEQ_MCXCOM_TRADES_REQ						6740
+#define IC_HISTORICAL_SEQ_MCXCOM_TRADES_HEADER					6741
+#define IC_HISTORICAL_SEQ_MCXCOM_TRADESS_DATA					6742
+#define IC_HISTORICAL_SEQ_MCXCOM_TRADES_TRAILER					6743
+////////////////////////////////////////////////////////////////////////
+
+
+
+#define IC_HISTORICAL_SEQ_NSEEQ_ORDER_REQ						6744
+#define IC_HISTORICAL_SEQ_NSEEQ_ORDER_HEADER					6745
+#define IC_HISTORICAL_SEQ_NSEEQ_ORDER_DATA						6746
+#define IC_HISTORICAL_SEQ_NSEEQ_ORDER_TRAILER					6747
+
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_ORDER_REQ					6748
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_ORDER_HEADER				6749
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_ORDER_DATA					6750
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_ORDER_TRAILER				6751
+
+#define IC_HISTORICAL_SEQ_NSEEQ_PENDINGORDERS_REQ				6752
+#define IC_HISTORICAL_SEQ_NSEEQ_PENDINGORDERS_HEADER			6753
+#define IC_HISTORICAL_SEQ_NSEEQ_PENDINGORDERS_DATA				6754
+#define IC_HISTORICAL_SEQ_NSEEQ_PENDINGORDERS_TRAILER			6755
+
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_PENDINGORDERS_REQ			6756		
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_PENDINGORDERS_HEADER		6757
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_PENDINGORDERS_DATA			6758
+#define IC_HISTORICAL_SEQ_NSEEQ_SPD_PENDINGORDERS_TRAILER		6759
+
+
+#define IC_HISTORICAL_SEQ_NSEEQ_TRADES_REQ						6760
+#define IC_HISTORICAL_SEQ_NSEEQ_TRADES_HEADER					6761
+#define IC_HISTORICAL_SEQ_NSEEQ_TRADES_DATA						6762
+#define IC_HISTORICAL_SEQ_NSEEQ_TRADES_TRAILER					6763
+#define	GC_HISTORICAL_NCDEX_TOKEN_MASTER_REQ		6558
+#define	GC_HISTORICAL_NCDEX_TOKEN_MASTER_HEADER		6559
+#define GC_HISTORICAL_NCDEX_TOKEN_MASTER_DATA		6560
+#define	GC_HISTORICAL_NCDEX_TOKEN_MASTER_TRAILER	6561
+
+#define GREEK_NCDEX_PARTICIPANTMASTER_REQ			6562
+#define GREEK_NCDEX_PARTICIPANTMASTER_HEADER		6563
+#define GREEK_NCDEX_PARTICIPANTMASTER_DATA			6564
+#define GREEK_NCDEX_PARTICIPANTMASTER_TRAILER		6565
+
+
+//************* Added By Sweety For GATS Automated Trading ***************/
+#define IC_GREEK_ADD_RULE_REQ		6313
+#define IC_GREEK_MODIFY_RULE_REQ	6314
+#define IC_GREEK_DELETE_RULE_REQ	6315
+#define IC_GREEK_START_RULE_REQ		6316
+#define IC_GREEK_STOP_RULE_REQ		6317
+//************* Added By Sweety For GATS Automated Trading ***************/
+
+//NCDEX
+#define NCDEX_COM_SEQUENCE_START							403000000
+#define NCDEX_COM_SEQUENCE_END								404000000
+
+#define IC_HISTORICAL_SEQ_NCDEX_ORDER_REQ						6876
+#define IC_HISTORICAL_SEQ_NCDEX_ORDER_HEADER					6877
+#define IC_HISTORICAL_SEQ_NCDEX_ORDER_DATA						6878
+#define IC_HISTORICAL_SEQ_NCDEX_ORDER_TRAILER					6879
+
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_ORDER_REQ					6880
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_ORDER_HEADER				6881
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_ORDER_DATA					6882
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_ORDER_TRAILER				6883
+
+#define IC_HISTORICAL_SEQ_NCDEX_PENDINGORDERS_REQ				6884
+#define IC_HISTORICAL_SEQ_NCDEX_PENDINGORDERS_HEADER			6885
+#define IC_HISTORICAL_SEQ_NCDEX_PENDINGORDERS_DATA				6886
+#define IC_HISTORICAL_SEQ_NCDEX_PENDINGORDERS_TRAILER			6787
+
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_PENDINGORDERS_REQ			6888		
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_PENDINGORDERS_HEADER		6889
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_PENDINGORDERS_DATA			6890
+#define IC_HISTORICAL_SEQ_NCDEX_SPD_PENDINGORDERS_TRAILER		6891
+
+#define IC_HISTORICAL_SEQ_NCDEX_TRADES_REQ						6892
+#define IC_HISTORICAL_SEQ_NCDEX_TRADES_HEADER					6893
+#define IC_HISTORICAL_SEQ_NCDEX_TRADESS_DATA					6894
+#define IC_HISTORICAL_SEQ_NCDEX_TRADES_TRAILER					6895
+
+#define GS_START_EXCEL					WM_USER + 1081
+#define GS_STOP_EXCEL					WM_USER + 1082
+#define GS_UPDATE_EXCEL					WM_USER + 1083
+#define GC_RELEASE						WM_USER	+ 1084
+#define GC_WAIT_OVER					WM_USER	+ 1085
+#define GC_PLACE_DATA					WM_USER	+ 1086
+#define GC_SEND_BROADCAST				WM_USER	+ 1087
+
+
+
+
+#define STOPRULE		5
+#define STARTRULE		6
+
+
+#define INSERTED_STATE			0
+#define START_STATE				1
+#define STOPPED_STATE			2
+#define PARTIALY_STOP_STATE		3
+
+#define IC_ARB_ORDER_REQ					7501			/// 2000
+#define IC_ARB_ORDER_RES					7502			/// 2001
+#define IC_ARB_ORDER_ERROR_RES				7516			/// 2231
+#define IC_ARB_ORDER_MOD_REQ				7505			/// 2040
+#define IC_ARB_ORDER_MOD_RES				7506			/// 2041
+#define IC_ARB_ORDER_MOD_REJ				7507			/// 2042
+#define IC_ARB_ORDER_CANCEL_REQ				7508			/// 2070
+#define IC_ARB_ORDER_CANCEL_RES				7509			/// 2071
+#define IC_ARB_ORDER_CANCEL_REJ				7510			/// 2072
+#define IC_ARB_ORDER_CONFIRMATION_RES		7511			/// 2073
+#define IC_ARB_ORDER_MOD_CONFIRM_RES		7512			/// 2074
+#define IC_ARB_ORDER_CANCEL_CONFIRM_RES		7513			/// 2075
+#define IC_ARB_NEG_ORDER_CANCEL				7514			/// 2076
+#define IC_ARB_ORDER_FREEZE_RES				7515			/// 2170
+
+#define MANAGER_NEW_ARB_ORD_RES				7520
+#define MANAGER_MODIFY_ARB_ORD_RES			7521	
+#define MANAGER_CANCEL_ARB_ORD_RES			7522

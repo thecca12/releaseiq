@@ -1,0 +1,91 @@
+
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 28-Apr-2026  and Current Date : 29-Apr-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 29-Apr-2026  and Current Date : 30-Apr-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 30-Apr-2026  and Current Date : 04-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 04-May-2026  and Current Date : 05-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 05-May-2026  and Current Date : 11-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 11-May-2026  and Current Date : 12-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 12-May-2026  and Current Date : 13-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 13-May-2026  and Current Date : 14-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 14-May-2026  and Current Date : 15-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 15-May-2026  and Current Date : 18-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 18-May-2026  and Current Date : 19-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 19-May-2026  and Current Date : 20-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 20-May-2026  and Current Date : 21-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 21-May-2026  and Current Date : 22-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (49) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (16) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 22-May-2026  and Current Date : 23-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 23-May-2026  and Current Date : 25-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 25-May-2026  and Current Date : 26-May-2026
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\DATABASE 
+Try to Remove All files from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading
+Removed All (0) files successfully from V:\Releases\2025\Optimus\0.0.2\Client\127\CTCLClient_AKSHAY\Downloading 
+Remove All files from DATABASE & Downloading folder, Previous Date : 26-May-2026  and Current Date : 27-May-2026

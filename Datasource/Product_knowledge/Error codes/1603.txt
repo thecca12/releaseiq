@@ -1,0 +1,14 @@
+Greek F7 Testing:
+
+Tested Greek Trade Trail window ,modify strategy name ,qty,price,save Excel,checked records in DB,in NSE EQ/FO/CD seg. 2
+
+
+Tested Greek Open position file upload funcationality ,mkt watch calcu for diff IV,checked postions,checked records in DB 3.30
+
+
+Retested Bug Greek Auto daysleft displayed wrong incase reduce days functionality is applied and change days manually.checked mkt watch calcu with diff IV's,summary report,checked records in DB  4
+
+
+Upadated Release mantis sheet note with Latest patches.   0.30
+
+

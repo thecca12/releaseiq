@@ -1,0 +1,14 @@
+Greek F7 Testing:
+Tested Greek Net Position window ,with all filters,with calculation.  1.30
+
+Tested Greek summary window,sorting ,calculation,with client relogin 2.30
+
+
+Tested Greek restore Todays data Funcationality ,checked trade entries in DB.  1.30
+
+
+Tested Greek Trade Trail window,modify Strategyname,Qty,Pirce ,cross checked values on Greek Mkt watch and in DB.2.30
+
+
+Tested Greek Positions with online backup ,Restore Backup file form server with client relogin. 1.30 
+  

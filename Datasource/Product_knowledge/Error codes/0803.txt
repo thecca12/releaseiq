@@ -1,0 +1,7 @@
+Greek F7 Testing:
+Tested Greek mkt watch calcu for Auto left days setting with diff IV.  3.30
+
+
+Tested Greek Setting VAR Calcu,Net Greek calcu,EQ -ve Qty Alert window Greek Details window.   4
+
+training on Apply Rate setting,EQ -ve Qty Alert ,Apply Bhav copy setting ,update mkt calcu ,update VAR calcu.  1 

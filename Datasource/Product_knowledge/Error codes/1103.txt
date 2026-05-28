@@ -1,0 +1,21 @@
+Summary: In Greek, Greek valuation (Diff MTOM,Time Value) field should be Display in Greek marketwatch.
+
+Description: In Greek, Greek valuation (Diff MTOM,Time Value) field should be Display in Greek marketwatch.
+
+1. Login Greek.
+2. Create portfolio.
+3. You will see that,  in Greek Market watch  (Diff MTOM,Time Value) Filed are not displayed proper.
+
+
+Tested Greek  Apply rate setting,  with mkt watch  calcu for diff IV setting,checked summary report window,sorting with client relogin.
+3.
+
+Tested trade file uploading method in NSE EQ/FO/CD segment ,cross checked data in database.
+
+2.5
+Tested greek Manually create portfolio funcationality,mkt watch calcu with diff IV setting,checked  summary report window,Last IV.
+
+3.5
+
+
+

@@ -1,0 +1,16 @@
+
+
+In Greek, Required "IV as per auto left days" Funcationality in Greek settings window.
+
+1.Login Greek .
+2.Click on Setting menu.
+3.Click on Greek setting.
+4.Click on Miscellaneous menu.
+5.you will see that 'IV as per auto left days funcationality ' checkbox  is not present .
+
+
+0032654: In Greek, Required "IV as per auto left days" Functionality in Greek settings window.
+
+
+
+

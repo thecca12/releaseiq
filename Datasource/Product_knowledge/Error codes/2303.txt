@@ -1,0 +1,13 @@
+Greek F7 Testing:
+Tested greek  Auto left days funcationality with mkt watch calcu, 
+Tested greek  Auto left days funcationality with Reduced days with mkt watch calcu.
+
+
+Tested Greek open position upload setting with greek format,cross checked positions,mkt watch calcu,Last IV,checked records in DB
+
+Tested greek  hide Suqare off position funcationality ,checked positions in summary report window.
+
+
+file mein cd ka record hi nahi hai to kaha se calc hoga hero? ok sir
+
+desktop wala file folder mein dalo and relogin karo client oksir

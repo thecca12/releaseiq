@@ -1,0 +1,17 @@
+Greek testing:1902_Rel
+1)Tested mkt watch calcu for Diff IV in 1902_fusion
+2)Tested summary report with sorting,calcu
+3)Tested Net position
+4)Tested Trad file upload,Greek Backup
+5)Tested Hide portfolio window with client relogin
+6)wrong order no show in trail save xls file.
+7)Calcu of MTOM,DaysMTOM,DiffMTOM.
+
+
+Greek testing:2202_Fixbse
+1)Tested mkt watch calcu for Diff IV in 1902_fusion
+2)Tested summary report with sorting,calcu
+3)Tested Trad file upload,Greek Backup.Eq file format wrong pop up shows.
+4)Tested Hide portfolio window with client relogin
+5)Tested net position window ,save file functinality.
+6)wrong order no show in saved xls file in trail window. 

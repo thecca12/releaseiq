@@ -1,0 +1,10 @@
+Greek F7 Testing:
+Tested Net Greek window Gamma,Theta,Vega ,Delta calcu with diff IV setting.  2
+
+Tested Greek Details window with total diff,total actual,total market calcu with diff IV setting.    3
+
+Tested Greek Positions after  mapping ,checked greek mkt watch calculation for diff IV and cross checked Last IV with client mkt watch Last IV   3
+
+
+Tested summary report window ,sorting ,with calculation.Tested Net Greek Position window ,cross checked position values,Net qty,Net Values.1.30
+

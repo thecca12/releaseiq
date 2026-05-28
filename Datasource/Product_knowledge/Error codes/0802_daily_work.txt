@@ -1,0 +1,15 @@
+Done BOD on server 5.took patches of Fusion_0901 Release from mail.
+updated patches on Client side.
+Added new patches in Daily Mantis sheet and assigned testers and also update date and time in mantis sheet.
+Tested Greek F7 market watch.
+Checked CTCL client trades are showing or not on Greek Market watch.
+Checked Calculation Of D/N values,Delta Val,Gamma Val,Theta Val,Balance,MTOM ,Days MTOM.
+Tested settings of greek F7 given below,
+1)create portfolio 2)Delete Portfolio 3) hide portfolio 4) Hide Net greek 5) greek setting window.
+cross checked greek mkt watch value with greek simulation report window .
+Created Manual order portfolio of diff scrips.
+cross checked values in online mode and offline mode.
+learned realised IV,USER IV,User IV Diff ,strike IV.
+
+
+ 

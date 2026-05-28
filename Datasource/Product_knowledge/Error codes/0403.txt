@@ -1,0 +1,12 @@
+Greek F7 Testing:
+Tested greek position using trade file uploading method,Restore todays data with  client relogin .2.30
+
+Tested greek Get online data,New portfolio as per ,simulation report,currency* regular setting setting with client relogin.  2.30
+
+
+
+Tested greek mkt watch calcu for StrikeIV,RealizedIV,userIV setting.
+cross checked Last IV,LTP values of greek mkt watch with client mkt watch. 3
+
+updated mantis sheet with latest patches.   0.30
+

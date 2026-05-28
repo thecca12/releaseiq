@@ -1,0 +1,7 @@
+Tested GreekIV Setting Window:
+Tested userIV recordwise and user IV Modify Diff modification with calaculations.
+Tested calculations For Accounting Field.
+
+
+
+Load testing on server 19 to check Client Communicator crash issue with multiple client login/logoff process.

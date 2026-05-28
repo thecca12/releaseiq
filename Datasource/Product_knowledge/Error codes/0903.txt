@@ -1,0 +1,5 @@
+Greek F7 Testing:
+Tested Greek VAR calcu for diff IV setting,with changes in percentage for  Buy,sell side.   4
+
+
+Tested Greek open position upload Functionality ,mkt watch calcu with diff IV ,summary report window,cross checked data in DB.4.30

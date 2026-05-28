@@ -1,0 +1,11 @@
+Greek F7 Testing:
+Tested greek mkt watch calcu for diff IV setting for NSE EQ,FO ,CD seg,cross checked data in DB.3.30
+
+Tested greek summary report window ,sorting ,calculation with client relogin,for NSE EQ,FO,CD.2.30
+
+
+Tested Greek Hied portfolio window with client relogin ,checked data in DB,cross checked position after unhide .1.30
+
+
+Tseted Net Greek window delta,Theta,Vega,Gamma calcu.  1.30
+

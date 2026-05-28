@@ -1,0 +1,8 @@
+
+Greek F7 Testing
+Tested greek Trade file upload func with mkt watch calcu ,cross checked Last IV with Base EQ/F,checked records in DB.
+Tested greek summary report with EQ/F base ,Bal ,Mtom ,Theta ,Vega calcu.save file ,tested hide squareoff position func .
+
+Tested MTOM.Days MTOM,Diff MTOM calcu with new and old Logic.
+Tested utility Delete Trade data ,checked positions after upload .
+Tested Greek Net position with filters ,calcu ,save Excel file cross checked positions

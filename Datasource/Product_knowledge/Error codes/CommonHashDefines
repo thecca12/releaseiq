@@ -1,0 +1,1435 @@
+//#define VERSION_NUMBER   "3.1.1" //@@Farhan Shaikh changed for Version
+
+
+#define DEFAULT_STRATEGY_NAME			"GREEKSOFT"		//@#@Bhushan
+#define IC_GREEK_CREATE_GSATS_LOG		6312	//Added To Create GSATS Arbitrage Order Logs By @#@Bhushan
+//****************** For IPC **********************
+
+/*!
+	\author:	Bhushan R. Chaudhari
+	\date:		25-Sept-2013
+	\brief:		MTOM check on admin and stop arbitrage trading 
+				if exceeds MTOM
+!*/
+//#define MTOM_CHECK_ON_ADMIN	//@#@Bhushan: MTOM check on admin 20-Sep-2013
+
+#define BC_MKTWATCH_INFORMATION_TCP	9856
+#define BC_MKTWATCH_UPDATE_NEW		9857
+
+#define ATS								301 //RSM REMOVED as of no use //** Added By Sweety
+#define FOR_TEST						50   //RSM CHNG reused Ats app. no. // BY VISHAL CHNG RSM
+
+#define MANAGER						8
+#define MCXBROADCAST							0
+#define NSEINTERACTIVE					1
+#define CLIENTCOMMUNICATOR				2
+#define DATABASEMANAGER					3
+#define EQBROADCAST						4
+#define FOBROADCAST						5
+#define	BSEINTERACTIVE					6
+#define MCXINTERACTIVE					7
+#define BSEBROADCAST				9
+#define NCDEXINTERACTIVE				10
+#define NCDEXBROADCAST					11
+#define NSE_CURRENCY_BROADCAST			12
+#define MCXSXBROADCAST					13	//as For MCXSX Exchange By Ganesh Tupe on 28 OCT 2010
+#define	ORDERBOOK						14
+#define USE_BROADCAST					15  // Replace by PRAVIN BCASTDATAPROCESSOR with USE_BROADCAST on 28-SEPT-2011
+#define USE_INTERACTIVE					16  // Added by PRAVIN on 28-SEPT-2011
+#define DGCXBROADCAST					17 // Added by Vaibhav Patil for DGCX
+#define DGCXINTERACTIVE					18
+
+#define	NO_OF_APPLICATION				19  //this is actual applications i.e. max application no.
+											//we can use actual application in the communication but it will be per application since it is postponed
+
+
+
+
+#define GETS_CLIENT_APP					111
+
+///// FOR GREEK IPC COMMUNICATION  ////////////////////////////////////////////////////
+
+#define SH_EQ_BROADCAST				0
+#define SH_GATS						1
+#define SH_GATS_NSE_INTERACTIVE		SH_GATS					//@#@Bhushan
+#define SH_NSE_INTERACTIVE			2
+#define SH_COMMUNICATOR				3
+#define SH_FO_BROADCAST				4
+#define SH_GATS_COMMUNICATOR		5
+#define SH_NCDEX_BROADCAST			6
+#define SH_NCDEX_INTERACTIVE		7
+#define SH_NCDEX_INTERACTIVE_GATS	SH_NCDEX_INTERACTIVE	//@#@Bhushan
+#define SH_GATS_NCDEX_EXCHANGE		8
+#define SH_BSE_BROADCAST			9
+#define SH_BSE_INTERACTIVE			10
+#define SH_GATS_BSE_EXCHANGE		11
+#define SH_NSE_CDS_BROADCAST		12 //Added by RahulJ on 3rd Aug 2010
+//MCXSX
+#define SH_MCXSX_BROADCAST			13
+#define SH_GATS_MCX_INTERACTIVE	    14
+#define SH_MCX_INTERACTIVE_GATS	    15  
+
+#define SH_NSE_ORDER_BOOK_BROADCAST		16
+#define SH_NSE_FO_ORDER_BOOK_BROADCAST	17 //Added by RahulJ 31st Dec 2010 For sending NSE Fo Tick by Tick Broadcast   
+#define SH_GATS_FO_ORDER_BOOK_EXCHANGE	18
+#define SH_NSE_JOBBING_BROADCAST		19 //Added by Arab on 28-10-2010
+
+#define SH_NSE_CD_ORDER_BOOK_BROADCAST	20 //Added by RahulJ 31st Dec 2010 For sending NSE Fo Tick by Tick Broadcast   
+#define SH_GATS_CD_ORDER_BOOK_EXCHANGE	21//comment by vishal I don't found use of this slot (slot added by rahul joshi) //we think to remove this slot after conformation
+#define SH_NSE_INTERACTIVE_DBMANAGER    22 //Added By mahendra on 22 Nov 2011 Send Data from NSE Intarctive to Database Manager
+#define SH_BSE_INTERACTIVE_DBMANAGER    23 //Added By mahendra on 22 Nov 2011 Send Data from BSE Intarctive to Database Manager
+#define SH_USE_BROADCAST				24 // ADDED by PRAVIN 28-SEPT-2011
+#define SH_USE_INTERACTIVE				25 // ADDED by PRAVIN 28-SEPT-2011
+#define SH_GATS_USE_INTERACTIVE         26 // anuj dantara for use 18-11-11
+#define SH_MCX_BROADCAST				27 //RSM to send data from MCXBroadcast and it is getting received by GATS(GSATS.dll) 
+#define SH_DGCX_BROADCAST				28 //Added By Arab on 10 May 2012 for DGCX Broadcast.
+#define SH_DGCX_INTERACTIVE				29
+#define SH_DGCX_GATS					30
+
+#define	NO_OF_SH_CHANNELS				31	//this is actual channel + 1 i.e. max channel no. + 1
+
+#define MEMORY_SLOT				1024	//@#@Bhushan
+#define	INTERNAL_SLOTS			10000
+#define SHARED_MEMORY_SIZE		(INTERNAL_SLOTS * MEMORY_SLOT) * NO_OF_SH_CHANNELS//add 2 for NSECD TBT AND GATS by vishal //RSM CHNG //Modifer RahulJ original Value was 13 updated to 15 For sending FoTickbyTick Broadcast
+//////////////////////////////////////////////////////////////////////////////////////
+
+#define GREEKIPC
+#define IPC_HWND		100
+#define IPC_CLOSE		101
+/********************************************************************/
+/*	@#@Bhushan			:	For lOurOrder Generation For Tracking	*/
+/*	Manual Orders		:	   0000001		To		   4967295		*/
+/*	Automated Orders	:	   4967296		To		1004967295		*/
+/*	Arbitrage Orders	:	1004967295		To		4294967295		*/
+/********************************************************************/
+//============================================================================================
+//@#@Bhushan : Ignore These Ranges ===========================================================
+
+#define GREEK_FORMAT_DATA
+
+	#define GATS_AUTOMATEDORDERNOSTARTDIGIT		140000000 
+	#define GATS_MAXAUTOMATEDORDERNODIGIT		199999999 
+
+	#define GOTS_MIN_IVORDER_OURORDNO			200000000
+	#define GOTS_MAX_IVORDER_OURORDNO			249999999
+
+	#define GOTS_MIN_ITMORDER_OURORDNO			250000000
+	#define GOTS_MAX_ITMORDER_OURORDNO			299999999
+
+	#define GOTS_MIN_SPREADIV_OURORDNO			300000000
+	#define GOTS_MAX_SPREADIV_OURORDNO			333333330
+
+	#define GOTS_MIN_THEOROTICAL_OURORDNO		333333331
+	#define GOTS_MAX_THEOROTICAL_OURORDNO		366666660
+
+	#define GOTS_MIN_ABSSPREAD_OURORDNO			366666661
+	#define GOTS_MAX_ABSSPREAD_OURORDNO			399999999
+
+	#define GOTS_MIN_OPTSPREAD_OURORDNO			400000000
+	#define GOTS_MAX_OPTSPREAD_OURORDNO			499999999
+
+	#define GOTS_MIN_TRIANGLE_OURORDNO			500000000
+	#define GOTS_MAX_TRIANGLE_OURORDNO			599999999
+
+	#define GOTS_MIN_BUTTERFLY_OURORDNO			600000000
+	#define GOTS_MAX_BUTTERFLY_OURORDNO			699999999
+
+	#define GOTS_MIN_SLICEORD_OURORDNO			700000000
+	#define GOTS_MAX_SLICEORD_OURORDNO			749999999	//799999999
+
+	#define GOTS_MIN_BSELEIPS_OURORDNO			750000000
+	#define GOTS_MAX_BSELEIPS_OURORDNO			799999999
+
+	#define GOTS_MIN_BOXSTRATEGY_OURORDNO		800000000
+	#define GOTS_MAX_BOXSTRATEGY_OURORDNO		899999999
+
+	#define GREEK_ATS_ORDERNO_START				900000000
+	#define	GREEK_ATS_ORDERNO_END				999999999
+
+//@#@Bhushan : Ignore These Ranges ===========================================================
+//@#@Bhushan : Active lOurOrderNumber Generation Code ========================================
+
+	#define MAX_MANUAL_OURORD_NO				4967294						//By @#@Bhushan
+	#define MIN_AUTOMATED_OURORD_NO				(MAX_MANUAL_OURORD_NO + 1)	//By @#@Bhushan
+
+	#define BASKET_ORDERNO_START				4967295
+	#define BASKET_ORDERNO_END					20000000	//139999999
+
+	#define ETF_ORDERNO_START					50000001
+	#define ETF_ORDERNO_END						69999999	//100000000		//By @#@Bhushan On 11-Oct-2012
+
+	#define DYNAMIC_DELTA_MIN_OURORDNO			70000000	//By @#@Bhushan On 11-Oct-2012
+	#define DYNAMIC_DELTA_MAX_OURORDNO			75000000	//By @#@Bhushan On 11-Oct-2012
+
+	#define SQUAREOFF_ORDERNUMBER_START			100000001
+	#define SQUAREOFF_ORDERNUMBER_END			139999999
+
+	#define IOB_ORDERNUMBER_START				(BASKET_ORDERNO_END + 1)
+	#define IOB_ORDERNUMBER_END					(ETF_ORDERNO_START - 1)
+
+	#define GRAPH_ORDERNO_START					2967295
+	#define GRAPH_ORDERNO_END					3967295
+
+	#define REVERSEORDERSTART					3000000
+	#define REVERSEORDEREND						4967294
+	
+#define APPLY_ORDER_RANGE
+
+	#define JOBBING_NORMALORDSTARTSEQ			900000000
+	#define JOBBING_TOTAL_RANGE					99999999L
+	#define JOBBING_ORDER_TYPE_RANGE			1L
+	#define JOBBING_RULE_RANGE					50000L			// 50,000 Rules. Maximum orders generated for each rule 2000 
+	#define JOBBING_ORDER_RANGE					(((JOBBING_TOTAL_RANGE/JOBBING_ORDER_TYPE_RANGE)/JOBBING_RULE_RANGE))
+	#define JOBBING_INERMEDIATE					((JOBBING_TOTAL_RANGE / JOBBING_ORDER_TYPE_RANGE))
+
+	#define GetJobbingOrderNumber(OrderType,Ruleno,OrderSeq)\
+		((OrderType * JOBBING_INERMEDIATE) + ((Ruleno * JOBBING_ORDER_RANGE)+OrderSeq)+ JOBBING_NORMALORDSTARTSEQ)
+
+	#define GetJobbingRuleNo(lOurOrderNumber)\
+		((((lOurOrderNumber - JOBBING_NORMALORDSTARTSEQ) % JOBBING_INERMEDIATE) / JOBBING_ORDER_RANGE) - (((lOurOrderNumber - JOBBING_NORMALORDSTARTSEQ) % JOBBING_ORDER_RANGE) / JOBBING_INERMEDIATE) % 1)
+
+#define ARBITRAGETRACKING
+
+	#define NORMALORDERNOSTARTSEQUENCE			4967295
+	#define AUTOMATEDSTARTSEQUENCE				1004967295
+	#define TOTAL_RANGE							3290000000UL	//4290000000UL
+	#define ORDER_TYPE_RANGE					2UL
+	#define RULE_RANGE							250000UL
+	#define ORDER_RANGE							(((TOTAL_RANGE / ORDER_TYPE_RANGE) / RULE_RANGE))
+	#define INERMEDIATE							((ORDER_RANGE * RULE_RANGE))
+
+	#define GetOrderNumber(OrderType,Ruleno,OrderSeq)\
+		((OrderType * INERMEDIATE) + ((Ruleno * ORDER_RANGE) + OrderSeq) + AUTOMATEDSTARTSEQUENCE)
+
+	#define GetRuleStartingCounterRange(lRuleNumber)\
+		((lRuleNumber * ORDER_RANGE) + AUTOMATEDSTARTSEQUENCE)
+
+	#define GetRuleStartingAgainstRange(lRuleNumber)\
+		((INERMEDIATE) + (lRuleNumber * ORDER_RANGE) + AUTOMATEDSTARTSEQUENCE)
+
+	#define GetRuleNo(lOurOrderNumber)\
+		((((lOurOrderNumber - AUTOMATEDSTARTSEQUENCE) % INERMEDIATE) / ORDER_RANGE) - (((lOurOrderNumber - AUTOMATEDSTARTSEQUENCE) % ORDER_RANGE) / INERMEDIATE) % 1)
+
+	#define GetOrderSequence(lOurOrderNumber)\
+		(((lOurOrderNumber - AUTOMATEDSTARTSEQUENCE) % INERMEDIATE) % ORDER_RANGE)
+
+//@#@Bhushan : Active lOurOrderNumber Generation Code ========================================
+//============================================================================================
+
+#define SMALL_STRUCTURE //comment it if we don't want optimized structure in flow,it used in both NSE Broadcast & Interactive
+#define SEND_DPR_TO_CLIENT //when You want send to DPR To clent then use hash define other wise Comment This line
+#define TRADER_ID_CHANGE //comment it if we don't Trader ID Change structure in flow,it used in NSE FO
+#define BSE_ORDER_STRUCTURE_CHANGE //comment it if we don't BSe Structure Change in flow,it used in NSE FO
+#define MULTIPLE_TRADER_LOGIN//comment it if we don't Multiple Trader ID Login in flow, it used in BSE
+#define NSE_EQ_CALL_AUCTION_CHANGES//comment it if we don't Required NSE EQ Call Auction changes in flow 
+//#define NSE_FO_MUL_TRADE_MOD //comment it if we don't Required NSE fo Multiple Trade modification changes in flow 
+//////////////////////////////Batch Order Process//////////////////////////////////////////
+#define BATCH_ORDER_INSERTION//comment it if we don't Batch Order Insertion In SQL in flow, it used in All Exchnage
+#define ___WITHOUT_LOCK
+#define BATCH_PROCESS_EXECUTE_TIME_INTERVAL	500    // Required value Divided by 2
+#define BATCH_INSERT_QUERY					25600 //20480 //61440 // Max 102400 (per Recode 1024 size Required (Total size Requird for = Number Of Recode * 1024 or BATCH_INSERT_QUERY = MAX_BATCH_ORDER_COUNT * 1024))
+#define MAX_BATCH_ORDER_COUNT				25	    //60    // Max 100
+#define NSE_SEQUENCE_BATCH_QUERY            12800  //30720 // Max 51200 (per Recode 512 size Required (Total size Requird for = Number Of Recode * 512 or BATCH_INSERT_QUERY = MAX_BATCH_ORDER_COUNT * 512))
+#define FREE_QUEUE							0
+#define BUSY_QUEUE							1
+#define BATCH_PROCESS_SP
+////////////////////////////End Batch Order Process/////////////////////////////////////////
+#define DISABLE_MBPL
+//#define ENABLE_TIME_CAL //THIS FLAG IS FOR GAT BROADCAST STRUCTURE ALTERATION
+
+//////registry constants/////////
+#define REG_SEPARATOR				"|"
+#define EXCHANGE_SERVER_IP_UDP		"|40="
+#define EXCH_SERVER_IP_UDP_ID		40
+////////////////////////////////
+#define EXCHANGE_FACTOR 100000000
+
+//FOR EXCHANGES
+//******************************* Exchanges************************
+#define ALL_EXCHANGES				   -1	//@@Farhan Shaikh
+#define MBPL_EXCHANGE					0
+#define NSE_EXCHANGE					1
+#define BSE_EXCHANGE					2
+#define MCX_EXCHANGE					3
+#define NCDEX_EXCHANGE					4
+#define NSE_CURRENCY_EXCHANGE			5
+#define DGCX_EXCHANGE					6   
+#define MCXSX_CD_EXCHANGE				7	//added by Ganesh Tupe
+#define USE_CDX_EXCHANGE				8
+#define CME_EXCHANGE					11
+#define MCXSX_EXCHANGE                  12  // Added by Priya on 7/2/2013
+///////////////////////////// END Exchanges ///////////////////////
+//***************************** Market Segments********************
+#define ALL_SEGMENTS				   -1	//@@Farhan Shaikh
+#define EQ_MARKET						1
+#define FO_MARKET						2
+#define COM_MARKET						3
+#define OPT_MARKET						4
+
+#define NSE_EQ_MAX_SCRIP_RANGE          35000   // Added by Jatin Shah for Combined Spread Broadcast
+////////////////////////// END Market Segments ////////////////////
+
+#define GREEK_MANDETORY_UPDATE_PWD_REQ       5562	//Added For Password Updated Res To Interactive
+#define GREEK_MANDETORY_EXPIRE_PWD_REQ       5563	//Added For Password Not Update Res To Interactive
+
+//***************************** Exchange Segments********************
+#define ALL_EXCHANGE_ALL_MARKET			0
+#define NSE_EXCHANGE_INDEX				100
+#define BSE_EXCHANGE_INDEX				200
+#define NSE_EQ_MARKET					101
+#define NSE_FO_MARKET					102
+#define NSE_CD_MARKET					502
+#define BSE_EQ_MARKET					201
+#define BSE_FO_MARKET					202
+#define MCX_COM_MARKET					303
+#define NCDEX_COM_MARKET				403
+#define MCXSX_CURR_MARKET				702
+#define DGCX_COM_MARKET					603  // Added by Vaibhav Patil for DGCX
+#define USE_CDX_MARKET					802
+#define CME_FO_MARKET					1102
+//zigar added for MCXSX equity and future
+#define	MCXSX_EQ_MARKET					1201
+#define	MCXSX_FO_MARKET					1202
+#define BSE_CD_MARKET					1302
+////////////////////////// END Exchange Segments ////////////////////
+#define NSE_EF_DIVISOR			100
+#define NSE_CD_DIVISOR			10000000
+#define MCXSX_CD_DIVISOR		10000
+#define DGCX_PRICE_DIVISOR		10000// Added by Vaibhav Patil for DGCX // ritesh 050615 changed
+#define USE_CDX_DIVISOR         10000	//@@Farhan Shaikh added for USE on 29Nov2011
+#define DGCX_COM_DIVISOR		1000000
+#define BSE_CD_DIVISOR			10000
+//////////common greek codes start//////////////
+
+//*****************By Rahul M 26 Oct 2010  Start*****************//
+#define	GC_HISTORICAL_MCXSX_TOKEN_MASTER_REQ			6574
+#define	GC_HISTORICAL_MCXSX_TOKEN_MASTER_HEADER			6575
+#define GC_HISTORICAL_MCXSX_TOKEN_MASTER_DATA			6576
+#define	GC_HISTORICAL_MCXSX_TOKEN_MASTER_TRAILER		6577
+//*****************By Rahul M 26 Oct 2010  end*****************//
+//************* PRAVIN on 23-SEPT-2011******************************
+#define	GC_HISTORICAL_USE_TOKEN_MASTER_REQ			6916
+#define	GC_HISTORICAL_USE_TOKEN_MASTER_HEADER		6917
+#define GC_HISTORICAL_USE_TOKEN_MASTER_DATA			6918
+#define	GC_HISTORICAL_USE_TOKEN_MASTER_TRAILER		6919
+//******************************************************************
+
+//////BSECD--TOKEN///////////
+#define GC_HISTORICAL_BSE_CD_TOKEN_MASTER_REQ        6940
+#define GC_HISTORICAL_BSE_CD_TOKEN_MASTER_HEADER     6941
+#define GC_HISTORICAL_BSE_CD_TOKEN_MASTER_DATA       6942
+#define GC_HISTORICAL_BSE_CD_TOKEN_MASTER_TRAILER	 6943
+/////////////////////////////////////
+
+#define GC_HISTORICAL_BSE_CD_SPD_TOKEN_MASTER_REQ        6944
+#define GC_HISTORICAL_BSE_CD_SPD_TOKEN_MASTER_HEADER     6945
+#define GC_HISTORICAL_BSE_CD_SPD_TOKEN_MASTER_DATA       6946
+#define GC_HISTORICAL_BSE_CD_SPD_TOKEN_MASTER_TRAILER	 6947
+
+//! \author Ritesh
+//! \date   05.02.13
+//! \brief  For MCXSX EQ And FO Segment
+
+#define GC_HISTORICAL_MCXSX_EQ_TOKEN_MASTER_REQ     8843
+#define GC_HISTORICAL_MCXSX_EQ_TOKEN_MASTER_HEADER  8844
+#define GC_HISTORICAL_MCXSX_EQ_TOKEN_MASTER_DATA    8845
+#define GC_HISTORICAL_MCXSX_EQ_TOKEN_MASTER_TRAILER 8846
+
+#define GC_HISTORICAL_MCXSX_FO_TOKEN_MASTER_REQ     8847
+#define GC_HISTORICAL_MCXSX_FO_TOKEN_MASTER_HEADER  8848
+#define GC_HISTORICAL_MCXSX_FO_TOKEN_MASTER_DATA    8849
+#define GC_HISTORICAL_MCXSX_FO_TOKEN_MASTER_TRAILER 8850
+
+#define MCX_SX_EQ_SEQUENCE_START					1201000000
+#define MCX_SX_EQ_SEQUENCE_END						1202000000
+#define MCX_SX_FO_SEQUENCE_START					1202000000
+#define MCX_SX_FO_SEQUENCE_END						1203000000
+
+#define BSE_CD_SEQUENCE_START                       1302000000
+#define BSE_CD_SEQUENCE_END							1303000000
+
+
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_ORDER_REQ					8851
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_ORDER_HEADER				8852
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_ORDER_DATA					8853
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_ORDER_TRAILER				8854
+																
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_PENDINGORDERS_REQ			8855
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_PENDINGORDERS_HEADER		8856
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_PENDINGORDERS_DATA			8857
+#define GIC_HISTORICAL_SEQ_MCXSX_EQ_PENDINGORDERS_TRAILER		8858
+																
+#define	GIC_HISTORICAL_SEQ_MCXSX_EQ_TRADES_REQ					8859					
+#define	GIC_HISTORICAL_SEQ_MCXSX_EQ_TRADES_HEADER				8860
+#define	GIC_HISTORICAL_SEQ_MCXSX_EQ_TRADES_DATA					8861
+#define	GIC_HISTORICAL_SEQ_MCXSX_EQ_TRADES_TRAILER				8862
+																
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_ORDER_REQ					8863
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_ORDER_HEADER				8864
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_ORDER_DATA					8865
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_ORDER_TRAILER				8866
+																
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_PENDINGORDERS_REQ			8867
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_PENDINGORDERS_HEADER		8868
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_PENDINGORDERS_DATA			8869
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_PENDINGORDERS_TRAILER		8870
+																
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_ORDER_REQ				8871
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_ORDER_HEADER			8872
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_ORDER_DATA				8873
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_ORDER_TRAILER			8874
+			
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_PENDINGORDERS_REQ		8875
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_PENDINGORDERS_HEADER	8876
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_PENDINGORDERS_DATA		8877
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_SPD_PENDINGORDERS_TRAILER	8878
+																
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_TRADES_REQ					8879
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_TRADES_HEADER				8880
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_TRADES_DATA					8881
+#define	GIC_HISTORICAL_SEQ_MCXSX_FO_TRADES_TRAILER				8882
+
+#define GIC_HISTORICAL_SEQ_BSE_CD_ORDER_REQ                     8883
+#define GIC_HISTORICAL_SEQ_BSE_CD_ORDER_HEADER                  8884
+#define GIC_HISTORICAL_SEQ_BSE_CD_ORDER_DATA                    8885
+#define GIC_HISTORICAL_SEQ_BSE_CD_ORDER_TRAILER                 8886
+
+#define GIC_HISTORICAL_SEQ_BSE_CD_SPD_ORDER_REQ                 8887
+#define GIC_HISTORICAL_SEQ_BSE_CD_SPD_ORDER_HEADER              8888
+#define GIC_HISTORICAL_SEQ_BSE_CD_SPD_ORDER_DATA                8889
+#define GIC_HISTORICAL_SEQ_BSE_CD_SPD_ORDER_TRAILER             8890
+
+#define  GIC_HISTORICAL_SEQ_BSE_CD_PENDINGORDERS_REQ            8891
+#define  GIC_HISTORICAL_SEQ_BSE_CD_PENDINGORDERS_HEADER         8892
+#define  GIC_HISTORICAL_SEQ_BSE_CD_PENDINGORDERS_DATA           8893
+#define  GIC_HISTORICAL_SEQ_BSE_CD_PENDINGORDERS_TRAILER        8894
+
+#define  GIC_HISTORICAL_SEQ_BSE_CD_SPD_PENDINGORDERS_REQ        8895
+#define  GIC_HISTORICAL_SEQ_BSE_CD_SPD_PENDINGORDERS_HEADER     8896
+#define  GIC_HISTORICAL_SEQ_BSE_CD_SPD_PENDINGORDERS_DATA       8897
+#define  GIC_HISTORICAL_SEQ_BSE_CD_SPD_PENDINGORDERS_TRAILER    8898
+
+#define  GIC_HISTORICAL_SEQ_BSE_CD_TRADES_REQ                   8899
+#define  GIC_HISTORICAL_SEQ_BSE_CD_TRADES_HEADER                8900
+#define  GIC_HISTORICAL_SEQ_BSE_CD_TRADES_DATA                  8901
+#define  GIC_HISTORICAL_SEQ_BSE_CD_TRADES_TRAILER               8902
+
+
+//! END 
+
+#define  GC_PRODUCT_LOGIN_RES			5401
+#define  GC_PRODUCT_LOGOFF_RES			5403
+
+#define GC_MARKET_CLOSE					1999
+#define GC_NSE_DOWNLOADING_COMPLETED	5131
+
+#define GC_LOGIN_BASKET_REQ				6600
+#define GC_LOGIN_BASKET_RESP			6601
+#define GC_LOGOFF_BASKET_REQ			6602
+#define GC_LOGOFF_BASKET_RESP			6603
+
+#define GC_GAB_RULE_ENTRY_REQ			6604
+#define GC_GAB_RULE_ENTRY_RESP			6605
+#define GC_GAB_COMB_ENTRY_REQ			6606
+#define GC_GAB_COMB_ENTRY_RESP			6607
+#define GC_GAB_SLOT_ENTRY_REQ			6608
+#define GC_GAB_SLOT_ENTRY_RESP			6609
+		
+#define GC_GAB_RULE_MOD_REQ				6610
+#define GC_GAB_RULE_MOD_RESP			6611
+#define GC_GAB_COMB_MOD_REQ				6612
+#define GC_GAB_COMB_MOD_RESP			6613
+#define GC_GAB_SLOT_MOD_REQ				6614
+#define GC_GAB_SLOT_MOD_RESP			6615
+
+#define GC_GAB_INT_REQ					6616
+#define GC_GAB_INT_RESP					6617
+
+#define GC_GAB_SLOT_COMB_STATUS			6618
+#define GC_GAB_COMB_SLOT_STATUS			6619
+
+#define GC_GAB_SLOT_STATUS				6620
+#define GC_GAB_SLOT_MOD_STATUS_REQ		6621
+
+
+#define GC_GAB_RULE_LIMIT_MOD_REQ		6622
+#define GC_GAB_RULE_LIMIT_MOD_RESP		6623
+
+
+#define GC_GAB_MESSAGE					6631
+
+#define	GC_GREEK_GAB_TOKEN_ADD_REQ		6650
+#define	GC_GREEK_GAB_TOKEN_REMOVE_REQ	6651
+
+#define GC_GAB_ONLY_SLOT_MOD_REQ		6653 //this constants are declared after verificaction that this value is not use by any one else as an greek code
+#define GC_GAB_ONLY_SLOT_MOD_RESP		6654 //this constants are declared after verificaction that this value is not use by any one else as an greek code
+
+#define IC_GREEK_PRODUCT_ALLOWED_REQ		6442
+#define IC_GREEK_PRODUCT_ALLOWED_TRAILER	6443
+
+//Below Added by Hardik for License File
+#define IC_GREEK_DONGAL_INFO_RES			7605
+#define IC_GREEK_PRODUCT_MAPPPING_RES		7606
+
+#define IC_GREEK_LICENSE_MODIFY_REQ			7615
+#define IC_GREEK_LICENSE_MODIFY_RES			7616
+#define IC_GREEK_LICENSE_MODIFY_TRAILER		7617
+
+#define IC_GREEK_LICENSE_NEW_REQ			7618
+#define IC_GREEK_LICENSE_NEW_RES			7619
+#define IC_GREEK_LICENSE_NEW_TRAILER		7620
+
+#define IC_GREEK_LICENSE_USAGE_INFO_REQ		7610
+#define IC_GREEK_LICENSE_USAGE_INFO_RES		7611
+#define IC_GREEK_LICENSE_USAGE_INFO_TRAILER	7612
+//Hardik End
+//////////common greek codes end///////////////
+
+////////Action constant start///////////////
+
+#define GAB_ADD_RULE					11
+#define GAB_MODIFY_RULE					12
+#define GAB_DELETE_RULE					13
+
+#define GAB_START_RULE					21
+#define GAB_STOP_RULE					22
+#define GAB_STOP_BY_MANAGER_RULE		23
+
+#define GAB_RULE_PARTIALLY_STOPED		32
+#define GAB_RULE_STOPED					33
+
+#define GAB_RULE_LOAD_FILE_REQ			41
+#define GAB_RULE_SAVE_FILE_REQ			42
+#define GAB_RULE_LOAD_FILE_RES			43
+#define GAB_RULE_SAVE_FILE_RES			44
+
+
+#define GAB_START_ALL_RULES				4
+#define GAB_STOP_ALL_RULES				5
+#define GAB_STOP_ALL_RULES_BY_MANAGER	6
+
+#define GAB_LOG_OFF						7
+#define GAB_ABNORMAL_LOG_OFF			8
+#define GAB_LOG_OFF_ALL					9
+
+#define GAB_UPDATE_BASKET_CYCLE			111
+#define GAB_UPDATE_CURRENT_SLOT			112
+
+#define GC_GAB_RULE_ENTRY_REQ_HEADER     6465			
+#define GC_GAB_RULE_ENTRY_REQ_DATA		 6466			
+#define GC_GAB_RULE_ENTRY_REQ_TRAILER	 6467	
+
+#define GC_GAB_RULE_ENTRY_RES_HEADER     6468			
+#define GC_GAB_RULE_ENTRY_RES_DATA		 6469			
+#define GC_GAB_RULE_ENTRY_RES_TRAILER	 6470
+////////Action constant end///////////////
+
+////////Constants Start/////////////
+
+//Added By @#@Bhushan On 20-Oct-2011 For BSE LEIPS Arbitrage
+#define SNP_CNX_NIFTY_TOKEN				100009999
+#define BSE_SENSEX_TOKEN				200009999
+#define BSE_BSE100_TOKEN				200009998
+
+#define BSE_SENSEX_TOKEN_EXP1				200009996
+#define BSE_SENSEX_TOKEN_EXP2				200009997
+#define BSE_SENSEX_TOKEN_EXP3				200009998
+
+#define BSE_BSE100_TOKEN_EXP1				200009986
+#define BSE_BSE100_TOKEN_EXP2				200009987
+#define BSE_BSE100_TOKEN_EXP3				200009988
+//Added By @#@Bhushan On 20-Oct-2011 For BSE LEIPS Arbitrage
+
+//By @#@Bhushan ======================================================
+/********************************************************************/
+//					       STRATEGY TYPE
+/********************************************************************/
+	#define GATS_ARBITRAGE					22
+	#define	NORMAL_IV						4	//@#@Bhushan
+	#define	SPREAD_IV						5	//@#@Bhushan
+	#define	OPT_SPREAD						6	//@#@Bhushan
+	#define	TRIANGLE						7	//@#@Bhushan
+	#define	BUTTERFLY						8	//@#@Bhushan
+	#define	SLICE_ORD						9	//@#@Bhushan
+	#define	BOX_STRATEGY					10	//@#@Bhushan
+	#define	RSMARKET_MAKING					11	//@#@Bhushan
+	#define	IVMARKET_MAKING					12	//@#@Bhushan
+	#define	OPTION_SKEW						17	//@#@Bhushan
+	#define LONG_SHORT_TERM					13  // Added By Ganesh Saste 18/12/2012
+	#define CMB_DEPTH						14
+	#define GREEK_EXEC_ALGOS				15
+
+/********************************************************************/
+////////Constants end/////////////
+
+////////Error constants start/////////////
+#define	SURV_REJECT				1000
+#define	TOT_QTY_ERR				1001
+#define ATS_EXIT				1002
+#define RULE_EXIST				1003
+#define INDEX_LIMIT_EXCEEDS		1004
+
+#define RECORD_NOT_FOUND		1005
+#define KEY_RECORD_NOT_FOUND	1006
+#define RECORD_ALREADY_EXIST	1007
+
+#define RECORD_UNABLE_TO_UPDATE	1008
+
+
+////////Error constants end/////////////
+
+
+//////registry constants/////////
+#define REG_SEPARATOR				"|"
+#define EXCHANGE_SERVER_IP_UDP		"|40="
+#define EXCH_SERVER_IP_UDP_ID		40
+////////////////////////////////
+///////Product Id ////////////// 
+#define GETS_BASKET					23
+
+///////Product Id end///////////
+
+#define MCXSX_lUniqueIdentifier 	162500071
+
+#define MCX_lUniqueIdentifier 		152900129
+//999999999
+
+//////////Vender Codes
+#define MCXSX_VENDER_CODE				7
+#define MCX_VENDER_CODE					10		//may be 10 but need toe test
+#define NCDEX_TECHNO_VENDER_CODE		903
+#define NCDEX_AUTO_VENDER_CODE			999
+#define BSE_VENDER_CODE					14
+#define BSE_CD_VENDER_CODE				14
+#define NSE_VENDER_CODE					12
+#define NSE_IN_HOUSE_VENDER_CODE		00	//@#@Bhushan
+#define BSE_IN_HOUSE_VENDER_CODE		88	//@#@Bhushan
+//////////Vender Codes
+
+#define MCXSX_MEMBERID					13535
+
+//RSM EXCHANGE REASON CODE Start
+#define ERC_PRICE_FREEZE		17
+#define ERC_QUANTITY_FREEZE		18
+#define ERC_ORDER_NUMBER		11
+
+#define EEC_PRICE_FREEZE		16308
+#define EEC_QUANTITY_FREEZE		16307
+
+//RSM REASON CODE end
+
+#define MCX_PRICE_DIVISER		100L 
+
+///Added By RahulJ on 2ndNov 2010 for NSE'CX Downloading//
+#define IC_HISTORICAL_SEQ_MCXSX_ORDER_REQ						6801					
+#define IC_HISTORICAL_SEQ_MCXSX_ORDER_HEADER					6802
+#define IC_HISTORICAL_SEQ_MCXSX_ORDER_DATA						6803
+#define IC_HISTORICAL_SEQ_MCXSX_ORDER_TRAILER					6804					
+
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_ORDER_REQ					6805
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_ORDER_HEADER				6806
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_ORDER_DATA					6807
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_ORDER_TRAILER				6808
+
+#define IC_HISTORICAL_SEQ_MCXSX_PENDINGORDERS_REQ				6809
+#define IC_HISTORICAL_SEQ_MCXSX_PENDINGORDERS_HEADER			6810
+#define IC_HISTORICAL_SEQ_MCXSX_PENDINGORDERS_DATA				6811
+#define IC_HISTORICAL_SEQ_MCXSX_PENDINGORDERS_TRAILER			6812
+
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_PENDINGORDERS_REQ			6813
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_PENDINGORDERS_HEADER		6814
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_PENDINGORDERS_DATA			6815
+#define IC_HISTORICAL_SEQ_MCXSX_SPD_PENDINGORDERS_TRAILER		6816
+
+#define IC_HISTORICAL_SEQ_MCXSX_TRADES_REQ						6817
+#define IC_HISTORICAL_SEQ_MCXSX_TRADES_HEADER					6818
+#define IC_HISTORICAL_SEQ_MCXSX_TRADES_DATA						6819
+#define IC_HISTORICAL_SEQ_MCXSX_TRADES_TRAILER					6820
+///Rahulj on 2nd Nov 2010 End
+#define MCX_SX_SEQUENCE_START									702000000
+#define MCX_SX_SEQUENCE_END										703000000
+#define MCX_SX_FO_MARKET										702
+#define MBPL_COM												003	
+//#define MCX_SX_EXCHANGE											7
+
+#define	NSE					"NSE"
+#define BSE					"BSE"
+#define NSE_CURRENCY		"NSECUR"
+#define MCXSX_CD			"MCXCUR"
+#define MCX					"MCX"
+#define	NCDEX				"NCDEX"
+#define USE					"USE"
+#define MBPL				"MBPL"
+#define MCX_COM_FO			"MCX FO"
+#define DGCX				"DGCX"
+#define CME_				"CME"
+#define MCXSX_EQFO			"MCXSX_EQFO"	//Added by Hardik
+
+//============= INDICES OF EXCHANGE LIST =============
+#define NSE_EQ_INDEX			0  //NSE EQ
+#define NSE_FO_INDEX			1  //NSE FO
+#define BSE_EF_INDEX			2  //BSE EF
+#define MCX_COM_INDEX			3  //MCX
+#define NCDEX_INDEX				4  //NCDEX
+#define NSE_CD_INDEX			5  //NSE CD
+#define DGCX_INDEX				6  //DGCX
+#define MCX_SX_INDEX			7  //MCX SX
+#define USE_FO_INDEX			8  //USE FO
+#define CME_INDEX				11 //CME
+#define MCXSX_EQ_INDEX			12 //MCXSX_EQ
+#define MCXSX_FO_INDEX			13 //MCXSX_FO
+#define BSE_CD_INDEX			14 
+#define BSE_FO_INDEX			15 
+//============= INDICES OF EXCHANGE LIST =============
+
+//FOR EXCHANGES
+//******************************* Exchanges************************
+#define NSE_EXCHANGE					1
+#define BSE_EXCHANGE					2
+#define MCX_EXCHANGE					3
+#define NCDEX_EXCHANGE					4
+#define NSE_CURRENCY_EXCHANGE			5
+#define DGCX_EXCHANGE					6
+#define MCXSX_CD_EXCHANGE				7	//added by Ganesh Tupe
+#define USE_EXCHANGE					8 //@@Farhan Shaikh for USE
+#define CME_EXCHANGE					11
+#define MCXSX_EXCHANGE					12	//Added by Hardik
+#define BSE_CD_EXCHANGE					13
+///////////////////////////// END Exchanges ///////////////////////
+//***************************** Market Segments********************
+#define EQ_MARKET						1
+#define FO_MARKET						2
+#define COM_MARKET						3
+//#define CD_MARKET						4
+////////////////////////// END Market Segments ////////////////////
+
+//***************************** Exchange Segments********************
+#define ALL_EXCHANGE_ALL_MARKET			0
+#define NSE_EQ_MARKET					101
+#define NSE_FO_MARKET					102
+#define NSE_CD_MARKET					502
+#define BSE_EQ_MARKET					201
+#define MCX_COM_MARKET					303
+#define NCDEX_COM_MARKET				403
+#define MCXSX_CD_MARKET					702
+#define MCXSX_EQ					   1201
+#define MCXSX_FO					   1202
+#define BSE_CD_MARKET				   1302 //Prachi for bsecd
+
+////////////////////////// END Exchange Segments ////////////////////
+#define IC_LOOKUP_REQ				101			/// 2300
+#define IC_LOOKUP_RES				102			/// 2301
+
+//***************send whenever broadcast setting modified by user********
+#define EQ_BCAST_SETTING_CHANGED	10001
+#define FO_BCAST_SETTING_CHANGED	10002
+#define COM_BCAST_SETTING_CHANGED	10003
+#define DGCX_BCAST_SETTING_CHANGED	10004  // Added by Vaibhav Patil for DGCX
+//***********************************************************************
+
+////for MCXSX start////////
+#define IOC_SPD_ORDER	0
+#define ML_ORDER		1
+////for MCXSX end////////
+#define BC_SYSTEM_INFO_OUT_RES			5023			
+
+#define BOARD_LOT_IN					5501
+#define ORDER_MOD_IN					5505
+#define ORDER_CANCEL_IN					5508
+
+#define IC_OFFLINE_ORDER_ENTRY			5528 //offline order entry
+#define IC_OFFLINE_ORDER_CANCEL_REQ		5529 //offline order cancle entry
+#define IC_OFFLINE_ORDER_CANCEL_RES		5530 //offline order cancel response
+
+#define IC_OFFLINE_SPD_ORDER_ENTRY			5557 //offline Spread order entry
+#define IC_OFFLINE_SPD_ORDER_CANCEL_REQ		5558 //offline Spread order cancle entry
+#define IC_OFFLINE_SPD_ORDER_CANCEL_RES		5559 //offline Spread order cancel response
+//Added By @@K_Vilas For 2-Leg Offline Orders
+#define IC_OFFLINE_2LEG_ORDER_ENTRY				3359 //offline 2-Leg order entry
+#define IC_OFFLINE_2LEG_ORDER_CANCEL_REQ		3360 //offline 2-Leg order cancle entry
+#define IC_OFFLINE_2LEG_ORDER_CANCEL_RES		3361 //offline 2-Leg order cancel response
+
+#define OFFLINE_ORDER_SEND_TO_EX		4
+
+#define PRE_OPEN_ORDER_ENTRY			5528 //offline order entry
+#define PRE_OPEN_ORDER_CANCEL_REQ		5529 //offline order cancle entry
+#define PRE_OPEN_ORDER_CANCEL_RES		5530 //offline order cancel response
+#define PRE_OPEN_ORDER_SEND_TO_EX		4
+
+#define RESTORE_BACKUP_COMPLETED		6652
+
+#define EXCHANGE_TYPE			 100000000 //RSM 13122010
+#define EXCHANGE_MARKET_TYPE	 1000000 //RSM 13122010
+
+#define GET_EXCHANGE_TYPE(X)			(X/EXCHANGE_TYPE)	//RSM 13122010
+#define GET_MARKET_TYPE(X)				((X/EXCHANGE_MARKET_TYPE)%100)	//RSM 13122010
+#define GET_EXCHANGE_MARKET_TYPE(X)		(X/EXCHANGE_MARKET_TYPE)//RSM 13122010
+
+#define GET_EXCHANGE_TOKEN(X)		(X%EXCHANGE_MARKET_TYPE)//RSM 13122010
+
+#define  ORDER_INFO_NO_MOD_AND_CAN "FILTER_ORDER_INFO" //RSM
+#define REV_ORDERNO_START 110000000
+#define REV_ORDERNO_END   139999999
+#define IC_GIVE_UP_TRADE_APPROVE_CONFIRMATION_RES			5616
+#define IC_GIVE_UP_TRADE_REJECTION_CONFIRMATION_RES			5617
+
+#define GIVE_UP_TRADE_APPROVE_CONFIRMATION					1
+#define GIVE_UP_TRADE_REJECTION_CONFIRMATION				2
+
+#define SIGNED_LONG_LIMIT			2147483647
+#define UNSIGNED_LONG_LIMIT			4294967295
+
+#define CALL_AUCTION_MARKET_PRE_OPEN						0
+#define CALL_AUCTION_MARKET_OPEN							1
+#define CALL_AUCTION_MARKET_CLOSE							2
+#define CALL_AUCTION_MARKET_PTR_OPEN_END					3
+#define MARKET_NOT_ALLOWED									-2
+#define NORMAL_MARKET										1
+#define CALL_AUCTION_MARKET									5
+#define CALL_AUCTION2_MARKET								6
+
+//for bcast optimization start
+#define BC_MKTWATCH_INFORMATION		5032			/// 7208_updated //By RSM on 14042010
+#define BC_OPENCLOSE				5029			/// 7208_updated //By RSM on 14042010
+#define BC_BESTASKBID				5009			/// 7208_updated //By RSM on 14042010
+#define BC_BEST_ASK_BID_TCP			5049			/// 7208_updated //By RSM on 08102011
+
+#define IC_GREEK_SHOW_BEST_BID_ASK_REQ		6518
+#define IC_GREEK_SHOW_OPEN_CLOSE_REQ		6519
+#define IC_GREEK_CLOSE_BEST_BID_ASK_REQ		6520
+
+#define GREEK_MKT_WATCH_SIZE(x) (sizeof(GREEK_BC_HEADER) + (sizeof(GREEK_TOUCH_LINE_DETAILS)*x))
+#define GREEK_MBP_DEPTH_SIZE(x) (sizeof(GREEK_BC_HEADER) + (sizeof(GREEK_ASK_BID_DETAILS)*x))
+//for bcast optimization end
+
+
+//#define ENABLE_TIME_CAL
+
+#define IC_GREEK_FILTER_TOKEN_ADD			50
+#define IC_GREEK_FILTER_TOKEN_REMOVE		51
+
+#define IC_GREEK_FILTER_TOKEN_ADD_JOBBING 52
+#define IC_GREEK_FILTER_TOKEN_REMOVE_JOBBING 53
+
+#define IC_TRIGGERED_ALERT_HISTO_REQ			9225//(same as MCX)
+#define IC_TRIGGERED_ALERT_HISTO_START			9250//(same as MCX)
+#define IC_TRIGGERED_ALERT_HISTO				9275//(same as MCX)
+#define IC_TRIGGERED_ALERT_HISTO_END			9300//(same as MCX)
+
+#define IC_CURR_CONV_RATE_DOWNLOAD_REQ  9175 //(same as MCXSX)
+#define IC_CURR_CONV_RATE_START			9176 //(same as MCXSX)
+#define IC_CURR_CONV_RATE_INFO			9177 //(same as MCXSX)
+#define IC_CURR_CONV_RATE_END			9178 //(same as MCXSX)
+
+#define MCXSX_NNF		999999999999000
+#define EXCHANGE_ID	"EXCHANGE"
+
+#define IC_ORDER_BY_EXCHANGE_REQ				5541//MCXSX 7500
+#define IC_ORDER_MOD_BY_EXCHANGE_REQ			5542//MCXSX 7575
+#define IC_ORDER_CANCEL_BY_EXCHANGE_REQ			5543//MCXSX 7650
+
+
+#define	 IC_HISTORICAL_SEQ_TRADE_HISTORY_REQ			6323
+#define	 IC_HISTORICAL_SEQ_TRADE_HISTORY_HEADER			6324
+#define	 IC_HISTORICAL_SEQ_TRADE_HISTORY_DATA			6325
+#define	 IC_HISTORICAL_SEQ_TRADE_HISTORY_TRAILER		6326
+#define  ORDER_INFO_NO_MOD_AND_CAN "FILTER_ORDER_INFO"
+
+#define  ORDER_INFO_LOG_LIMIT "EXPECTED_ORDERS"
+
+
+#define BC_GREEK_QTY_MBA_DELTA				5040
+#define BC_GREEK_PRICE_MBA_DELTA			5041
+#define CD_BCAST_QTY_MBA_DELTA				7215
+#define CD_BCAST_PRICE_MBA_DELTA			7216
+
+#define BC_GREEK_QTY_MBA_DELTA			5040
+#define BC_GREEK_PRICE_MBA_DELTA		5041
+
+#define IC_MBA_QTY_INQ_REQ			5161
+#define IC_MBA_QTY_INQ_RES			5162
+
+#define IC_MBA_VALUE_INQ_REQ		5163
+#define IC_MBA_VALUE_INQ_RES		5164	
+
+#define IC_MBA_WAP_INQ_REQ			5165
+#define IC_MBA_WAP_INQ_RES			5166	
+
+#define SQUARE_OFF_OURORDER_NUMBER_START		130000000
+#define SQUARE_OFF_OURORDER_NUMBER_END			139999999
+
+#define BSE_IN_HOUSE_VENDER_CODE		88 // used for in house for bse by vishal on 26 Aug 2011
+
+#define MCXSX_VERSION_11_11
+#define MCX_API_VERSION_11_12
+//#define MCX_API_VERSION_11_12
+
+#define DGCX_VERSION_FIX50SP2	// Added by Vaibhav Patil for DGCX version 50SP2
+
+#ifdef MCXSX_VERSION_11_11				// NEW
+	#define MCXSX_VERSION_MINOR			12
+	#define MCXSX_VERSION_MAJOR			11
+#else								    // OLD
+	#define MCXSX_VERSION_MINOR			12
+	#define MCXSX_VERSION_MAJOR			10
+#endif
+
+#ifdef MCX_API_VERSION_11_12
+	#define MCX_VERSION_MAJOR			11
+	#define MCX_VERSION_MINOR			12
+#else
+    #define MCX_VERSION_MAJOR			10
+	#define MCX_VERSION_MINOR			21
+#endif
+
+//Strategy Types for gats arbitrages //Prachi
+#define STG_CASHTOFUTURE                        0
+#define STG_FUTURETOFUTURE_QUOTE                1
+#define STG_FUTURETOFUTURE_OPPORTUNITY          2
+#define STG_CASHTOCASH                          3
+#define STG_ABSRATIO                           -1
+#define STG_PRODRATIO                          -2
+#define STG_LOG_ABS_RATIO                      -3//added by vishal on 04 Jan 2012
+#define STG_CMB_SPREAD						   -4
+#define	STG_PRODDIFF                           -5//zigar added Prod Diff on 25-07-2012 
+#define STG_SWAP_RATIO						   -6
+#define STG_BPS_RATIO						   -7// added by Ganesh Saste for BPS Ratio 28-01-14
+#define STG_INVALID                            -8
+
+
+#define IC_ORDER_CANCEL_CONFIRM_RES	5513
+#define IC_ORDER_FREEZE_RES			5515
+#define IC_ORDER_ERROR_RES			5516
+#define IC_ORDER_MOD_REJ			5507
+#define IC_ORDER_CANCEL_REJ			5510
+
+#define IC_IOB_ORDER				8881
+#define IC_IOB_ORDER_MODIFICATION	8882
+#define IC_IOB_ORDER_CANCELLATION	8883
+#define IC_IOB_ORDER_HOLD			8884
+
+#define IC_IOB_SPRD_ORDER				8891
+#define IC_IOB_SPRD_ORDER_MODIFICATION	8892
+#define IC_IOB_SPRD_ORDER_CANCELLATION	8893
+#define IC_IOB_SPRD_ORDER_HOLD			8894
+
+#define IC_IOB_TWO_LEG_ORDER				8871
+#define IC_IOB_TWO_LEG_ORDER_MODIFICATION	8872
+#define IC_IOB_TWO_LEG_ORDER_CANCELLATION	8873
+#define IC_IOB_TWO_LEG_ORDER_HOLD			8874
+
+#define ALL_EXCHANGE 50
+#define ALL_SEGMENT	  9	
+//#define BASKET						"BASKET"
+///////Product Id end///////////
+
+#define TIMER_INTERVAL_TCP_BC_SENDING  50    //miliseconds  //RSM
+#define GET_EXCHANGE(lOurToken,iExchange)\
+		iExchange = lOurToken/100000000;	 
+#define GET_MARKET_SEGMENT(lOurToken,iMarketSegment)\
+		iMarketSegment = (lOurToken/1000000)%100;	 
+
+//START HN_BROADCAST_SETTINGS	26APR2012	To increase size of UDP Socket Receive Buffer
+#define		UDP_SOCKET_RECV_KEY		"UDP_RECV_SOCKET_BUFFER_SIZE"
+#define		DEFAULT_RECV_SIZE		256 //(consider as 256kb)
+//END HN_BROADCAST_SETTINGS	26APR2012	To increase size of UDP Socket Receive Buffer
+
+//@#@Bhushan: Greek Codes For Option Skew=====
+#define IC_HISTORICAL_GREEK_OPTIONSKEW_REQ				6924
+#define	IC_HISTORICAL_GREEK_OPTIONSKEW_HEADER			6925
+#define IC_HISTORICAL_GREEK_OPTIONSKEW_DATA				6926
+#define IC_HISTORICAL_GREEK_OPTIONSKEW_TRAILER			6927
+//@#@Bhushan: Greek Codes For Option Skew=====
+
+//@#@Bhushan: Greek Codes For Offline Orders=====
+#define GC_HISTORICAL_OFFLINE_ORDER_REQ				6928
+#define	GC_HISTORICAL_OFFLINE_ORDER_HEADER			6929
+#define GC_HISTORICAL_OFFLINE_ORDER_DATA			6930
+#define GC_HISTORICAL_OFFLINE_ORDER_TRAILER			6931
+//@#@Bhushan: Greek Codes For Offline Orders=====
+
+#define GC_HISTORICAL_SEQ_BSE_SPD_PENDINGORDERS_REQ       		6920
+#define GC_HISTORICAL_SEQ_BSE_SPD_PENDINGORDERS_HEADER    		6921
+#define GC_HISTORICAL_SEQ_BSE_SPD_PENDINGORDERS_DATA      		6922
+#define GC_HISTORICAL_SEQ_BSE_SPD_PENDINGORDERS_TRAILER   		6923
+
+//@#@Bhushan: Greek codes warning message from manager=====
+#define GC_SCAN_DISK_MESSAGE							9994
+#define IC_COMPONENT_DISSCONNECT						9995
+//@#@Bhushan: Greek codes warning message from manager=====
+//Prachi: Greek Codes For Offline Spread Orders=====
+#define GC_HISTORICAL_OFFLINE_SPD_ORDER_REQ				6932
+#define	GC_HISTORICAL_OFFLINE_SPD_ORDER_HEADER			6933
+#define GC_HISTORICAL_OFFLINE_SPD_ORDER_DATA			6934
+#define GC_HISTORICAL_OFFLINE_SPD_ORDER_TRAILER			6935
+//Prachi: Greek Codes For Offline Spread Orders=====
+
+#define IC_PRICE_RANGE_NOTIFICATION				3000 // Added by Vaibhav to send MCX Price Range Notification to all clients
+#define IC_TRADE_MOD_REJ_RES					5607 // Added by Vaibhav for TradeRejection response.
+#define IC_GREEK_ADD_BANNEDCONTRACT_REQ					8801
+#define IC_GREEK_ADD_BANNEDCONTRACT_RES					8802
+#define IC_HISTORICAL_GREEK_BANNEDCONTRACT_REQ			8803
+#define IC_GREEK_ADD_MWPL_REQ							8804
+#define IC_GREEK_ADD_MWPL_RES							8805
+#define IC_HISTORICAL_GREEK_MWPL_REQ					8806
+#define IC_GREEK_DELETE_BANNEDCONTRACT_REQ				8807
+#define IC_GREEK_DELETE_BANNEDCONTRACT_RES				8808
+#define IC_GREEK_DELETE_MWPL_REQ						8809
+#define IC_GREEK_DELETE_MWPL_RES						8810
+#define IC_HISTORICAL_GREEK_BANNEDCONTRACT_TRAILER		8811
+#define IC_HISTORICAL_GREEK_MWPL_TRAILER				8812
+#define IC_GREEK_UPDATE_MWPL_REQ						8813
+#define IC_GREEK_UPDATE_MWPL_RES						8814
+//Added By Mahendra on 18052012 start
+#define DATADASE_REG_SETTING							"DATABASE_REG_SETTING"
+
+#define BSE_MANUAL_TRADING								0	//0 :-Send All Order Request as a No Program Trading
+#define BSE_AUTO_TRADING								1   //1 :-Send All Order Request as a Program Trading
+#define BSE_TRADING_USE_CLIENT_DETAIL					2   //2 :-Send All manual Order Request as a No Program Trading & GSAT Order as  Program Trading
+//By Mahendra on 18052012 End	
+#define NSE_CURRENCY_PRECISION	10000000.00
+#define USE_MULTIPLIER				1000	//@@Farhan Shaikh added for USE Exchange
+#define USE_TOKEN_PRECISION			10000
+#define ALL_SEGMENT	  9	
+
+////////USE SESSION STATUS//////////////////////////
+#define USE_SESSION_BEGIN_OF_DAY    1
+#define USE_LOGIN_SESSION_ID		2
+#define USE_PREOPEN_SESSION			3
+#define	USE_OPEN_SESSION			4
+#define USE_TRADING_SESSION_ID		5
+#define USE_POSITION_TRANSFER		6
+#define USE_CLOSSING_SESSION		7
+#define USE_RESERVED_SESSION		8
+#define USE_MARGIN_SESSION			9
+#define USE_QUERY_SESSION			10
+#define USE_END_OF_DAY_SESSION		11
+#define USE_BREAK_SESSION			12
+#define USE_TRANSFER_SESSION		13
+////////USE SESSION STATUS//////////////////////////
+
+/////////////////////////////PRAVIN ON 25-NOV-2011////////////////////////
+#define USE_SEQUENCE_START                              802000000
+#define USE_SEQUENCE_END                                803000000
+
+#define IC_HISTORICAL_SEQ_USE_ORDER_REQ					7888
+#define IC_HISTORICAL_SEQ_USE_ORDER_HEADER				7889
+#define IC_HISTORICAL_SEQ_USE_ORDER_DATA				7890
+#define IC_HISTORICAL_SEQ_USE_ORDER_TRAILER				7891
+
+#define IC_HISTORICAL_SEQ_USE_PENDINGORDERS_REQ			7892
+#define IC_HISTORICAL_SEQ_USE_PENDINGORDERS_HEADER		7893
+#define IC_HISTORICAL_SEQ_USE_PENDINGORDERS_DATA		7894
+#define IC_HISTORICAL_SEQ_USE_PENDINGORDERS_TRAILER		7895
+
+#define IC_HISTORICAL_SEQ_USE_TRADES_REQ				7896
+#define IC_HISTORICAL_SEQ_USE_TRADES_HEADER				7897
+#define IC_HISTORICAL_SEQ_USE_TRADES_DATA				7898
+#define IC_HISTORICAL_SEQ_USE_TRADES_TRAILER			7899
+
+#define IC_HISTORICAL_SEQ_USE_SPD_ORDER_REQ				7900
+#define IC_HISTORICAL_SEQ_USE_SPD_ORDER_HEADER			7901
+#define IC_HISTORICAL_SEQ_USE_SPD_ORDER_DATA			7902
+#define IC_HISTORICAL_SEQ_USE_SPD_ORDER_TRAILER			7903
+
+#define IC_HISTORICAL_SEQ_USE_SPD_PENDINGORDERS_REQ		7904
+#define IC_HISTORICAL_SEQ_USE_SPD_PENDINGORDERS_HEADER	7905
+#define IC_HISTORICAL_SEQ_USE_SPD_PENDINGORDERS_DATA	7906
+#define IC_HISTORICAL_SEQ_USE_SPD_PENDINGORDERS_TRAILER	7907
+/////////////////////////////PRAVIN ON 25-NOV-2011////////////////////////
+#define COUNTER_ORDER_DPR_EXCEED	-1110// PRAVIN 21-JUN-2012
+#define REVERSE_ORDER_DPR_EXCEED	-1111
+#define AGAINST_ORDER_DPR_EXCEED	-1112
+
+//@@Farhan Shaikh on 31/10/2013 for Uploading Margin File
+#define GC_RMS_SURVEILLANCE_MARGIN_UPLOAD_REQ			7828
+#define GC_RMS_SURVEILLANCE_MARGIN_UPLOAD_RES			7829
+#define GC_RMS_USAGE_CONFIG_CHANGE						12001
+
+#define MERGE_IOM			1
+#define EXTRACT_IOM			2
+
+//Changed by Prachi
+#define TIME_INTERVAL                   1
+#define BIDDING_FOR_BEST				2		//BETST_BID_BROADCAST
+#define MKT_PARTICIPATION_SLOT			3
+#define BIDDING_WITH_TIMER				4		//BETST_BID_TIMER
+#define MKT_PARTICIPATION_CUMULATIVE	5
+#define BID_BROADCAST_OPPORTUNITY		6	//Added by Hardik on 04Feb2013
+#define BID_BROADCAST_TIMER				7	//Added by Hardik on 04Feb2013
+#define ORDER_LIMIT_METHOD				8
+
+
+/*
+#define MKT_PARTICIPATION_SLOT			1
+	#define MKT_PARTICIPATION_CUMULATIVE	2
+#define TIME_INTERVAL                   3
+#define BETST_BID_BROADCAST				4
+#define BETST_BID_TIMER					5
+	#define BID_BROADCAST_OPPORTUNITY		6	//Added by Hardik on 04Feb2013
+	#define BID_BROADCAST_TIMER				7	//Added by Hardik on 04Feb2013
+*/
+#define IC_LOGIN_FAILUER				1
+
+//@Start Prashant Shinde 
+// Date-29/08/2012
+//"Change in label of Client Type from 'CBO' to 'BCO'"
+// We can set this MICRO to 'CBO' or 'BCO' as per BSE Exchange Requirement
+
+//#define BCO "CBO"
+#define BCO "BCO"
+//End Prashant
+#define AGAINST_ORDER_DPR_EXCEED	-1112
+
+//#define FIX_COMMUNICATION		//Added by @@K_Vilas
+//zigar 01-09-2012 add for option symbol trading.
+//comment this flag if want to disable option sysmbol trading in gats.
+
+//#define SHOW_GATS_WITH_OPTION  // enabled for bug ID 0006580 
+#define CME_SEQUENCE_START											1102000000
+#define CME_SEQUENCE_END											1103000000
+
+#define IC_LOGIN_FAILUER			1
+
+#define IC_TRADE_ERROR						5603			
+#define IC_TRADE_CANCEL_CONFIRM				5604			
+#define IC_TRADE_CANCEL_REJECT				5605			
+#define IC_TRADE_MODIFY_CONFIRM				5606			
+#define IC_TRADE_MODIFY_REJECT				5607			
+#define IC_TRADE_CANCEL_OUT					5609			
+#define IC_TRADE_MOD_OUT					5611			
+#define IC_BATCH_ORDER_CANCEL				5517			
+#define IC_TRADE_NOTIFICATION				5295
+
+#define BASKET_MAGIC_RULE_NUMBER		2000000
+
+#define BASKET_TYPE_CASH_FUT 0 
+#define BASKET_TYPE_FUT_DERIVED 1
+#define BASKET_TYPE_CASH_DERIVED 2
+
+#define EXECUTE_BOTH_LEG   0
+#define EXECUTE_INDEX_ONLY 1
+#define EXECUTE_STOCK_ONLY 2
+
+//Hardik on 29/10/2012 for ScripWise RMS Surveillance
+#define GC_RMS_SURVEILLANCE_SCRIP_ADD_REQ           7819
+#define GC_RMS_SURVEILLANCE_SCRIP_ADD_RES           7820
+#define GC_RMS_SURVEILLANCE_SCRIP_MOD_REQ           7821
+#define GC_RMS_SURVEILLANCE_SCRIP_MOD_RES           7822
+#define GC_RMS_SURVEILLANCE_SCRIP_DEL_REQ           7823
+#define GC_RMS_SURVEILLANCE_SCRIP_DEL_RES           7824
+#define GC_RMS_SURVEILLANCE_SCRIP_DATA              7825
+
+/////AuditTrail//
+//////////AuditTrail///////////
+#define	IC_HISTORICAL_AUDIT_TRAIL_REQ				7916
+#define	IC_HISTORICAL_AUDIT_TRAIL_HEADER			7917
+#define IC_HISTORICAL_AUDIT_TRAIL_DATA				7918
+#define	IC_HISTORICAL_AUDIT_TRAIL_TRAILER			7919
+#define IC__HISTORICAL_AUDIT_TRAIL_VIEW_RES			7920
+
+#define	IC_LIVE_AUDIT_TRAIL_REQ						7921
+#define	IC_LIVE_AUDIT_TRAIL_HEADER					7922
+#define IC_LIVE_AUDIT_TRAIL_DATA					7923
+#define	IC_LIVE_AUDIT_TRAIL_TRAILER					7924
+//////////AuditTrail///////////
+
+#define CNX_NIFTY		"CNX Nifty"
+#define CNX_500			"CNX 500"
+#define CNX_DEFTY		"CNX Defty"
+
+#define BSE_PCAS_MKT			20
+#define BSE_ALLOWED_IN_PCAS			3
+#define BSE_ALLOWED_IN_AUCTION		100
+
+#define BC_AUCTION_MATCHING_START		5046
+#define BC_AUCTION_MATCHING_END			5047
+
+#define BSE_MEMBER_QUERY            	5051
+#define MARKET_START_OF_AUCTION			5052
+#define MARKET_END_OF_AUCTION			5053
+#define BSE_OFFER_ENTRY                 5054
+#define BSE_AUCTION_MATCHING        	5055
+#define BSE_REPORT_DOWNLOAD         	5056
+
+#define IC_BSE_PACS_MKT_SCRIP_INFO_REQ	5319
+
+#define MATCHING_SESSION_START			8
+#define MATCHING_SESSION_END			9
+
+// for order log added by sachin pal
+#define GC_ORDER_LOG_REQ						7929
+#define	GC_ORDER_LOG_RESP						7930
+////////////////////////////////
+
+//For BSE Institution client
+/*!
+	author:	Bhushan R. Chaudhari
+	date:	23-Aug-2013
+	brief:	Compiler flag enabled for BSE Institution client changes
+!*/
+#define BSE_INST_CLI
+
+//For NSE currency new changes.
+/*!
+	author:	Bhushan R. Chaudhari
+	date:	23-Aug-2013
+	brief:	Compiler flag enabled for currency changes
+!*/
+#define NSE_CURR_VER_109 //If NSE Currency new changes required thne flag should be on.
+
+#define ENABLE_DYNAMIC_STATUSBAR		// Added By @@K_Vilas On 04-09-13
+#define EXCHANGE_SETTINGS_FILENAME "exchange_settings.ini" // 
+#define EXCHANGE_PANE_START 4
+#define EXCHANGE_PANE_MAX	6
+
+//Added By @@Vilas For OrderCancel
+#define GIC_KILL_SWITCH_REQ                                                 6507		
+#define GIC_KILL_SWITCH_MANAGER_RES                                         6508
+#define MARKET_STATUS_LOG_FILE							"MarketStatusLog"
+//! Added By Ganesh Saste for BSE-EQ & BSE-FO this flag should be on when EQ on ETI
+#define BSE_EQ_ETI
+
+//! Added By Ganesh Saste for BSE-FO
+#define IC_HISTORICAL_SEQ_BSE_FO_ORDER_REQ				9910
+#define IC_HISTORICAL_SEQ_BSE_FO_ORDER_HEADER			9911
+#define IC_HISTORICAL_SEQ_BSE_FO_ORDER_DATA				9912
+#define IC_HISTORICAL_SEQ_BSE_FO_ORDER_TRAILER			9913
+
+#define IC_HISTORICAL_SEQ_BSE_FO_PENDINGORDERS_REQ		9914
+#define IC_HISTORICAL_SEQ_BSE_FO_PENDINGORDERS_HEADER	9915
+#define IC_HISTORICAL_SEQ_BSE_FO_PENDINGORDERS_DATA		9916
+#define IC_HISTORICAL_SEQ_BSE_FO_PENDINGORDERS_TRAILER	9917
+
+#define IC_HISTORICAL_SEQ_BSE_FO_TRADES_REQ				9918
+#define IC_HISTORICAL_SEQ_BSE_FO_TRADES_HEADER			9919
+#define IC_HISTORICAL_SEQ_BSE_FO_TRADESS_DATA			9920
+#define IC_HISTORICAL_SEQ_BSE_FO_TRADES_TRAILER			9921
+
+
+#define GC_HISTORICAL_SEQ_BSE_FO_SPD_PENDINGORDERS_REQ       		9922
+#define GC_HISTORICAL_SEQ_BSE_FO_SPD_PENDINGORDERS_HEADER    		9923
+#define GC_HISTORICAL_SEQ_BSE_FO_SPD_PENDINGORDERS_DATA      		9924
+#define GC_HISTORICAL_SEQ_BSE_FO_SPD_PENDINGORDERS_TRAILER   		9925
+
+//@@Farhan Shaikh on 11/07/2014 for RMS
+#define RMS_LOAD_FILE					11
+#define RMS_MARGIN_FILE					12
+
+//@@Farhan Shaikh on 28/10/2014 to display Client Code
+#define		WND_PENDING_ORDER			1
+#define		WND_TRADES_ORDER			2
+#define		WND_NET_POSITION_ORDER		3
+
+
+#define DONT_MAKE_EDITABLE -1000
+#define NCDEX_SPREAD_CONTRACT
+/* Added By Ganesh Saste On 22/09/14 For Greek Start With Sqlite*/
+#define USE_GREEK_SQLITEDB
+
+/*
+	@@Farhan Shaikh on 08/09/2014
+	To skip tables which are not implemented in SQLite database
+*/
+//#define SKIP_FOR_SQLITE
+
+//@@Farhan Shaikh on 28/10/2014 to display Client Code
+#define		WND_PENDING_ORDER			1
+#define		WND_TRADES_ORDER			2
+#define		WND_NET_POSITION_ORDER		3
+#define DONT_MAKE_EDITABLE -1000
+
+//#define ENABLE_INDEX_BCAST_SUBS		//Added by Hardik on 14JAN2015
+#define	IC_GREEK_MBP_BHAVCOPY_RES		5539	//Added by Hardik on 27JAN2015
+#define NCDEX_SPREAD_CONTRACT
+
+/*
+	@@Farhan Shaikh on 25/11/2014 
+	To maintane Max number of count to open Tape Reading Window.
+*/
+#define		BROADCAST_TRACKER_INFO_MAX		10
+#define		TAPE_READING_MAX				 3
+#define		TAPE_READING_INTERVAL_MAX		 4
+#define     TECHINICAL_SCANNER_MAX           3
+
+// Added Below greek codes for Broadcast Tracking(Tape Reading)
+#define GC_BROADCAST_TRACKER_RULE_ADD_REQ		3312
+#define GC_BROADCAST_TRACKER_RULE_ADD_RES		3313
+#define GC_BROADCAST_TRACKER_RULE_DEL_REQ		3314
+#define GC_BROADCAST_TRACKER_RULE_DEL_RES		3315
+
+#define GC_BROADCAST_TRACKER_RULE_REQ			3316
+#define GC_BROADCAST_TRACKER_RULE_HEADER		3317
+#define GC_BROADCAST_TRACKER_RULE_DATA			3318
+#define GC_BROADCAST_TRACKER_RULE_TRAILER		3319
+
+#define SUB_TOKEN_INTERVAL_REQ					1591
+#define SUB_TOKEN_INTERVAL_RES					1592
+
+#define SUB_TOKEN_DEPTH							1593
+#define UN_SUB_TOKEN_DEPTH						1594
+#define DISCONNECT_CLIENT						1595
+#define SINGLE_DEPTH_DATA						1596
+#define DEPTH_SNAPSHOT_DATA						1597
+#define RULE_SUB_TOKEN_DEPTH					1598
+
+#define RULE_SUB_TOKEN_DEPTH					1598
+#define RULE_UN_SUB_TOKEN_DEPTH					1599
+#define RULE_DEPTH_DATA							1635
+#define		TAPE_READING_MAX		3
+/*
+	Added by Raju Palakurla  on 12FEB2015
+	Flex Grid Text Style for Specific Columns these are not effect on other Columns
+*/
+#define GRID_TEXTSTYLE_RIGHT_CENTER     1		
+#define GRID_TEXTSTYLE_LEFT_CENTER      7
+#define GRID_TEXTSTYLE_GENERAL          9
+
+/*  \author Pravin \date 03-MAR-2015
+    \brief  used for View only Mini Admin
+ */
+#define	GC_HISTORICAL_VIEW_ONLY_MINIADMIN_SETTING_REQ		6831
+#define	GC_HISTORICAL_VIEW_ONLY_MINIADMIN_SETTING_HEADER	6832
+#define GC_HISTORICAL_VIEW_ONLY_MINIADMIN_SETTING_DATA		6833
+#define	GC_HISTORICAL_VIEW_ONLY_MINIADMIN_SETTING_TRAILER	6834
+
+#define IC_VIEW_ONLY_MINIADMIN_MODIFY_REQ					6835
+#define IC_VIEW_ONLY_MINIADMIN_MODIFY_RES					6836
+
+
+/*
+	Added By @@K_Vilas For IOM on 03-APR-2014
+*/
+#define GC_HISTORICAL_IOM_RULES_REQ									7671
+#define GC_HISTORICAL_IOM_RULES_HEADER								7672
+#define GC_HISTORICAL_IOM_RULES_DATA								7673
+#define GC_HISTORICAL_IOM_RULES_TRAILER								7674
+
+#define GC_HISTORICAL_NONIOB_LINKTRADE_REQ							7676
+#define GC_HISTORICAL_NONIOB_LINKTRADE_HEADER						7677
+#define GC_HISTORICAL_NONIOB_LINKTRADE_DATA							7678
+#define GC_HISTORICAL_NONIOB_LINKTRADE_TRAILER						7679
+
+#define GC_HISTORICAL_IOM_RIGHTS_REQ								7680
+#define GC_HISTORICAL_IOM_RIGHTS_HEADER								7681
+#define GC_HISTORICAL_IOM_RIGHTS_DATA								7682
+#define GC_HISTORICAL_IOM_RIGHTS_TRAILER							7683
+
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_REQ						7684
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_HEADER						7685
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_DATA						7686
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_TRAILER					7687
+
+#define GC_IOM_RULE_REQ												7688	//Actions Merge,Extract,Modify
+#define GC_IOM_RULE_RES												7689
+									
+#define GC_IOM_RIGHTS_ADD_REQ										7690
+#define GC_IOM_RIGHTS_ADD_RES										7691
+
+//! PRAVIN for IOM Extract Merge 10-APR-2014
+#define GC_IOM_MERGE_REQ                                            7692
+#define GC_IOM_MERGE_RES                                            7693
+#define GC_IOM_EXTRACT_REQ                                          7694
+#define GC_IOM_EXTRACT_RES                                          7695
+
+#define GC_HISTORICAL_IOM_RULES_ABR_DOWNLOAD_REQ					7661
+#define GC_HISTORICAL_IOM_RULES_ABR_DOWNLOAD_RES					7662
+
+#define GC_HISTORICAL_NONIOB_LINKTRADE_ABR_DOWNLOAD_REQ				7663
+#define GC_HISTORICAL_NONIOB_LINKTRADE_ABR_DOWNLOAD_RES				7664
+
+#define GC_HISTORICAL_IOM_RIGHTS_ABR_DOWNLOAD_REQ					7665
+#define GC_HISTORICAL_IOM_RIGHTS_ABR_DOWNLOAD_RES					7666
+
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_ABR_DOWNLOAD_REQ			7667
+#define GC_HISTORICAL_EXCHANGE_IOM_ORDER_ABR_DOWNLOAD_RES			7668
+
+//=== IOM Order Execution Type ===
+#define IOM_ORDER_EXECUTE_MANUAL			0
+#define IOM_ORDER_EXECUTE_AUTOMATED			1
+#define IOM_ORDER_EXECUTE_BOTH				2
+
+//=== IOM Order Action Type ===
+#define IOM_ORDER_ACTION_ASSIGN				1
+#define IOM_ORDER_ACTION_RELEASE			2
+#define IOM_ORDER_ACTION_HOLD				3
+#define IOM_ORDER_ACTION_ACTIVE				4
+#define IOM_ORDER_ACTION_DEACTIVE			5
+#define IOM_ORDER_ACTION_CANCEL				6
+#define IOM_ORDER_ACTION_DELETE				7
+#define IOM_ORDER_ACTION_MODIFY             8
+#define IOM_ORDER_ACTION_FORCEASSIGN		9
+#define IOM_ORDER_ACTION_SPLIT              10
+#define IOM_ORDER_ACTION_BASE_ADD           11
+#define IOM_ORDER_ACTION_BASE_Mod           12
+
+#define IOM_NORMAL_ORDER					1
+#define IOM_SPREAD_ORDER					2
+/*
+	@@Farhan Shaikh on 16/04/2014 to handle IOM Error codes
+*/
+#define IOM_NOT_LOGGEDIN                    50 // Arbitrage Not logged In
+#define IOM_EXCH_NOT_ALLOWED                51 // Arbitrage Login but Exch not allowed
+#define IOM_EXCH_NOT_LOGGEDIN               52 // While Login Exchnage not Tick[Arbitrage Login]
+#define IOM_RULE_ASSIGNED                   53 // If User has rules in Assigned status
+#define IOM_LOT_MODIFICATION                54 // Error IOM Rule midification is less than placed Qty
+#define IOM_TRANSACTION_MGMT_ERROR          55 // Trasaction management error
+#define IOM_SPLIT_QTY_EXCEED                56 
+#define IOM_LOT_MOD_EXCEED_BASE             57 // Split Rule Mod qty exceeds base rule's remainning to assign Qty
+#define IOM_RULE_ASSIGNED_AUTOMATED         58 // If User has Automated or Both type rules in Assigned status
+#define IOM_TOT_LOT_EXCEED                  59 // Qty Exceeds than TotalQTY
+#define IOM_BASE_QTY_MOD                    60 // Base Rule Modification Less than Assigned Qty
+#define IOM_INVALID_RETAILER                61 // Retailer is not Mapped to the dealer
+
+#define MAX_DEPTHUPTO_IN_ARBITRAGE			10
+
+/*  \author Ankush \date 04-MAY-2015
+    \brief  used for Product Master Settings
+ */
+#define	GC_HISTORICAL_PRODUCT_MASTER_REQ		6837
+#define	GC_HISTORICAL_PRODUCT_MASTER_HEADER		6838
+#define GC_HISTORICAL_PRODUCT_MASTER_DATA		6839
+#define	GC_HISTORICAL_PRODUCT_MASTER_TRAILER	6840
+/*
+	Added Greek Codes For Graph Technical Summary report on 11-06-2015
+*/
+
+#define IC_GREEK_SUMMARY_OFFLINE_ADD_RULE_REQ		2903
+#define IC_GREEK_SUMMARY_ADD_RULE_REQ		        2904
+#define IC_GREEK_SUMMARY_OFFLINE_MOFIFY_RULE_REQ	2905
+#define IC_GREEK_SUMMARY_DELETE_RULE_REQ	        2906
+#define IC_GREEK_SUMMARY_LOGOFF_REQ                 2907
+#define IC_GREEK_SUMMARY_STOP_ALL_RULE              2908
+
+#define IC_GREEK_SUMMARY_TOKEN_INFO                 2909
+
+#define IC_GREEK_SUMMARY_OFFLINE_ADD_RULE_RESP		2910
+#define	IC_GREEK_SUMMARY_ADD_RULE_RESP              2911
+#define	IC_GREEK_SUMMARY_MODIFY_RULE_RESP           2912
+#define	IC_GREEK_SUMMARY_DELETE_RULE_RESP           2913
+#define	IC_GREEK_SUMMARY_TRADE_RESP                 2914
+#define IC_GREEK_SUMMARY_STOP_RULE_REQ		        2915
+#define IC_GREEK_SUMMARY_START_RULE_REQ		        2916
+#define IC_GREEK_SIGNAL_DATA_RES					2917
+
+#define IC_HISTORICAL_SUMMARY_TOKEN_REQ	 			2899
+#define IC_HISTORICAL_SUMMARY_TOKEN_HEADER          2900
+#define IC_HISTORICAL_SUMMARY_TOKEN_DATA			2901
+#define IC_HISTORICAL_SUMMARY_TOKEN_TRAILER			2902
+
+
+
+#define MAX_EXCHANGES       17
+#define MAX_PRODUCTS        50
+#define MAX_CLIENTS         30000
+
+// In TapeReading Interval for Maximum Intervals 
+#define MAX_INTERVALS				          20
+#define REFRESH_TIME						   5
+
+
+//____________________________________________________________Shrawan Patel
+#define GC_ORDERS_WITH_ERROR_CODE_REQ				9006
+#define GC_ORDERS_WITH_ERROR_CODE_HEADER			9007	
+#define GC_ORDERS_WITH_ERROR_CODE_DATA  			9008
+#define GC_ORDERS_WITH_ERROR_CODE_TRAILER			9009

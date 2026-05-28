@@ -1,0 +1,16 @@
+Greek F7:
+Tested Greek Mkt watch values for StrikeIV,RealisedIV,UserIV with calculation.
+cross checked values with client logoff/login.                3.30
+
+
+Tested Greek Hide portfolio window,checked hided portfolio with client logoff/login.
+Tested Scenario for simulation Report view ,Graph view.          1.30
+
+
+Tested Scenario for Greek backup,Online Backup and DB autobackup on app exit.       1.30
+
+
+Load testing: placed automated orders in Alt+Z ,manual orders.          1.30
+              
+
+

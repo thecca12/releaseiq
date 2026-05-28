@@ -1,0 +1,11 @@
+Todays testing:-Greek_F7
+Tested Portfolio Menu:created Manually portfolio using Strike IV,Realised IV,user recordwise Iv.
+1)created new portfolio as per realisedIV setting and observed values in Realised IV column and checked which are showing correct or not as per setting applied 
+2)created new portfolio as per realisedIV setting and observed values in Realised IV column and checked which are showing correct or not as per setting applied 
+3)Tested IV settings as per user IV recordwise and user IV Modify diff wise
+4)tested IV setting :-in that we tested after tick on checkbox realised IV column is editable or or not and also observed after changing call and put values the values  in realised IV column get change or not
+5)tested scenario for  Get Online Data checkbox:1)if checkbox is checked then all portfolio should display as online mode                                                                2)if checkbox is unchecked then all portfolio should display as per offline mode
+6)checked bhideportfolio column in db 1)if portfolio hided then it should display '1'   2)if portfolio unhided then it should display '0'
+7)compared  greek mkt values with greek simu report values and obeserved which are showing same or diff.
+8)cross checked greek trade entries in database in greekpositions table. 
+

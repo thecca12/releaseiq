@@ -1,0 +1,128 @@
+version: "3.9"
+
+# ============================================================
+# ReleaseIQ – Development Override
+#
+# Usage:
+#   docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# Features:
+#   - Hot-reload for both frontend (Vite HMR) and backend (uvicorn --reload)
+#   - Source-mounted volumes so changes are reflected instantly
+#   - Nginx is bypassed – frontend dev server runs on port 5173
+#   - Direct port exposure; no production hardening
+# ============================================================
+
+services:
+  # ----------------------------------------------------------
+  # Frontend  (Vite dev server with HMR)
+  # ----------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend.dev
+    image: releaseiq-frontend-dev:latest
+    container_name: releaseiq_frontend_dev
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:8000
+      VITE_WS_URL: ws://localhost:8000
+      CHOKIDAR_USEPOLLING: "true"   # needed inside Docker on some hosts
+    volumes:
+      # Mount source for HMR; node_modules stays in the container
+      - ./frontend/src:/app/src:delegated
+      - ./frontend/public:/app/public:delegated
+      - ./frontend/index.html:/app/index.html:delegated
+      - /app/node_modules
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5173"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    depends_on:
+      - backend
+
+  # ----------------------------------------------------------
+  # Backend  (Uvicorn with --reload)
+  # ----------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend.dev
+    image: releaseiq-backend-dev:latest
+    container_name: releaseiq_backend_dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DEBUG: "true"
+      ENVIRONMENT: development
+      SECRET_KEY: dev-secret-key-not-for-production
+      JWT_SECRET_KEY: dev-jwt-secret-key-not-for-production
+      ALLOWED_ORIGINS: "http://localhost:3000,http://localhost:5173,http://localhost"
+      DATABASE_URL: postgresql+asyncpg://releaseiq:releaseiq@postgres:5432/releaseiq
+      OLLAMA_BASE_URL: http://ollama:11434
+      AI_MODEL: ${AI_MODEL:-llama3}
+      CHROMA_PERSIST_DIR: /app/data/chroma
+      ROOT_DATA_FOLDER: /app/data/files
+      UPLOAD_DIR: /app/data/uploads
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      # Mount source for live reload
+      - ./backend/app:/app/app:delegated
+      - ./backend/tests:/app/tests:delegated
+      - backend_data:/app/data
+    networks:
+      - releaseiq_net
+    command: >
+      python -m uvicorn app.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir /app/app
+      --log-level debug
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 20s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # PostgreSQL  (same as prod, no overrides needed)
+  # ----------------------------------------------------------
+  postgres:
+    environment:
+      POSTGRES_USER: releaseiq
+      POSTGRES_PASSWORD: releaseiq
+      POSTGRES_DB: releaseiq
+    ports:
+      - "5432:5432"
+
+  # ----------------------------------------------------------
+  # Redis  (more verbose logging in dev)
+  # ----------------------------------------------------------
+  redis:
+    command: redis-server --loglevel verbose
+    ports:
+      - "6379:6379"
+
+  # ----------------------------------------------------------
+  # ChromaDB  (same as prod)
+  # ----------------------------------------------------------
+  chromadb:
+    ports:
+      - "8001:8000"
+
+  # ----------------------------------------------------------
+  # Ollama  (same as prod)
+  # ----------------------------------------------------------
+  ollama:
+    ports:
+      - "11434:11434"

@@ -1,0 +1,8 @@
+Greek F7 Testing:Rel_1103
+Tested Last IV  with include Expiry with Eq and Fut Base
+Tested Last IV  with Exclude Expiry with Eq and Fut Base
+Tested Mkt watch calcu with Include Expiry 
+Tested Mkt watch calcu with Exclude Expiry 
+Tested Mkt watch calcu with Reduced days
+Tested Mkt watch calcu with online portflio
+Tested Mkt watch calcu with offline portfolio.

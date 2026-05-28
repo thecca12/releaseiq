@@ -1,0 +1,18 @@
+Greek F7 Testing:
+Tested Greek mkt watch values Based on  StrikeIV,UserIV with calculation.      2
+
+
+Tested greek hide portfolio window with client logoff/login and also checked data in db and flags. 
+Tested scenario for Greek backup ,online backup,hide net greek.      2
+
+
+Tested scenario for manually created portfolio in greek and checked calcu for UserIV Setting.     1
+
+Tested Greek summary report window tested with calculation, checked values with sorting coloumns/row with client logoff/login.    2
+
+
+
+
+
+
+

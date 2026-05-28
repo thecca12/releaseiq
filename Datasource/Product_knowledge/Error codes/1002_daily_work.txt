@@ -1,0 +1,11 @@
+Testing of Greek Trail trade window:
+1)tested Scenario for ,Display,Modify,cancel,delete Buttons
+2)Teted Scenario for stategy settings in that checked funcationality of 'apply' checkbox  1)if apply checkbox is checked data in strategy name  should get changed 
+3)tested funcatinality of modify button:-it should get editable strategy name,Qty,and price  only when checkbox is checked otherwise not.
+also observed entries in database in greekpositions table.
+4)tested Funcationality of save button:-it should allow user to save trade data file on selected path.
+5)after click on Display button it should display data as per filter applied
+6)cross verified values which is displaying on greek mkt watch and greek summary report window.it should be same.
+7)tested accounting menu of greek:in that observed values of premium ,stock(U),Future(U),Option(U) with calculation.
+8)tested scenario for greek hide portfolio window with client relogin process to check after taking client relogin is there any changes occurs in hided porfolio.
+9)testing done for user iv modi diff setting,after applied this setting user can change iv diff for seleted portfolio or multiple .also checked mkt watch calculations after iv modify. 

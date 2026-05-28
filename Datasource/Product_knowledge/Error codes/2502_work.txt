@@ -1,0 +1,23 @@
+Greek F7 Testing:
+Tested greek market watch calculation with diff IV   2.30
+
+Tested Greek summary window value with calculation.
+checked value with sorting Coloumn/row with greek relogin.  1.30
+
+Tested Greek Funcatinality Auto Left Days with mkt watch calculation. 2
+
+Tested Tradefile upload Funcationality and check positions on greek mkt watch,check trade entries ,flags in DB. 1
+
+tested greek hide portfolio window with client relogin and checked flag in DB 1
+
+
+
+
+
+
+
+
+
+
+
+

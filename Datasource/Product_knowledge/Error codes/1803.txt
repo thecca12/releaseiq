@@ -1,0 +1,9 @@
+Greek F7 Testing :
+Tested Greek Mkt watch calcu with Diff Expiry and Strategy name with diff IV setting,summary report,checked records in DB  4.30
+
+
+Tested Greek Date Diff func,currency* regular lot func.
+Tested Greek IV setting ,userIV Recordwise,UserIV Modify Diff,modify and checked Call/put values in Realised IV coloumn.1 1.30
+
+
+Traning given by Hemant sir on AskIV,BidIV,LastIV,Option Calcu,cross checked Iv values with option calcu calculations. 2 

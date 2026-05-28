@@ -1,0 +1,26 @@
+Greek F7 Testing:
+Tested VAR calcu window with changes in percentage for diff iv,for Nse EQ/FO/CD seg,
+Tested Greek Details window with calculation   4   1103rel
+ 
+
+Tested Net greek window ,Delta ,Theta,Vega,Gamma calcu.
+Tested greek portfolio rate setting with mkt watch calculation for diff IV setting,summary report window calcu.  3 1103rel
+
+
+Tested greek auto left days funcationality ,mkt watch calcu with diff IV's,summary report.2  1902rel
+
+Placed manual orders with multiple clients 
+
+
+
+
+
+
+
+Todays Greek Testing in rel_1103
+Tested VAR calcu window
+Tested Greek details,Net greek window
+Tested Portfolio Rate setting
+Tested auto left days func with calcu ,summary window in rel_1902
+
+

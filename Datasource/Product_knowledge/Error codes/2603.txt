@@ -1,0 +1,6 @@
+Greek F7 Testing:
+
+Tested greek  Manual Entry funct,with Current date,Previous date,mkt watch calcu,summary report,checked records in DB  5
+Tested greek Accounting window calcu with diff IV .    
+Tested greek Positions with hide portfolio funct with client relogin.  2.30
+Tested greek summary report window with Bal,MTOM,Theta,Vega  calcu ,sorting ,with client relogin.  1.30

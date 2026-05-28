@@ -1,0 +1,15 @@
+Greek F7 Testing:
+Tested Greek Manual entry positions for NSE EQ/FO/CD ,mkt watch calcu,checked Last IV with base E/F .checked data DB.
+Tested summary report window,sorting coloumns,row,calcu with client relogin. 4
+
+
+
+Tested Greek Trade file upload Functionality with calcu,checked data in DB,checked positions,tested summary report window.3.30
+
+
+Tested Greek Accounting window with calcu for diff IV setting.
+Tested greek Restore Todays data funcationality ,checked positions.
+
+
+
+

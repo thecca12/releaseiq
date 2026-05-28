@@ -1,0 +1,252 @@
+version: "3.9"
+
+# ============================================================
+# ReleaseIQ – Production Docker Compose
+# ============================================================
+
+x-common-env: &common-env
+  TZ: UTC
+
+services:
+  # ----------------------------------------------------------
+  # Frontend  (Nginx + React build)
+  # ----------------------------------------------------------
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    image: releaseiq-frontend:latest
+    container_name: releaseiq_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    environment:
+      <<: *common-env
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    labels:
+      - "com.releaseiq.service=frontend"
+
+  # ----------------------------------------------------------
+  # Backend  (FastAPI + Uvicorn)
+  # ----------------------------------------------------------
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    image: releaseiq-backend:latest
+    container_name: releaseiq_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      <<: *common-env
+      APP_NAME: ReleaseIQ
+      APP_VERSION: "1.0.0"
+      DEBUG: "false"
+      ENVIRONMENT: production
+      SECRET_KEY: ${SECRET_KEY:-changeme-production-secret}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:3000,http://localhost}
+      # Database
+      DATABASE_URL: ${DATABASE_URL:-postgresql+asyncpg://releaseiq:releaseiq@postgres:5432/releaseiq}
+      # JWT
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-changeme-jwt-production-secret}
+      JWT_ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "60"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+      # AI / Ollama
+      OLLAMA_BASE_URL: http://ollama:11434
+      AI_MODEL: ${AI_MODEL:-llama3}
+      AI_EMBEDDING_MODEL: ${AI_EMBEDDING_MODEL:-nomic-embed-text}
+      CHROMA_PERSIST_DIR: /app/data/chroma
+      # Storage
+      ROOT_DATA_FOLDER: /app/data/files
+      UPLOAD_DIR: /app/data/uploads
+      MAX_FILE_SIZE_MB: "100"
+      # Redis
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      chromadb:
+        condition: service_healthy
+    volumes:
+      - backend_data:/app/data
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    labels:
+      - "com.releaseiq.service=backend"
+
+  # ----------------------------------------------------------
+  # PostgreSQL
+  # ----------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: releaseiq_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      <<: *common-env
+      POSTGRES_USER: ${POSTGRES_USER:-releaseiq}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-releaseiq}
+      POSTGRES_DB: ${POSTGRES_DB:-releaseiq}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-releaseiq} -d ${POSTGRES_DB:-releaseiq}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    labels:
+      - "com.releaseiq.service=postgres"
+
+  # ----------------------------------------------------------
+  # Redis  (session cache, Celery broker)
+  # ----------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: releaseiq_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    environment:
+      <<: *common-env
+    command: >
+      redis-server
+      --save 60 1
+      --loglevel warning
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    labels:
+      - "com.releaseiq.service=redis"
+
+  # ----------------------------------------------------------
+  # ChromaDB  (vector store for RAG)
+  # ----------------------------------------------------------
+  chromadb:
+    image: chromadb/chroma:0.5.3
+    container_name: releaseiq_chromadb
+    restart: unless-stopped
+    ports:
+      - "8001:8000"
+    environment:
+      <<: *common-env
+      CHROMA_SERVER_AUTH_CREDENTIALS_PROVIDER: chromadb.auth.token.TokenConfigServerAuthCredentialsProvider
+      ANONYMIZED_TELEMETRY: "false"
+      ALLOW_RESET: "true"
+      IS_PERSISTENT: "true"
+      PERSIST_DIRECTORY: /chroma/chroma
+    volumes:
+      - chroma_data:/chroma/chroma
+    networks:
+      - releaseiq_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+    labels:
+      - "com.releaseiq.service=chromadb"
+
+  # ----------------------------------------------------------
+  # Ollama  (local LLM inference)
+  # ----------------------------------------------------------
+  ollama:
+    image: ollama/ollama:latest
+    container_name: releaseiq_ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    environment:
+      <<: *common-env
+      OLLAMA_ORIGINS: "*"
+      OLLAMA_HOST: 0.0.0.0
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - releaseiq_net
+    # Uncomment for NVIDIA GPU support:
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    labels:
+      - "com.releaseiq.service=ollama"
+
+
+# ============================================================
+# Named Volumes
+# ============================================================
+volumes:
+  postgres_data:
+    driver: local
+    labels:
+      com.releaseiq.volume: postgres
+  redis_data:
+    driver: local
+    labels:
+      com.releaseiq.volume: redis
+  chroma_data:
+    driver: local
+    labels:
+      com.releaseiq.volume: chromadb
+  ollama_models:
+    driver: local
+    labels:
+      com.releaseiq.volume: ollama
+  backend_data:
+    driver: local
+    labels:
+      com.releaseiq.volume: backend
+
+
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  releaseiq_net:
+    driver: bridge
+    labels:
+      com.releaseiq.network: main

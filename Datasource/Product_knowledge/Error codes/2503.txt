@@ -1,0 +1,11 @@
+Greek F7 Testing:
+Tested greek Create Portfolio funct with mkt watch calcu,summary report,checked Last IV,checked records in DB.4
+
+
+Tested Greek Total MTOM,Days MTOM,Diff MTOM calculation with Close price,Prev LTP setting.3
+
+
+
+Update Release mantis sheet note with latest patches.0.30
+
+Tested greek Net position window with calcu,save Excel file . 1
