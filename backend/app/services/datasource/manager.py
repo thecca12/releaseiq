@@ -105,6 +105,19 @@ class DataSourceManager:
 
     def get_releases(self, env: str = None, status: str = None, version: str = None, health: str = None) -> List[Dict]:
         items = list(self._cache.get("releases", []))
+
+        # Deduplicate by version — prefer LIVE over QA when duplicates exist
+        seen: dict = {}
+        for r in items:
+            ver = r.get("version", "").strip()
+            if ver not in seen:
+                seen[ver] = r
+            else:
+                # Keep the LIVE entry as the canonical one
+                if r.get("environment", "").upper() == "LIVE":
+                    seen[ver] = r
+        items = list(seen.values())
+
         if env:
             items = [r for r in items if r.get("environment", "").upper() == env.upper()]
         if status:

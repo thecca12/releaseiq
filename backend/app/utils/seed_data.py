@@ -47,6 +47,34 @@ DEFAULT_USERS = [
         "password": "user123",
         "role": UserRole.user,
     },
+    {
+        "username": "psharma",
+        "email": "priya.sharma@greeksoft.co.in",
+        "full_name": "Priya Sharma",
+        "password": "priya1234",
+        "role": UserRole.manager,
+    },
+    {
+        "username": "rkulkarni",
+        "email": "rohit.kulkarni@greeksoft.co.in",
+        "full_name": "Rohit Kulkarni",
+        "password": "rohit1234",
+        "role": UserRole.user,
+    },
+    {
+        "username": "njoshi",
+        "email": "neha.joshi@greeksoft.co.in",
+        "full_name": "Neha Joshi",
+        "password": "neha1234",
+        "role": UserRole.user,
+    },
+    {
+        "username": "dmenon",
+        "email": "divya.menon@greeksoft.co.in",
+        "full_name": "Divya Menon",
+        "password": "divya1234",
+        "role": UserRole.admin,
+    },
 ]
 
 

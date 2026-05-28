@@ -29,6 +29,7 @@ const UtilitiesPage = lazy(() => import('@/pages/UtilitiesPage'))
 const TestCasesPage = lazy(() => import('@/pages/TestCasesPage'))
 const GreekCodesPage = lazy(() => import('@/pages/GreekCodesPage'))
 const CircularsPage = lazy(() => import('@/pages/CircularsPage'))
+const BackupPage = lazy(() => import('@/pages/BackupPage'))
 
 // ── Auth guard ───────────────────────────────────────────────────────────────
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -88,6 +89,7 @@ const App: React.FC = () => {
           <Route path="utilities"    element={<Page><UtilitiesPage /></Page>} />
           <Route path="test-cases"   element={<Page><TestCasesPage /></Page>} />
           <Route path="greek-codes"  element={<Page><GreekCodesPage /></Page>} />
+          <Route path="backup"       element={<Page><BackupPage /></Page>} />
         </Route>
 
         {/* Catch-all */}

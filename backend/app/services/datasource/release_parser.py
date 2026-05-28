@@ -26,8 +26,9 @@ class ReleaseParser(BaseParser):
         return releases
 
     def _build_from_patch_notes(self, patch_root: Path) -> List[Dict[str, Any]]:
-        releases = []
-        seen = set()
+        # Collect per-environment data keyed by normalised version name
+        by_version: Dict[str, Dict[str, Any]] = {}
+
         for env_folder in ["For Live", "For QA"]:
             env_path = patch_root / env_folder
             if not env_path.exists():
@@ -36,29 +37,47 @@ class ReleaseParser(BaseParser):
             for release_folder in sorted(env_path.iterdir(), reverse=True):
                 if not release_folder.is_dir():
                     continue
-                version = release_folder.name.replace("Release_","").replace("Relase_","").strip()
-                key = f"{version}-{environment}"
-                if key in seen:
-                    continue
-                seen.add(key)
+                version = release_folder.name.replace("Release_", "").replace("Relase_", "").strip()
                 xlsx_files = list(release_folder.rglob("*.xlsx"))
                 patch_date, jira_count = self._read_patch_xlsx(xlsx_files)
-                health = "Healthy" if environment == "LIVE" else "Warning"
-                releases.append({
-                    "version": version,
-                    "release_date": patch_date,
-                    "environment": environment,
-                    "status": "Deployed" if environment == "LIVE" else "Testing",
-                    "owner": "GreekSoft DeployTeam",
-                    "modules": ["RMS", "FIX", "OMS", "CLIENT", "SERVER"],
-                    "health": health,
-                    "open_issues": jira_count,
-                    "critical_issues": 0,
-                    "notes": f"{version} patch for {environment}. {jira_count} issues addressed.",
-                    "health_color": "bg-emerald-500" if health == "Healthy" else "bg-amber-500",
-                    "patch_file_count": len(xlsx_files),
+
+                if version not in by_version:
+                    by_version[version] = {
+                        "version": version,
+                        "release_date": patch_date,
+                        "environment": environment,
+                        "status": "Deployed" if environment == "LIVE" else "Testing",
+                        "owner": "GreekSoft DeployTeam",
+                        "modules": ["RMS", "FIX", "OMS", "CLIENT", "SERVER"],
+                        "health": "Healthy",
+                        "open_issues": jira_count,
+                        "critical_issues": 0,
+                        "notes": f"{version} patch for {environment}. {jira_count} issues addressed.",
+                        "health_color": "bg-emerald-500",
+                        "patch_file_count": len(xlsx_files),
+                        "environments": [],
+                    }
+                else:
+                    # Merge: prefer LIVE values for primary fields
+                    rec = by_version[version]
+                    if environment == "LIVE":
+                        rec["environment"] = "LIVE"
+                        rec["status"] = "Deployed"
+                        rec["health"] = "Healthy"
+                        rec["health_color"] = "bg-emerald-500"
+                        if patch_date:
+                            rec["release_date"] = patch_date
+                        rec["open_issues"] = max(rec["open_issues"], jira_count)
+                        rec["notes"] = f"{version} patch for LIVE. {rec['open_issues']} issues addressed."
+
+                by_version[version]["environments"].append({
+                    "env": environment,
+                    "date": patch_date,
+                    "jira_count": jira_count,
+                    "patch_files": len(xlsx_files),
                 })
-        return releases
+
+        return list(by_version.values())
 
     def _read_patch_xlsx(self, xlsx_files: List[Path]):
         """Extract patch date and JIRA count from xlsx files."""

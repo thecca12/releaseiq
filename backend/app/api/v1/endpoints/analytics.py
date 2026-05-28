@@ -110,7 +110,7 @@ async def get_dashboard_stats(
         "jira_issues": final_issues,
         "releases": final_releases,
         "log_files": len(ds_logs),
-        "documents": file_counts.get("Product_Knowledge", 0),
+        "documents": file_counts.get("Product_knowledge", file_counts.get("Product_Knowledge", 0)),
         "active_clients": len(ds_clients),
         "datasource_stats": ds_stats,
         "releases_detail": {

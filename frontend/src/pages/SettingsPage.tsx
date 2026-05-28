@@ -30,7 +30,6 @@ import {
 import { Separator } from '@/components/ui/separator'
 import { Progress } from '@/components/ui/progress'
 import { PageHeader } from '@/components/shared/PageHeader'
-import { cn } from '@/utils/cn'
 
 // ─── Section wrapper ──────────────────────────────────────────────────────────
 
@@ -54,8 +53,6 @@ const FormRow: React.FC<{ label: string; description?: string; children: React.R
     <div className="flex-shrink-0 w-64">{children}</div>
   </div>
 )
-
-// ─── Save button ──────────────────────────────────────────────────────────────
 
 const SaveButton: React.FC<{ onSave: () => void; saved?: boolean }> = ({ onSave, saved }) => (
   <div className="flex justify-end pt-2">
@@ -149,13 +146,10 @@ const SettingsPage: React.FC = () => {
                     <Input id="app-name" value={appName} onChange={(e) => setAppName(e.target.value)} className="h-9" />
                   </FormRow>
                 </Section>
-
                 <Section title="Locale">
                   <FormRow label="Timezone" description="Used for scheduling and timestamps." htmlFor="timezone">
                     <Select value={timezone} onValueChange={setTimezone}>
-                      <SelectTrigger id="timezone" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="timezone" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Asia/Kolkata">Asia/Kolkata (IST +5:30)</SelectItem>
                         <SelectItem value="UTC">UTC (+0:00)</SelectItem>
@@ -167,9 +161,7 @@ const SettingsPage: React.FC = () => {
                   </FormRow>
                   <FormRow label="Language" htmlFor="language">
                     <Select value={language} onValueChange={setLanguage}>
-                      <SelectTrigger id="language" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="language" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="en">English</SelectItem>
                         <SelectItem value="hi">Hindi</SelectItem>
@@ -177,7 +169,6 @@ const SettingsPage: React.FC = () => {
                     </Select>
                   </FormRow>
                 </Section>
-
                 <SaveButton onSave={() => handleSave('general')} saved={saved.general} />
               </CardContent>
             </Card>
@@ -207,7 +198,6 @@ const SettingsPage: React.FC = () => {
                     <Input id="exclude-types" value={excludeTypes} onChange={(e) => setExcludeTypes(e.target.value)} className="h-9 font-mono text-xs" />
                   </FormRow>
                 </Section>
-
                 <Section title="Schedule">
                   <FormRow label="Indexing Schedule (Cron)" description="When to automatically re-index." htmlFor="schedule">
                     <div className="relative">
@@ -222,7 +212,6 @@ const SettingsPage: React.FC = () => {
                     <Switch checked={deepIndex} onCheckedChange={setDeepIndex} />
                   </FormRow>
                 </Section>
-
                 <SaveButton onSave={() => handleSave('indexing')} saved={saved.indexing} />
               </CardContent>
             </Card>
@@ -241,9 +230,7 @@ const SettingsPage: React.FC = () => {
                 <Section title="Model Selection">
                   <FormRow label="AI Model" description="The LLM to use for chat and analysis." htmlFor="ai-model">
                     <Select value={aiModel} onValueChange={setAiModel}>
-                      <SelectTrigger id="ai-model" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="ai-model" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="llama3">Llama 3 (8B)</SelectItem>
                         <SelectItem value="llama3-70b">Llama 3 (70B)</SelectItem>
@@ -262,34 +249,22 @@ const SettingsPage: React.FC = () => {
                     </div>
                   </FormRow>
                 </Section>
-
                 <Section title="Inference Parameters">
                   <FormRow label="Temperature" description="Controls randomness (0 = deterministic, 1 = creative).">
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Input
-                          type="number"
-                          min="0"
-                          max="1"
-                          step="0.1"
-                          value={temperature}
-                          onChange={(e) => setTemperature(e.target.value)}
-                          className="h-9 w-24 font-mono text-xs"
-                        />
-                        <span className="text-xs text-muted-foreground ml-2">{temperature}</span>
+                      <div className="flex items-center gap-2">
+                        <Input type="number" min="0" max="1" step="0.1" value={temperature} onChange={(e) => setTemperature(e.target.value)} className="h-9 w-24 font-mono text-xs" />
+                        <span className="text-xs text-muted-foreground">{temperature}</span>
                       </div>
                       <Progress value={parseFloat(temperature) * 100} className="h-1.5" />
                       <div className="flex justify-between text-[10px] text-muted-foreground">
-                        <span>Precise</span>
-                        <span>Creative</span>
+                        <span>Precise</span><span>Creative</span>
                       </div>
                     </div>
                   </FormRow>
                   <FormRow label="Max Tokens" description="Maximum response length in tokens." htmlFor="max-tokens">
                     <Select value={maxTokens} onValueChange={setMaxTokens}>
-                      <SelectTrigger id="max-tokens" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="max-tokens" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="512">512</SelectItem>
                         <SelectItem value="1024">1024</SelectItem>
@@ -303,7 +278,6 @@ const SettingsPage: React.FC = () => {
                     <Switch checked={streamResponses} onCheckedChange={setStreamResponses} />
                   </FormRow>
                 </Section>
-
                 <SaveButton onSave={() => handleSave('ai')} saved={saved.ai} />
               </CardContent>
             </Card>
@@ -332,7 +306,6 @@ const SettingsPage: React.FC = () => {
                     </FormRow>
                   )}
                 </Section>
-
                 <Section title="Thresholds">
                   <FormRow label="Critical Issue Threshold" description="Alert when critical issues exceed this count." htmlFor="critical-threshold">
                     <Input id="critical-threshold" type="number" min="1" value={criticalThreshold} onChange={(e) => setCriticalThreshold(e.target.value)} className="h-9 w-24" />
@@ -344,7 +317,6 @@ const SettingsPage: React.FC = () => {
                     <Switch checked={dailyDigest} onCheckedChange={setDailyDigest} />
                   </FormRow>
                 </Section>
-
                 <SaveButton onSave={() => handleSave('notifications')} saved={saved.notifications} />
               </CardContent>
             </Card>
@@ -363,9 +335,7 @@ const SettingsPage: React.FC = () => {
                 <Section title="Session">
                   <FormRow label="Session Timeout (minutes)" description="Auto-logout inactive users after this duration." htmlFor="session-timeout">
                     <Select value={sessionTimeout} onValueChange={setSessionTimeout}>
-                      <SelectTrigger id="session-timeout" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="session-timeout" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="30">30 minutes</SelectItem>
                         <SelectItem value="60">1 hour</SelectItem>
@@ -379,13 +349,10 @@ const SettingsPage: React.FC = () => {
                     <Switch checked={requireMfa} onCheckedChange={setRequireMfa} />
                   </FormRow>
                 </Section>
-
                 <Section title="Password Policy">
                   <FormRow label="Minimum Password Length" description="Minimum characters required for new passwords." htmlFor="min-pw">
                     <Select value={minPasswordLength} onValueChange={setMinPasswordLength}>
-                      <SelectTrigger id="min-pw" className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
+                      <SelectTrigger id="min-pw" className="h-9"><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="6">6 characters</SelectItem>
                         <SelectItem value="8">8 characters</SelectItem>
@@ -396,13 +363,11 @@ const SettingsPage: React.FC = () => {
                     </Select>
                   </FormRow>
                 </Section>
-
                 <Section title="Audit">
                   <FormRow label="Enable Audit Logs" description="Log all user actions for compliance and debugging.">
                     <Switch checked={auditLogs} onCheckedChange={setAuditLogs} />
                   </FormRow>
                 </Section>
-
                 <SaveButton onSave={() => handleSave('security')} saved={saved.security} />
               </CardContent>
             </Card>
@@ -418,7 +383,6 @@ const SettingsPage: React.FC = () => {
                 <CardDescription>Version information and system health status.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-5">
-                {/* Version info */}
                 <div className="grid grid-cols-2 gap-4">
                   {[
                     { label: 'Application Version', value: 'v1.4.2' },
@@ -434,20 +398,17 @@ const SettingsPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-
                 <Separator />
-
-                {/* System Status */}
                 <div>
                   <h4 className="text-sm font-semibold text-foreground mb-3">System Status</h4>
                   <div className="space-y-2.5">
                     {[
-                      { service: 'API Server', status: 'operational', latency: '12ms' },
-                      { service: 'AI Model (Llama 3)', status: 'operational', latency: '240ms' },
-                      { service: 'Indexing Engine', status: 'operational', latency: '8ms' },
-                      { service: 'Database', status: 'operational', latency: '3ms' },
-                      { service: 'Search Index', status: 'operational', latency: '15ms' },
-                    ].map(({ service, status, latency }) => (
+                      { service: 'API Server', latency: '12ms' },
+                      { service: 'AI Model (Llama 3)', latency: '240ms' },
+                      { service: 'Indexing Engine', latency: '8ms' },
+                      { service: 'Database', latency: '3ms' },
+                      { service: 'Search Index', latency: '15ms' },
+                    ].map(({ service, latency }) => (
                       <div key={service} className="flex items-center justify-between rounded-lg border border-border bg-background px-3 py-2.5">
                         <div className="flex items-center gap-2">
                           <span className="h-2 w-2 rounded-full bg-emerald-500" />
@@ -455,15 +416,13 @@ const SettingsPage: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-3">
                           <span className="text-xs text-muted-foreground">{latency}</span>
-                          <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-full px-2 py-0.5 capitalize">{status}</span>
+                          <span className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 rounded-full px-2 py-0.5">operational</span>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
                 <Separator />
-
                 <div className="flex items-center justify-between text-xs text-muted-foreground">
                   <span>ReleaseIQ — AI-powered release intelligence for trading platforms</span>
                   <span>© 2025 GreekSoft Technologies Pvt. Ltd.</span>

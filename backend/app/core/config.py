@@ -35,16 +35,28 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
 
-    # AI / Ollama
+    # AI — LiteLLM / OpenAI-compatible proxy
+    AI_BASE_URL: str = "http://192.168.192.50:4000/v1"
+    AI_API_KEY: str = "sk-RukKxLSb5N4bmKSZS4EgQA"
+    AI_MODEL: str = "global.anthropic.claude-haiku-4-5-20251001-v1:0"
+    AI_MAX_TOKENS: int = 2048
+    AI_TEMPERATURE: float = 0.3
+
+    # AI — Ollama fallback (used if AI_BASE_URL is unavailable)
     OLLAMA_BASE_URL: str = "http://localhost:11434"
-    AI_MODEL: str = "llama3"
     AI_EMBEDDING_MODEL: str = "nomic-embed-text"
     CHROMA_PERSIST_DIR: str = "./data/chroma"
+
+    @property
+    def ai_is_litellm(self) -> bool:
+        """True when using the LiteLLM/OpenAI-compatible proxy."""
+        return "4000" in self.AI_BASE_URL or "openai" in self.AI_BASE_URL.lower()
 
     # File Storage
     ROOT_DATA_FOLDER: str = "./data/files"
     UPLOAD_DIR: str = "./data/uploads"
     MAX_FILE_SIZE_MB: int = 100
+    PRODUCT_KNOWLEDGE_DIR: str = "../Datasource/Product_knowledge"
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"

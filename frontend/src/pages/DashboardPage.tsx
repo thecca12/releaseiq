@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useQuery } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import {
   AreaChart,
   Area,
@@ -43,7 +44,7 @@ import { PageHeader } from '@/components/shared/PageHeader'
 import { StatusBadge } from '@/components/shared/StatusBadge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/utils/cn'
-import { analyticsApi } from '@/services/api'
+import { analyticsApi, releasesApi, issuesApi } from '@/services/api'
 import type { DashboardStats } from '@/types'
 
 // ─── Mock / fallback data ─────────────────────────────────────────────────────
@@ -158,7 +159,13 @@ const priorityColor = (p: string) => {
   }
 }
 
-const statusMap: Record<string, string> = { Open: 'open', 'In Progress': 'in_progress', Resolved: 'resolved', Closed: 'completed' }
+const statusMap: Record<string, string> = {
+  Open: 'open', open: 'open',
+  'In Progress': 'in_progress', in_progress: 'in_progress',
+  Resolved: 'resolved', resolved: 'resolved', done: 'resolved',
+  Closed: 'completed', closed: 'completed',
+  Testing: 'in_progress', testing: 'in_progress',
+}
 
 // Map backend response to DashboardStats — handles both flat and nested shapes
 const mapApiStats = (data: RawApiResponse): DashboardStats => ({
@@ -179,15 +186,20 @@ interface StatCardProps {
   trend?: number
   color: string
   delay?: number
+  href?: string     // navigation target when card is clicked
 }
 
-const StatCard: React.FC<StatCardProps> = ({ label, value, icon, trend, color, delay = 0 }) => (
+const StatCard: React.FC<StatCardProps> = ({ label, value, icon, trend, color, delay = 0, href }) => {
+  const navigate = useNavigate()
+  return (
   <motion.div
     initial={{ opacity: 0, y: 16 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.35, delay }}
+    onClick={() => href && navigate(href)}
+    className={href ? 'cursor-pointer' : ''}
   >
-    <Card className="overflow-hidden">
+    <Card className={cn('overflow-hidden transition-all', href && 'hover:shadow-lg hover:ring-2 hover:ring-primary/20 hover:-translate-y-0.5')}>
       <CardContent className="p-5">
         <div className="flex items-start justify-between">
           <div>
@@ -209,7 +221,8 @@ const StatCard: React.FC<StatCardProps> = ({ label, value, icon, trend, color, d
       </CardContent>
     </Card>
   </motion.div>
-)
+  )
+}
 
 // ─── Custom tooltip ───────────────────────────────────────────────────────────
 
@@ -231,6 +244,9 @@ const CustomTooltip: React.FC<{ active?: boolean; payload?: Array<{ name: string
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate()
+
+  // ── Fetch dashboard stats ──────────────────────────────────────────────────
   const { data: statsData, isLoading: statsLoading, refetch } = useQuery<QueryResult>({
     queryKey: ['dashboard-stats'],
     queryFn: async () => {
@@ -244,52 +260,120 @@ const DashboardPage: React.FC = () => {
     },
   })
 
+  // ── Fetch real releases for health chart ───────────────────────────────────
+  const { data: releasesData } = useQuery({
+    queryKey: ['dashboard-releases'],
+    queryFn: async () => {
+      try {
+        const res = await releasesApi.list({ page_size: 10 })
+        return res.data?.items ?? []
+      } catch { return [] }
+    },
+  })
+
+  // ── Fetch real JIRA issues for Top Issues table ────────────────────────────
+  const { data: issuesData } = useQuery({
+    queryKey: ['dashboard-top-issues'],
+    queryFn: async () => {
+      try {
+        const res = await issuesApi.list({ page_size: 6, priority: 'critical' })
+        const items = res.data?.items ?? []
+        if (items.length < 5) {
+          const res2 = await issuesApi.list({ page_size: 6 })
+          return res2.data?.items ?? []
+        }
+        return items
+      } catch { return [] }
+    },
+  })
+
   const stats = statsData?.stats ?? MOCK_STATS
   const raw = statsData?.raw ?? null
+  const realReleases: Array<Record<string, string>> = releasesData ?? []
+  const realIssues: Array<Record<string, string>> = issuesData ?? []
 
-  // ── Build chart data from real API values when available ───────────────────
-
-  const releaseHealthData = raw?.releases_detail
-    ? [
-        {
-          name: 'v9.48',
-          healthy: raw.releases_detail.healthy || 7,
-          warning: raw.releases_detail.warning || 2,
-          critical: raw.releases_detail.critical || 1,
-        },
-        { name: 'v9.47', healthy: Math.max(1, (raw.releases_detail.healthy || 7) - 1), warning: (raw.releases_detail.warning || 2) + 1, critical: (raw.releases_detail.critical || 1) + 1 },
-        { name: 'v9.46', healthy: Math.max(1, (raw.releases_detail.healthy || 7) - 2), warning: Math.max(0, (raw.releases_detail.warning || 2) - 1), critical: 0 },
-      ]
+  // ── Release Health chart — use real release names (Optimus/3009/1209) ──────
+  const releaseHealthData = realReleases.length > 0
+    ? realReleases.slice(0, 6).map((r) => ({
+        name: r.version as string,
+        healthy: r.health?.toLowerCase() === 'healthy' ? 1 : 0,
+        warning: r.health?.toLowerCase() === 'warning' ? 1 : 0,
+        critical: r.health?.toLowerCase() === 'critical' ? 1 : 0,
+      }))
     : HARDCODED_RELEASE_HEALTH
 
-  const issuesByModule = raw?.issues
-    ? (() => {
-        const total = raw.issues.total || 1248
-        const critical = raw.issues.critical || 0
-        const open = raw.issues.open || total
-        // Distribute across modules proportionally using real totals
-        const modules = [
-          { name: 'RMS', color: '#818cf8' },
-          { name: 'FIX', color: '#6172f3' },
-          { name: 'OMS', color: '#a855f7' },
-          { name: 'SERVER', color: '#ec4899' },
-          { name: 'CLIENT', color: '#14b8a6' },
-        ]
-        const weights = [0.274, 0.230, 0.185, 0.159, 0.152]
-        return modules.map((m, i) => ({
-          ...m,
-          value: Math.round(total * weights[i]),
-        }))
-      })()
-    : HARDCODED_ISSUES_BY_MODULE
+  // ── Issues by Module — count from real JIRA data ───────────────────────────
+  const issuesByModule = (() => {
+    if (realIssues.length > 0) {
+      const moduleCounts: Record<string, number> = {}
+      const moduleColors: Record<string, string> = {
+        RMS: '#818cf8', FIX: '#6172f3', OMS: '#a855f7',
+        SERVER: '#ec4899', CLIENT: '#14b8a6', GENERAL: '#64748b',
+      }
+      realIssues.forEach((i) => {
+        const mod = String(i.module || i.components?.[0] || 'GENERAL').toUpperCase().split(',')[0].trim()
+        const key = Object.keys(moduleColors).find((k) => mod.includes(k)) || 'GENERAL'
+        moduleCounts[key] = (moduleCounts[key] || 0) + 1
+      })
+      const entries = Object.entries(moduleCounts).sort((a, b) => b[1] - a[1])
+      if (entries.length > 0) {
+        return entries.map(([name, value]) => ({ name, value, color: moduleColors[name] || '#64748b' }))
+      }
+    }
+    // Scale HARDCODED proportionally with real totals
+    const total = raw?.issues?.total || 500
+    const weights = [0.274, 0.230, 0.185, 0.159, 0.152]
+    return HARDCODED_ISSUES_BY_MODULE.map((m, i) => ({ ...m, value: Math.round(total * weights[i]) }))
+  })()
 
+  // ── Top Issues — use real JIRA data ───────────────────────────────────────
+  const topIssues = realIssues.length > 0
+    ? realIssues.slice(0, 5).map((i) => ({
+        id: String(i.jira_key || i.jira_id || ''),
+        title: String(i.summary || i.title || ''),
+        priority: String(i.priority || 'Medium'),
+        status: String(i.status || 'Open'),
+        module: String(i.module || i.components?.[0] || '—'),
+        created: String(i.created_at || '').split('T')[0],
+      }))
+    : TOP_ISSUES
+
+  // ── Recent Activity — built from real releases + patch notes ──────────────
+  const recentActivity = [
+    ...realReleases.slice(0, 2).map((r, i) => ({
+      id: i + 1,
+      type: 'release' as const,
+      text: `${r.version} deployed to ${r.environment || 'production'}`,
+      time: r.release_date ? new Date(r.release_date as string).toLocaleDateString('en-IN') : 'recently',
+      icon: <GitBranch className="h-3.5 w-3.5" />,
+      color: 'text-emerald-500',
+    })),
+    ...realIssues.slice(0, 2).map((issue, i) => ({
+      id: i + 10,
+      type: 'jira' as const,
+      text: `${issue.jira_key || issue.jira_id} — ${String(issue.summary || '').slice(0, 40)}`,
+      time: String(issue.created_at || '').split('T')[0] || 'recently',
+      icon: <AlertCircle className="h-3.5 w-3.5" />,
+      color: String(issue.priority).toLowerCase() === 'critical' ? 'text-red-500' : 'text-amber-500',
+    })),
+    {
+      id: 99,
+      type: 'index' as const,
+      text: `${stats.log_files} log files indexed from Datasource`,
+      time: 'today',
+      icon: <Terminal className="h-3.5 w-3.5" />,
+      color: 'text-blue-500',
+    },
+  ].slice(0, 6)
+
+  // ── Stat cards with navigation links ──────────────────────────────────────
   const statCards = [
-    { label: 'Files Indexed', value: stats.files_indexed, icon: <FileText />, trend: 12, color: 'bg-blue-500', delay: 0 },
-    { label: 'Jira Issues', value: stats.jira_issues, icon: <AlertCircle />, trend: -5, color: 'bg-red-500', delay: 0.05 },
-    { label: 'Releases', value: stats.releases, icon: <GitBranch />, trend: 8, color: 'bg-purple-500', delay: 0.1 },
-    { label: 'Log Files', value: stats.log_files, icon: <Terminal />, trend: 22, color: 'bg-slate-600', delay: 0.15 },
-    { label: 'Documents', value: stats.documents, icon: <BookOpen />, trend: 3, color: 'bg-indigo-500', delay: 0.2 },
-    { label: 'Active Clients', value: stats.active_clients, icon: <Users />, trend: 11, color: 'bg-emerald-500', delay: 0.25 },
+    { label: 'Files Indexed',  value: stats.files_indexed,  icon: <FileText />,  trend: 12, color: 'bg-blue-500',    delay: 0,    href: '/documents' },
+    { label: 'Jira Issues',    value: stats.jira_issues,    icon: <AlertCircle />, trend: -5, color: 'bg-red-500',   delay: 0.05, href: '/jira' },
+    { label: 'Releases',       value: stats.releases,       icon: <GitBranch />, trend: 8,  color: 'bg-purple-500', delay: 0.1,  href: '/releases' },
+    { label: 'Log Files',      value: stats.log_files,      icon: <Terminal />,  trend: 22, color: 'bg-slate-600',  delay: 0.15, href: '/logs' },
+    { label: 'Documents',      value: stats.documents,      icon: <BookOpen />,  trend: 3,  color: 'bg-indigo-500', delay: 0.2,  href: '/documents' },
+    { label: 'Active Clients', value: stats.active_clients, icon: <Users />,     trend: 11, color: 'bg-emerald-500', delay: 0.25, href: '/clients' },
   ]
 
   return (
@@ -421,7 +505,7 @@ const DashboardPage: React.FC = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border">
-                    {TOP_ISSUES.map((issue, idx) => (
+                    {topIssues.map((issue, idx) => (
                       <motion.tr
                         key={issue.id}
                         initial={{ opacity: 0 }}
@@ -465,7 +549,7 @@ const DashboardPage: React.FC = () => {
                 <CardTitle className="text-base">Recent Activity</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
-                {RECENT_ACTIVITY.map((event) => (
+                {recentActivity.map((event) => (
                   <div key={event.id} className="flex items-start gap-2.5">
                     <span className={cn('mt-0.5', event.color)}>{event.icon}</span>
                     <div className="flex-1 min-w-0">

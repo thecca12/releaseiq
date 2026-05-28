@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   UserPlus,
@@ -9,6 +9,8 @@ import {
   UserCheck,
   Shield,
   X,
+  Trash2,
+  RefreshCw,
 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -31,20 +33,8 @@ import {
 import { PageHeader } from '@/components/shared/PageHeader'
 import { EmptyState } from '@/components/shared/EmptyState'
 import { cn } from '@/utils/cn'
+import { usersApi } from '@/services/api'
 import type { User, UserRole } from '@/types'
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-
-const MOCK_USERS: User[] = [
-  { id: '1', email: 'admin@greeksoft.co.in', username: 'admin', full_name: 'Ajay Todkar', role: 'admin', is_active: true, created_at: '2024-01-10T08:00:00Z', last_login: '2025-05-28T09:15:00Z' },
-  { id: '2', email: 'priya.sharma@greeksoft.co.in', username: 'psharma', full_name: 'Priya Sharma', role: 'manager', is_active: true, created_at: '2024-02-14T10:00:00Z', last_login: '2025-05-27T14:30:00Z' },
-  { id: '3', email: 'rohit.kulkarni@greeksoft.co.in', username: 'rkulkarni', full_name: 'Rohit Kulkarni', role: 'user', is_active: true, created_at: '2024-03-01T09:00:00Z', last_login: '2025-05-28T08:45:00Z' },
-  { id: '4', email: 'neha.joshi@greeksoft.co.in', username: 'njoshi', full_name: 'Neha Joshi', role: 'user', is_active: true, created_at: '2024-04-05T11:00:00Z', last_login: '2025-05-26T16:00:00Z' },
-  { id: '5', email: 'vikram.nair@greeksoft.co.in', username: 'vnair', full_name: 'Vikram Nair', role: 'manager', is_active: false, created_at: '2024-01-20T09:00:00Z', last_login: '2025-04-10T11:30:00Z' },
-  { id: '6', email: 'ananya.iyer@greeksoft.co.in', username: 'aiyer', full_name: 'Ananya Iyer', role: 'user', is_active: true, created_at: '2024-05-10T10:00:00Z', last_login: '2025-05-25T10:15:00Z' },
-  { id: '7', email: 'suresh.patil@greeksoft.co.in', username: 'spatil', full_name: 'Suresh Patil', role: 'user', is_active: false, created_at: '2024-06-01T08:00:00Z', last_login: '2025-03-18T09:00:00Z' },
-  { id: '8', email: 'divya.menon@greeksoft.co.in', username: 'dmenon', full_name: 'Divya Menon', role: 'admin', is_active: true, created_at: '2024-01-15T09:00:00Z', last_login: '2025-05-28T07:30:00Z' },
-]
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -52,7 +42,7 @@ function getInitials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2)
 }
 
-function formatDate(iso?: string) {
+function formatDate(iso?: string | null) {
   if (!iso) return 'Never'
   const d = new Date(iso)
   const now = new Date()
@@ -125,7 +115,7 @@ const UserForm: React.FC<{
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="uname" className="text-xs font-medium">Username</Label>
-          <Input id="uname" value={data.username} onChange={set('username')} placeholder="e.g. psharma" className="h-9 font-mono" />
+          <Input id="uname" value={data.username} onChange={set('username')} placeholder="e.g. psharma" className="h-9 font-mono" disabled={isEdit} />
         </div>
       </div>
       <div className="space-y-1.5">
@@ -158,15 +148,37 @@ const UserForm: React.FC<{
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const UsersPage: React.FC = () => {
-  const [users, setUsers] = useState<User[]>(MOCK_USERS)
+  const [users, setUsers] = useState<User[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
 
   const [createOpen, setCreateOpen] = useState(false)
   const [editUser, setEditUser] = useState<User | null>(null)
+  const [deleteUser, setDeleteUser] = useState<User | null>(null)
+  const [resetUser, setResetUser] = useState<User | null>(null)
+  const [newPassword, setNewPassword] = useState('')
+
   const [formData, setFormData] = useState<UserFormData>(defaultForm)
   const [editForm, setEditForm] = useState<UserFormData>(defaultForm)
+  const [saving, setSaving] = useState(false)
+
+  const loadUsers = useCallback(async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await usersApi.list({ page_size: 100 })
+      setUsers(res.data.items ?? [])
+    } catch {
+      setError('Failed to load users.')
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { loadUsers() }, [loadUsers])
 
   const filtered = useMemo(() =>
     users.filter((u) => {
@@ -178,27 +190,78 @@ const UsersPage: React.FC = () => {
     [users, search, roleFilter, statusFilter]
   )
 
-  const handleCreate = () => {
-    if (!formData.full_name || !formData.email || !formData.username) return
-    const newUser: User = {
-      id: `u-${Date.now()}`,
-      ...formData,
-      is_active: true,
-      created_at: new Date().toISOString(),
+  const handleCreate = async () => {
+    if (!formData.full_name || !formData.email || !formData.username || !formData.password) return
+    setSaving(true)
+    try {
+      await usersApi.create({ ...formData })
+      await loadUsers()
+      setFormData(defaultForm)
+      setCreateOpen(false)
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      alert(msg || 'Failed to create user.')
+    } finally {
+      setSaving(false)
     }
-    setUsers((prev) => [newUser, ...prev])
-    setFormData(defaultForm)
-    setCreateOpen(false)
   }
 
-  const handleEdit = () => {
+  const handleEdit = async () => {
     if (!editUser) return
-    setUsers((prev) => prev.map((u) => u.id === editUser.id ? { ...u, ...editForm } : u))
-    setEditUser(null)
+    setSaving(true)
+    try {
+      await usersApi.update(editUser.id, {
+        full_name: editForm.full_name,
+        email: editForm.email,
+        role: editForm.role,
+      })
+      await loadUsers()
+      setEditUser(null)
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      alert(msg || 'Failed to update user.')
+    } finally {
+      setSaving(false)
+    }
   }
 
-  const handleToggleActive = (id: string) => {
-    setUsers((prev) => prev.map((u) => u.id === id ? { ...u, is_active: !u.is_active } : u))
+  const handleToggleActive = async (user: User) => {
+    try {
+      await usersApi.toggleActive(user.id)
+      setUsers((prev) => prev.map((u) => u.id === user.id ? { ...u, is_active: !u.is_active } : u))
+    } catch {
+      alert('Failed to update user status.')
+    }
+  }
+
+  const handleDelete = async () => {
+    if (!deleteUser) return
+    setSaving(true)
+    try {
+      await usersApi.delete(deleteUser.id)
+      setUsers((prev) => prev.filter((u) => u.id !== deleteUser.id))
+      setDeleteUser(null)
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      alert(msg || 'Failed to delete user.')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleResetPassword = async () => {
+    if (!resetUser || newPassword.length < 8) return
+    setSaving(true)
+    try {
+      await usersApi.resetPassword(resetUser.id, newPassword)
+      setResetUser(null)
+      setNewPassword('')
+    } catch (e: unknown) {
+      const msg = (e as { response?: { data?: { detail?: string } } })?.response?.data?.detail
+      alert(msg || 'Failed to reset password.')
+    } finally {
+      setSaving(false)
+    }
   }
 
   const openEdit = (u: User) => {
@@ -212,18 +275,19 @@ const UsersPage: React.FC = () => {
         title="User Management"
         subtitle="Manage system users, roles, and access permissions."
         actions={
-          <Button size="sm" className="gap-1.5" onClick={() => { setFormData(defaultForm); setCreateOpen(true) }}>
-            <UserPlus className="h-3.5 w-3.5" /> Create User
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={loadUsers} disabled={loading}>
+              <RefreshCw className={cn('h-3.5 w-3.5', loading && 'animate-spin')} /> Refresh
+            </Button>
+            <Button size="sm" className="gap-1.5" onClick={() => { setFormData(defaultForm); setCreateOpen(true) }}>
+              <UserPlus className="h-3.5 w-3.5" /> Create User
+            </Button>
+          </div>
         }
       />
 
       {/* Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="grid grid-cols-4 gap-3"
-      >
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="grid grid-cols-4 gap-3">
         {[
           { label: 'Total Users', value: users.length },
           { label: 'Active', value: users.filter((u) => u.is_active).length },
@@ -240,12 +304,7 @@ const UsersPage: React.FC = () => {
       </motion.div>
 
       {/* Filters */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15 }}
-        className="flex flex-wrap gap-2"
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="flex flex-wrap gap-2">
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search users..." className="pl-8 h-9 text-sm" />
@@ -270,8 +329,19 @@ const UsersPage: React.FC = () => {
         </Select>
       </motion.div>
 
+      {/* Error */}
+      {error && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {error} <button className="underline ml-2" onClick={loadUsers}>Retry</button>
+        </div>
+      )}
+
       {/* Users table */}
-      {filtered.length === 0 ? (
+      {loading ? (
+        <Card>
+          <CardContent className="p-8 text-center text-sm text-muted-foreground">Loading users…</CardContent>
+        </Card>
+      ) : filtered.length === 0 ? (
         <EmptyState icon={<Shield />} title="No users found" description="Try adjusting your search or filters." compact />
       ) : (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
@@ -305,34 +375,38 @@ const UsersPage: React.FC = () => {
                               <div>
                                 <p className="text-sm font-medium text-foreground">{user.full_name}</p>
                                 <p className="text-xs text-muted-foreground">{user.email}</p>
+                                <p className="text-[10px] text-muted-foreground/60 font-mono">@{user.username}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-5 py-3">
-                            <RoleBadge role={user.role} />
-                          </td>
-                          <td className="px-5 py-3">
-                            <StatusBadge active={user.is_active} />
-                          </td>
-                          <td className="px-5 py-3 text-xs text-muted-foreground">
-                            {formatDate(user.last_login)}
-                          </td>
+                          <td className="px-5 py-3"><RoleBadge role={user.role} /></td>
+                          <td className="px-5 py-3"><StatusBadge active={user.is_active} /></td>
+                          <td className="px-5 py-3 text-xs text-muted-foreground">{formatDate(user.last_login)}</td>
                           <td className="px-5 py-3">
                             <div className="flex items-center gap-1">
                               <Button variant="ghost" size="icon" className="h-7 w-7" title="Edit user" onClick={() => openEdit(user)}>
                                 <Edit className="h-3.5 w-3.5" />
                               </Button>
-                              <Button variant="ghost" size="icon" className="h-7 w-7" title="Reset password">
+                              <Button variant="ghost" size="icon" className="h-7 w-7" title="Reset password" onClick={() => { setResetUser(user); setNewPassword('') }}>
                                 <KeyRound className="h-3.5 w-3.5" />
                               </Button>
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className={cn('h-7 w-7', user.is_active ? 'text-red-500 hover:text-red-600' : 'text-emerald-600 hover:text-emerald-700')}
+                                className={cn('h-7 w-7', user.is_active ? 'text-amber-500 hover:text-amber-600' : 'text-emerald-600 hover:text-emerald-700')}
                                 title={user.is_active ? 'Deactivate' : 'Activate'}
-                                onClick={() => handleToggleActive(user.id)}
+                                onClick={() => handleToggleActive(user)}
                               >
                                 {user.is_active ? <UserX className="h-3.5 w-3.5" /> : <UserCheck className="h-3.5 w-3.5" />}
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-7 w-7 text-destructive hover:text-destructive"
+                                title="Delete user"
+                                onClick={() => setDeleteUser(user)}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
                               </Button>
                             </div>
                           </td>
@@ -356,8 +430,10 @@ const UsersPage: React.FC = () => {
           </DialogHeader>
           <UserForm data={formData} onChange={setFormData} />
           <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" size="sm" onClick={() => setCreateOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={handleCreate} disabled={!formData.full_name || !formData.email || !formData.username}>Create User</Button>
+            <Button variant="outline" size="sm" onClick={() => setCreateOpen(false)} disabled={saving}>Cancel</Button>
+            <Button size="sm" onClick={handleCreate} disabled={saving || !formData.full_name || !formData.email || !formData.username || formData.password.length < 8}>
+              {saving ? 'Creating…' : 'Create User'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
@@ -371,8 +447,56 @@ const UsersPage: React.FC = () => {
           </DialogHeader>
           <UserForm data={editForm} onChange={setEditForm} isEdit />
           <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" size="sm" onClick={() => setEditUser(null)}>Cancel</Button>
-            <Button size="sm" onClick={handleEdit}>Save Changes</Button>
+            <Button variant="outline" size="sm" onClick={() => setEditUser(null)} disabled={saving}>Cancel</Button>
+            <Button size="sm" onClick={handleEdit} disabled={saving}>{saving ? 'Saving…' : 'Save Changes'}</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reset Password Dialog */}
+      <Dialog open={!!resetUser} onOpenChange={() => { setResetUser(null); setNewPassword('') }}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><KeyRound className="h-4 w-4" /> Reset Password</DialogTitle>
+            <DialogDescription>Set a new password for {resetUser?.full_name}.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1.5 mt-4">
+            <Label htmlFor="new-password" className="text-xs font-medium">New Password</Label>
+            <Input
+              id="new-password"
+              type="password"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              placeholder="Minimum 8 characters"
+              className="h-9"
+            />
+            {newPassword.length > 0 && newPassword.length < 8 && (
+              <p className="text-[11px] text-destructive">Password must be at least 8 characters.</p>
+            )}
+          </div>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" size="sm" onClick={() => { setResetUser(null); setNewPassword('') }} disabled={saving}>Cancel</Button>
+            <Button size="sm" onClick={handleResetPassword} disabled={saving || newPassword.length < 8}>
+              {saving ? 'Resetting…' : 'Reset Password'}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirm Dialog */}
+      <Dialog open={!!deleteUser} onOpenChange={() => setDeleteUser(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-destructive"><Trash2 className="h-4 w-4" /> Delete User</DialogTitle>
+            <DialogDescription>
+              Permanently delete <strong>{deleteUser?.full_name}</strong> (@{deleteUser?.username})? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-2 mt-4">
+            <Button variant="outline" size="sm" onClick={() => setDeleteUser(null)} disabled={saving}>Cancel</Button>
+            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={saving}>
+              {saving ? 'Deleting…' : 'Delete User'}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>

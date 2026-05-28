@@ -7,6 +7,7 @@ from fastapi import APIRouter
 from app.api.v1.endpoints import (
     analytics,
     auth,
+    backup,
     chat,
     client_releases,
     documents,
@@ -62,3 +63,6 @@ api_router.include_router(knowledge.router)
 api_router.include_router(patch_notes.router)
 api_router.include_router(utilities.router)
 api_router.include_router(client_releases.router)
+
+# Backup
+api_router.include_router(backup.router)

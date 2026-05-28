@@ -44,7 +44,7 @@ export const usersApi = {
   create: (data: Record<string, unknown>) => apiClient.post('/users', data),
   update: (id: string, data: Record<string, unknown>) => apiClient.put(`/users/${id}`, data),
   delete: (id: string) => apiClient.delete(`/users/${id}`),
-  resetPassword: (id: string) => apiClient.post(`/users/${id}/reset-password`),
+  resetPassword: (id: string, new_password: string) => apiClient.post(`/users/${id}/reset-password`, { new_password }),
   toggleActive: (id: string) => apiClient.post(`/users/${id}/toggle-active`),
 }
 
@@ -91,6 +91,7 @@ export const documentsApi = {
       headers: { 'Content-Type': 'multipart/form-data' },
     }),
   reindex: () => apiClient.post('/documents/reindex'),
+  knowledgeBase: (params?: Record<string, unknown>) => apiClient.get('/documents/knowledge-base', { params }),
 }
 
 export const analyticsApi = {
@@ -158,4 +159,9 @@ export const clientReleasesApi = {
   list: (params?: Record<string, unknown>) => apiClient.get('/client-releases', { params }),
   stats: () => apiClient.get('/client-releases/stats'),
   get: (clientId: string) => apiClient.get(`/client-releases/${clientId}`),
+}
+
+export const backupApi = {
+  stats: () => apiClient.get('/backup/stats'),
+  download: () => apiClient.get('/backup/download', { responseType: 'blob' }),
 }

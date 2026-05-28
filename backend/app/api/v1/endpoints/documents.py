@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import os
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -203,6 +203,103 @@ async def upload_document(
     logger.info("document_uploaded", doc_id=doc_id, filename=file.filename, size=len(content))
     return DocumentResponse(**doc)
 
+
+# ---------------------------------------------------------------------------
+# Knowledge-base file listing  (must be before /{doc_id} to avoid shadowing)
+# ---------------------------------------------------------------------------
+
+# Extensions we want to surface in the UI (skip images, archives, binaries)
+_VIEWABLE_EXTENSIONS = {
+    ".pdf", ".xlsx", ".xls", ".docx", ".doc",
+    ".txt", ".md", ".csv", ".json", ".log",
+    ".yaml", ".yml", ".xml",
+}
+
+_DESCRIPTION_MAP: dict[str, str] = {
+    "1_GREEKSOFT COMPANY PROFILE.pdf": "GreekSoft company profile and overview",
+    "2_GETS Hardware Configuration Revised.pdf": "GETS hardware configuration guide",
+    "3_GMX Installation Guide.pdf": "Step-by-step GMX installation instructions",
+    "4_GMX Manager User Manual.pdf": "GMX Manager user manual",
+    "5_GMX Daily Operations.pdf": "GMX daily operations reference",
+    "6_GMX Manager FAQs.pdf": "Frequently asked questions for GMX Manager",
+    "7_GMX ADMIN User Manual.pdf": "GMX Admin module user manual",
+    "8_GETS CTCL User Manual.pdf": "GETS CTCL user manual",
+    "9_Colocation Services.pdf": "Colocation services documentation",
+    "Admin_Survillence.pdf": "Admin surveillance module guide",
+    "BEGINNER_MODULE.pdf": "Beginner's module for trading platform",
+    "BOD Process.xlsx": "Beginning-of-day process reference sheet",
+    "GMX ADMIN User Manual_2.0.0.pdf": "GMX Admin manual version 2.0.0",
+    "GMX CTCL User Manual_2.0.0.pdf": "GMX CTCL manual version 2.0.0",
+    "Linux GATS installation.doc": "GATS installation guide for Linux",
+    "MessageBox_Reference.md": "Complete message box reference documentation",
+    "msgbox_parsed.csv": "Parsed message box data export",
+    "mysql commands.docx": "MySQL command reference for DBA tasks",
+    "shortcuts keys.xlsx": "Keyboard shortcuts reference sheet",
+    "terms in share market.docx": "Share market terminology glossary",
+}
+
+
+class KnowledgeFileResponse(BaseModel):
+    id: str
+    filename: str
+    file_type: str
+    size_bytes: int
+    description: Optional[str]
+    indexed_status: str
+    modified_at: datetime
+
+
+class KnowledgeFileList(BaseModel):
+    items: list[KnowledgeFileResponse]
+    total: int
+    folder: str
+
+
+@router.get(
+    "/knowledge-base",
+    response_model=KnowledgeFileList,
+    summary="List Product_knowledge files",
+)
+async def list_knowledge_base(
+    current_user: CurrentUser,
+    file_type: Optional[str] = Query(None, description="Filter by extension e.g. pdf"),
+) -> KnowledgeFileList:
+    """Return files from the Product_knowledge datasource folder."""
+    folder = Path(settings.PRODUCT_KNOWLEDGE_DIR)
+
+    if not folder.exists():
+        logger.warning("knowledge_dir_not_found", path=str(folder))
+        return KnowledgeFileList(items=[], total=0, folder=str(folder))
+
+    items: list[KnowledgeFileResponse] = []
+    for entry in sorted(folder.iterdir(), key=lambda p: p.name.lower()):
+        if not entry.is_file():
+            continue
+        ext = entry.suffix.lower()
+        if ext not in _VIEWABLE_EXTENSIONS:
+            continue
+        if file_type and ext.lstrip(".") != file_type.lower():
+            continue
+
+        stat = entry.stat()
+        items.append(
+            KnowledgeFileResponse(
+                id=f"kb-{entry.name}",
+                filename=entry.name,
+                file_type=ext.lstrip("."),
+                size_bytes=stat.st_size,
+                description=_DESCRIPTION_MAP.get(entry.name),
+                indexed_status="indexed",
+                modified_at=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc),
+            )
+        )
+
+    return KnowledgeFileList(items=items, total=len(items), folder=str(folder))
+
+
+# ---------------------------------------------------------------------------
+# Per-document endpoints (must be after fixed-path routes above)
+# ---------------------------------------------------------------------------
 
 @router.get("/{doc_id}", response_model=DocumentResponse, summary="Get document details")
 async def get_document(
