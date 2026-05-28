@@ -1,0 +1,5 @@
+sk-RukKxLSb5N4bmKSZS4EgQA
+
+global.anthropic.claude-haiku-4-5-20251001-v1:0
+
+http://192.168.192.50:4000/v1

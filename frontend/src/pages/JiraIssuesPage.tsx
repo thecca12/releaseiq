@@ -187,7 +187,29 @@ const IssueDetailDialog: React.FC<{ issue: JiraIssue | null; onClose: () => void
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-type SortField = 'jira_id' | 'title' | 'status' | 'priority' | 'assignee' | 'module' | 'created_at'
+type SortField = 'jira_id' | 'title' | 'status' | 'priority' | 'assignee' | 'module' | 'created_at' | 'issue_type'
+
+// Issue type badge config
+const ISSUE_TYPE_CONFIG: Record<string, { label: string; bg: string; text: string }> = {
+  'Live Issue': { label: 'Live Issue', bg: 'bg-blue-100 dark:bg-blue-950/40',    text: 'text-blue-700 dark:text-blue-400' },
+  'Bug':        { label: 'Bug',        bg: 'bg-red-100 dark:bg-red-950/40',      text: 'text-red-700 dark:text-red-400' },
+  'New Feature':{ label: 'Feature',    bg: 'bg-emerald-100 dark:bg-emerald-950/40', text: 'text-emerald-700 dark:text-emerald-400' },
+  'Task':       { label: 'Task',       bg: 'bg-slate-100 dark:bg-slate-800',     text: 'text-slate-600 dark:text-slate-400' },
+  'Test Case':  { label: 'Test Case',  bg: 'bg-violet-100 dark:bg-violet-950/40', text: 'text-violet-700 dark:text-violet-400' },
+  'Sub-task':   { label: 'Sub-task',   bg: 'bg-slate-100 dark:bg-slate-800',     text: 'text-slate-500 dark:text-slate-400' },
+  'Story':      { label: 'Story',      bg: 'bg-teal-100 dark:bg-teal-950/40',    text: 'text-teal-700 dark:text-teal-400' },
+  'Patch':      { label: 'Patch',      bg: 'bg-amber-100 dark:bg-amber-950/40',  text: 'text-amber-700 dark:text-amber-400' },
+}
+
+const IssueTypeBadge: React.FC<{ type?: string }> = ({ type }) => {
+  if (!type) return <span className="text-xs text-muted-foreground">—</span>
+  const cfg = ISSUE_TYPE_CONFIG[type] ?? { label: type, bg: 'bg-muted', text: 'text-muted-foreground' }
+  return (
+    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium whitespace-nowrap', cfg.bg, cfg.text)}>
+      {cfg.label}
+    </span>
+  )
+}
 
 const PRIORITY_ORDER: Record<string, number> = { Critical: 0, High: 1, Medium: 2, Low: 3 }
 const STATUS_ORDER: Record<string, number> = { Open: 0, 'In Progress': 1, Resolved: 2, Closed: 3 }
@@ -198,6 +220,7 @@ const JiraIssuesPage: React.FC = () => {
   const [filterPriority, setFilterPriority] = useState('all')
   const [filterModule, setFilterModule] = useState('all')
   const [filterAssignee, setFilterAssignee] = useState('all')
+  const [filterIssueType, setFilterIssueType] = useState('all')
   const [sortField, setSortField] = useState<SortField>('created_at')
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc')
   const [selectedIssue, setSelectedIssue] = useState<JiraIssue | null>(null)
@@ -235,6 +258,7 @@ const JiraIssuesPage: React.FC = () => {
             created_at: String(item.created_at ?? new Date().toISOString()),
             updated_at: String(item.updated_at ?? new Date().toISOString()),
             module: item.module as string | undefined,
+            issue_type: item.type as string | undefined,
             affected_versions: item.affected_version
               ? [String(item.affected_version)]
               : (item.affected_versions as string[] | undefined),
@@ -251,7 +275,8 @@ const JiraIssuesPage: React.FC = () => {
   const issues = data ?? MOCK_ISSUES
 
   const assignees = useMemo(() => Array.from(new Set(issues.map((i) => i.assignee).filter(Boolean) as string[])), [issues])
-  const modules = useMemo(() => Array.from(new Set(issues.map((i) => i.module).filter(Boolean) as string[])), [issues])
+  const modules   = useMemo(() => Array.from(new Set(issues.map((i) => i.module).filter(Boolean) as string[])), [issues])
+  const issueTypes = useMemo(() => Array.from(new Set(issues.map((i) => (i as unknown as { issue_type?: string }).issue_type).filter(Boolean) as string[])).sort(), [issues])
 
   const handleSort = useCallback((field: SortField) => {
     if (sortField === field) {
@@ -276,7 +301,8 @@ const JiraIssuesPage: React.FC = () => {
       const matchPriority = filterPriority === 'all' || i.priority === filterPriority
       const matchModule = filterModule === 'all' || i.module === filterModule
       const matchAssignee = filterAssignee === 'all' || i.assignee === filterAssignee
-      return matchSearch && matchStatus && matchPriority && matchModule && matchAssignee
+      const matchType = filterIssueType === 'all' || (i as unknown as { issue_type?: string }).issue_type === filterIssueType
+      return matchSearch && matchStatus && matchPriority && matchModule && matchAssignee && matchType
     })
 
     items.sort((a, b) => {
@@ -288,6 +314,7 @@ const JiraIssuesPage: React.FC = () => {
         case 'priority': cmp = (PRIORITY_ORDER[a.priority] ?? 99) - (PRIORITY_ORDER[b.priority] ?? 99); break
         case 'assignee': cmp = (a.assignee ?? '').localeCompare(b.assignee ?? ''); break
         case 'module': cmp = (a.module ?? '').localeCompare(b.module ?? ''); break
+        case 'issue_type': cmp = ((a as unknown as { issue_type?: string }).issue_type ?? '').localeCompare((b as unknown as { issue_type?: string }).issue_type ?? ''); break
         case 'created_at': cmp = new Date(a.created_at).getTime() - new Date(b.created_at).getTime(); break
       }
       return sortDir === 'asc' ? cmp : -cmp
@@ -295,13 +322,14 @@ const JiraIssuesPage: React.FC = () => {
     return items
   }, [issues, search, filterStatus, filterPriority, filterModule, filterAssignee, sortField, sortDir])
 
-  const hasFilters = search || filterStatus !== 'all' || filterPriority !== 'all' || filterModule !== 'all' || filterAssignee !== 'all'
+  const hasFilters = search || filterStatus !== 'all' || filterPriority !== 'all' || filterModule !== 'all' || filterAssignee !== 'all' || filterIssueType !== 'all'
   const clearFilters = () => {
     setSearch('')
     setFilterStatus('all')
     setFilterPriority('all')
     setFilterModule('all')
     setFilterAssignee('all')
+    setFilterIssueType('all')
   }
 
   // Summary counts
@@ -310,6 +338,8 @@ const JiraIssuesPage: React.FC = () => {
     inProgress: issues.filter((i) => i.status === 'In Progress').length,
     resolved: issues.filter((i) => i.status === 'Resolved').length,
     critical: issues.filter((i) => i.priority === 'Critical').length,
+    liveIssues: issues.filter((i) => (i as unknown as { issue_type?: string }).issue_type === 'Live Issue').length,
+    bugs: issues.filter((i) => (i as unknown as { issue_type?: string }).issue_type === 'Bug').length,
   }), [issues])
 
   const SortableHeader: React.FC<{ field: SortField; label: string; className?: string }> = ({ field, label, className }) => (
@@ -349,10 +379,10 @@ const JiraIssuesPage: React.FC = () => {
         className="grid grid-cols-2 sm:grid-cols-4 gap-3"
       >
         {[
-          { label: 'Open', value: counts.open, color: 'text-blue-600 dark:text-blue-400' },
-          { label: 'In Progress', value: counts.inProgress, color: 'text-amber-600 dark:text-amber-400' },
-          { label: 'Resolved', value: counts.resolved, color: 'text-emerald-600 dark:text-emerald-400' },
-          { label: 'Critical', value: counts.critical, color: 'text-red-600 dark:text-red-400' },
+          { label: 'Open',          value: counts.open,        color: 'text-blue-600 dark:text-blue-400' },
+          { label: 'In Progress',   value: counts.inProgress,  color: 'text-amber-600 dark:text-amber-400' },
+          { label: 'Live Issues',   value: counts.liveIssues,  color: 'text-blue-700 dark:text-blue-400' },
+          { label: 'QA Bugs',       value: counts.bugs,        color: 'text-red-600 dark:text-red-400' },
         ].map((s) => (
           <Card key={s.label}>
             <CardContent className="p-4 text-center">
@@ -421,6 +451,19 @@ const JiraIssuesPage: React.FC = () => {
             {assignees.map((a) => <SelectItem key={a} value={a}>{a}</SelectItem>)}
           </SelectContent>
         </Select>
+        <Select value={filterIssueType} onValueChange={setFilterIssueType}>
+          <SelectTrigger className="w-36 h-9 text-sm">
+            <SelectValue placeholder="Issue Type" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All types</SelectItem>
+            <SelectItem value="Live Issue">Live Issue (Production)</SelectItem>
+            <SelectItem value="Bug">Bug (QA)</SelectItem>
+            {issueTypes.filter((t) => t !== 'Live Issue' && t !== 'Bug').map((t) => (
+              <SelectItem key={t} value={t}>{t}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         {hasFilters && (
           <Button variant="ghost" size="sm" className="h-9 gap-1 text-xs" onClick={clearFilters}>
             <X className="h-3 w-3" /> Clear
@@ -461,6 +504,7 @@ const JiraIssuesPage: React.FC = () => {
                     <tr className="border-b border-border bg-muted/30">
                       <SortableHeader field="jira_id" label="JIRA ID" className="pl-6" />
                       <SortableHeader field="title" label="Title" />
+                      <SortableHeader field="issue_type" label="Issue Type" />
                       <SortableHeader field="status" label="Status" />
                       <SortableHeader field="priority" label="Priority" />
                       <SortableHeader field="assignee" label="Assignee" />
@@ -486,6 +530,9 @@ const JiraIssuesPage: React.FC = () => {
                           </td>
                           <td className="px-4 py-3 text-xs text-foreground max-w-[220px]">
                             <span className="line-clamp-2 leading-snug">{issue.title}</span>
+                          </td>
+                          <td className="px-4 py-3 whitespace-nowrap">
+                            <IssueTypeBadge type={(issue as unknown as { issue_type?: string }).issue_type} />
                           </td>
                           <td className="px-4 py-3 whitespace-nowrap">
                             <StatusBadge status={statusMap[issue.status] ?? 'unknown'} size="sm" label={issue.status} />

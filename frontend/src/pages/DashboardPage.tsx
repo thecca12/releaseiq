@@ -37,6 +37,14 @@ import {
   CheckCircle2,
   XCircle,
   AlertTriangle,
+  Rocket,
+  FlaskConical,
+  Calendar,
+  Bug,
+  Building2,
+  Cpu,
+  Layers,
+  DatabaseZap,
 } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -45,6 +53,8 @@ import { StatusBadge } from '@/components/shared/StatusBadge'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/utils/cn'
 import { analyticsApi, releasesApi, issuesApi } from '@/services/api'
+
+interface JiraStats { version: string; live_issues: number; qa_bugs: number; health_live: string; health_qa: string }
 import type { DashboardStats } from '@/types'
 
 // ─── Mock / fallback data ─────────────────────────────────────────────────────
@@ -241,6 +251,16 @@ const CustomTooltip: React.FC<{ active?: boolean; payload?: Array<{ name: string
   )
 }
 
+// ─── Info pill ────────────────────────────────────────────────────────────────
+
+const InfoPill: React.FC<{ icon: React.ReactNode; label: string; value: string; valueClass?: string }> = ({ icon, label, value, valueClass }) => (
+  <div className="flex items-center gap-1.5 text-xs">
+    <span className="text-muted-foreground flex-shrink-0">{icon}</span>
+    <span className="text-muted-foreground whitespace-nowrap">{label}:</span>
+    <span className={cn('font-medium text-foreground whitespace-nowrap', valueClass)}>{value}</span>
+  </div>
+)
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const DashboardPage: React.FC = () => {
@@ -268,6 +288,17 @@ const DashboardPage: React.FC = () => {
         const res = await releasesApi.list({ page_size: 10 })
         return res.data?.items ?? []
       } catch { return [] }
+    },
+  })
+
+  // ── Fetch JIRA stats per release (Live Issue vs Bug counts) ───────────────
+  const { data: jiraStatsData } = useQuery({
+    queryKey: ['dashboard-jira-stats'],
+    queryFn: async () => {
+      try {
+        const res = await analyticsApi.getReleaseJiraStats()
+        return res.data?.by_version as Record<string, JiraStats> ?? {}
+      } catch { return {} as Record<string, JiraStats> }
     },
   })
 
@@ -366,6 +397,29 @@ const DashboardPage: React.FC = () => {
     },
   ].slice(0, 6)
 
+  // ── Live / QA release rows ────────────────────────────────────────────────
+  type EnvEntry = { env: string; date: string; jira_count: number }
+  interface ReleaseRow { version: string; liveEnv: EnvEntry | null; qaEnv: EnvEntry | null }
+
+  const FALLBACK_ROWS: ReleaseRow[] = [
+    { version: 'Optimus', liveEnv: { env: 'LIVE', date: '12 May 2026', jira_count: 19 }, qaEnv: { env: 'QA', date: '26 May 2026', jira_count: 7 } },
+    { version: '3009',    liveEnv: { env: 'LIVE', date: '—', jira_count: 0 },            qaEnv: { env: 'QA', date: '—', jira_count: 0 } },
+    { version: '1209',    liveEnv: { env: 'LIVE', date: '—', jira_count: 0 },            qaEnv: { env: 'QA', date: '22 May 2026', jira_count: 0 } },
+  ]
+
+  const jiraStats: Record<string, JiraStats> = jiraStatsData ?? {}
+
+  const releaseRows: ReleaseRow[] = realReleases.length > 0
+    ? realReleases.map((r) => {
+        const envs: EnvEntry[] = (r as Record<string, unknown>).environments as EnvEntry[] ?? []
+        return {
+          version: r.version as string,
+          liveEnv: envs.find((e) => e.env === 'LIVE') ?? null,
+          qaEnv:   envs.find((e) => e.env === 'QA')   ?? null,
+        }
+      })
+    : FALLBACK_ROWS
+
   // ── Stat cards with navigation links ──────────────────────────────────────
   const statCards = [
     { label: 'Files Indexed',  value: stats.files_indexed,  icon: <FileText />,  trend: 12, color: 'bg-blue-500',    delay: 0,    href: '/documents' },
@@ -389,6 +443,52 @@ const DashboardPage: React.FC = () => {
         }
       />
 
+      {/* ── Project Overview ──────────────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 via-background to-blue-500/5 overflow-hidden">
+          <CardContent className="p-4">
+            <div className="flex flex-wrap items-center gap-6">
+
+              {/* Brand block */}
+              <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 flex-shrink-0">
+                  <Brain className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-foreground leading-none">ReleaseIQ</p>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">AI-Powered Release Intelligence</p>
+                </div>
+              </div>
+
+              <div className="h-8 w-px bg-border flex-shrink-0 hidden sm:block" />
+
+              {/* Info pills */}
+              <div className="flex flex-wrap items-center gap-3 flex-1 min-w-0">
+
+                <InfoPill icon={<Building2 className="h-3.5 w-3.5" />} label="Organisation" value="GreekSoft Technologies" />
+                <InfoPill icon={<Cpu className="h-3.5 w-3.5" />} label="Platform" value="GETS / GMX Trading Platform" />
+                <InfoPill icon={<Layers className="h-3.5 w-3.5" />} label="Modules" value="RMS · FIX · OMS · CLIENT · SERVER" />
+                <InfoPill icon={<Rocket className="h-3.5 w-3.5" />} label="Active Releases" value="Optimus · 3009 · 1209" />
+                <InfoPill icon={<DatabaseZap className="h-3.5 w-3.5" />} label="Datasource" value="Connected" valueClass="text-emerald-600 dark:text-emerald-400" />
+
+              </div>
+
+              {/* Version badge */}
+              <div className="flex-shrink-0">
+                <span className="rounded-full bg-muted border border-border px-2.5 py-1 text-[11px] font-mono font-medium text-muted-foreground">
+                  v1.4.2
+                </span>
+              </div>
+
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
       {/* Stat cards */}
       {statsLoading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
@@ -403,6 +503,135 @@ const DashboardPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      {/* ── Production & QA Releases ─────────────────────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, delay: 0.28 }}
+      >
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+
+          {/* Production (Live) */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500">
+                    <Rocket className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-sm">Production Releases</CardTitle>
+                    <CardDescription className="text-[11px]">Live deployments</CardDescription>
+                  </div>
+                </div>
+                <span className="rounded-full bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-[10px] font-semibold px-2 py-0.5">
+                  LIVE
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-border">
+                {releaseRows.map((row) => {
+                  const js = jiraStats[row.version]
+                  const liveCount = js?.live_issues ?? 0
+                  const liveHealth = js?.health_live ?? 'Healthy'
+                  const healthColor = liveHealth === 'Critical' ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40' : liveHealth === 'Warning' ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40' : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'
+                  return (
+                  <div key={row.version} className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className={cn('h-2 w-2 rounded-full flex-shrink-0', liveHealth === 'Critical' ? 'bg-red-500' : liveHealth === 'Warning' ? 'bg-amber-500' : 'bg-emerald-500')} />
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground font-mono">{row.version}</p>
+                        <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                          <Calendar className="h-2.5 w-2.5" />
+                          {row.liveEnv?.date || '—'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                        <Bug className="h-3 w-3" />{liveCount} live issues
+                      </span>
+                      <span className={cn('flex items-center gap-1 text-[10px] font-medium rounded-full px-2 py-0.5', healthColor)}>
+                        {liveHealth === 'Critical' ? <AlertTriangle className="h-2.5 w-2.5" /> : liveHealth === 'Warning' ? <AlertTriangle className="h-2.5 w-2.5" /> : <CheckCircle2 className="h-2.5 w-2.5" />}
+                        {liveHealth}
+                      </span>
+                      <span className="rounded-full bg-blue-100 dark:bg-blue-950/40 text-blue-700 dark:text-blue-400 text-[10px] font-medium px-2 py-0.5">Live</span>
+                    </div>
+                  </div>
+                  )
+                })}
+              </div>
+              <div className="px-5 py-2.5 border-t border-border">
+                <button className="text-xs text-primary hover:underline flex items-center gap-1" onClick={() => navigate('/releases')}>
+                  View all releases <ChevronRight className="h-3 w-3" />
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Under Development (QA) */}
+          <Card>
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-purple-500">
+                    <FlaskConical className="h-3.5 w-3.5 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-sm">Under Development</CardTitle>
+                    <CardDescription className="text-[11px]">QA / testing phase</CardDescription>
+                  </div>
+                </div>
+                <span className="rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 text-[10px] font-semibold px-2 py-0.5">
+                  QA
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="divide-y divide-border">
+                {releaseRows.map((row) => {
+                  const js = jiraStats[row.version]
+                  const qaCount  = js?.qa_bugs ?? 0
+                  const qaHealth = js?.health_qa ?? 'Healthy'
+                  const hColor = qaHealth === 'Critical' ? 'text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/40' : qaHealth === 'Warning' ? 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40' : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40'
+                  return (
+                    <div key={row.version} className="flex items-center justify-between px-5 py-3 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className={cn('h-2 w-2 rounded-full flex-shrink-0', qaHealth === 'Critical' ? 'bg-red-500' : qaHealth === 'Warning' ? 'bg-amber-500' : 'bg-purple-400')} />
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-foreground font-mono">{row.version}</p>
+                          <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <Calendar className="h-2.5 w-2.5" />
+                            {row.qaEnv?.date || '—'}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3 flex-shrink-0">
+                        <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                          <Bug className="h-3 w-3" />{qaCount} QA bugs
+                        </span>
+                        <span className={cn('flex items-center gap-1 text-[10px] font-medium rounded-full px-2 py-0.5', hColor)}>
+                          {qaHealth === 'Healthy' ? <CheckCircle2 className="h-2.5 w-2.5" /> : <AlertTriangle className="h-2.5 w-2.5" />}
+                          {qaHealth}
+                        </span>
+                        <span className="rounded-full bg-purple-100 dark:bg-purple-950/40 text-purple-700 dark:text-purple-400 text-[10px] font-medium px-2 py-0.5">QA</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+              <div className="px-5 py-2.5 border-t border-border">
+                <button className="text-xs text-primary hover:underline flex items-center gap-1" onClick={() => navigate('/releases')}>
+                  View all releases <ChevronRight className="h-3 w-3" />
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+
+        </div>
+      </motion.div>
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

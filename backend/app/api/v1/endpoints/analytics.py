@@ -311,3 +311,60 @@ async def get_team_velocity(_: CurrentUser) -> Dict[str, Any]:
         "avg_story_points": sum(story_points) // len(story_points),
         "avg_issues_resolved": sum(issues_resolved) // len(issues_resolved),
     }
+
+
+@router.get("/release-jira-stats", summary="JIRA issue counts per release version, split by type")
+async def get_release_jira_stats(_: CurrentUser) -> Dict[str, Any]:
+    """
+    Returns per-version JIRA issue counts from the datasource.
+    Bug  = QA-reported issue (testing / development phase)
+    Live Issue = Production issue reported by Support team
+    """
+    from app.services.datasource.manager import get_datasource_manager
+    ds = get_datasource_manager()
+    all_issues = ds.get_jira_issues()
+
+    # Versions we track (must match release parser output)
+    versions = ["Optimus", "3009", "1209"]
+
+    # Issue-type buckets
+    LIVE_TYPES = {"live issue"}
+    QA_TYPES   = {"bug", "bug (sub-task)"}
+
+    def _matches_version(issue: dict, ver: str) -> bool:
+        text = f"{issue.get('title','') or ''} {issue.get('description','') or ''}".lower()
+        return ver.lower() in text
+
+    def _health(live: int, qa: int) -> str:
+        if live > 20 or qa > 200:
+            return "Critical"
+        if live > 10 or qa > 50:
+            return "Warning"
+        return "Healthy"
+
+    by_version: Dict[str, Dict] = {}
+    for ver in versions:
+        ver_issues = [i for i in all_issues if _matches_version(i, ver)]
+        live_count = sum(1 for i in ver_issues if (i.get("type") or "").lower() in LIVE_TYPES)
+        qa_count   = sum(1 for i in ver_issues if (i.get("type") or "").lower() in QA_TYPES)
+        by_version[ver] = {
+            "version":    ver,
+            "live_issues": live_count,
+            "qa_bugs":     qa_count,
+            "total":       len(ver_issues),
+            "health_live": _health(live_count, 0),
+            "health_qa":   _health(0, qa_count),
+        }
+
+    # Global totals
+    total_live = sum(1 for i in all_issues if (i.get("type") or "").lower() in LIVE_TYPES)
+    total_qa   = sum(1 for i in all_issues if (i.get("type") or "").lower() in QA_TYPES)
+
+    return {
+        "by_version": by_version,
+        "totals": {
+            "live_issues": total_live,
+            "qa_bugs":     total_qa,
+            "total":       len(all_issues),
+        },
+    }

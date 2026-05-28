@@ -182,20 +182,23 @@ async def get_circulars(
     for c in circulars:
         exch = c.get("exchange", "")
         output.append({
-            "id": c.get("id"),
-            "exchange": exch,               # used by frontend CircularsPage
-            "circular_no": c.get("circular_no", ""),
+            "id":            c.get("id"),
+            "exchange":      exch,
+            "circular_no":   c.get("circular_no", ""),
             "circular_number": c.get("circular_no", ""),
-            "title": c.get("subject", c.get("filename", "")),
-            "subject": c.get("subject", c.get("filename", "")),
-            "issued_by": exch,
-            "date": c.get("date", ""),
-            "category": "Exchange Circular",
-            "body": c.get("body", ""),     # full body for frontend
-            "summary": c.get("body", "")[:300],
-            "url": None,
-            "tags": [exch.lower()] if exch else [],
-            "filename": c.get("filename"),
+            "subject":       c.get("subject", c.get("filename", "")),
+            "title":         c.get("subject", c.get("filename", "")),
+            "issued_by":     exch,
+            "date":          c.get("date", ""),
+            "category":      "Exchange Circular",
+            "body":          c.get("body", ""),
+            "summary":       c.get("body", "")[:400],
+            "filename":      c.get("filename"),
+            "filepath":      c.get("filepath"),
+            "file_size_kb":  c.get("file_size_kb", 0),
+            "num_pages":     c.get("num_pages", 0),
+            "file_type":     c.get("file_type", "pdf"),
+            "tags":          [exch.lower()] if exch else [],
         })
 
     # Fallback to built-in list if datasource empty
@@ -527,9 +530,9 @@ async def get_test_cases(
     automation: Optional[bool] = Query(None),
     search: Optional[str] = Query(None),
     page: int = Query(1, ge=1),
-    page_size: int = Query(20, ge=1, le=100),
+    page_size: int = Query(50, ge=1, le=3000),
 ) -> PaginatedResponse:
-    """Return test cases from DataSourceManager regression suite."""
+    """Return test cases from DataSourceManager — all real modules from xlsx."""
     from app.services.datasource.manager import get_datasource_manager
     ds = get_datasource_manager()
     cases = ds.get_test_cases(module=module, status=test_status, test_type=test_type, priority=priority)

@@ -65,6 +65,8 @@ def _ds_release_to_response(r: Dict[str, Any], idx: int) -> Dict[str, Any]:
         "modules": r.get("modules", []),
         "open_issues": r.get("open_issues", 0),
         "critical_issues": r.get("critical_issues", 0),
+        # Per-environment breakdown (LIVE + QA entries)
+        "environments": r.get("environments", []),
     }
 
 

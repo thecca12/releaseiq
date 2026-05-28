@@ -102,6 +102,7 @@ export const analyticsApi = {
     apiClient.get('/analytics/issues', { params }),
   getLogAnalytics: (params?: Record<string, unknown>) =>
     apiClient.get('/analytics/logs', { params }),
+  getReleaseJiraStats: () => apiClient.get('/analytics/release-jira-stats'),
 }
 
 export const searchApi = {
